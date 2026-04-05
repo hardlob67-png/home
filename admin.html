@@ -440,32 +440,32 @@ async function loadQuizzes(){
 
 // 업로드 시 기록 코드 자동 삽입
 function injectRecordCode(html){
-  const snippet = `<script>
-(function(){
-  const SU='https://cheuclwcrxuofiomhtuz.supabase.co';
-  const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
-  window.__metaSave=async function(score,total,wrongWords){
-    try{
-      const user=JSON.parse(sessionStorage.getItem('qhub_user')||'null');
-      if(!user)return;
-      await fetch(SU+'/rest/v1/quiz_records',{
-        method:'POST',
-        headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=minimal'},
-        body:JSON.stringify({
-          member_id:user.id,
-          member_name:user.name,
-          quiz_id:sessionStorage.getItem('qhub_current_quiz_id')||null,
-          quiz_title:sessionStorage.getItem('qhub_current_quiz_title')||document.title,
-          score:score,
-          total:total,
-          wrong_words:wrongWords||[]
-        })
-      });
-    }catch(e){}
-  };
-})();
-</script>`;
   if(html.includes('__metaSave')) return html;
+  const lines = [
+    '<scr'+'ipt>',
+    '(function(){',
+    '  const SU="https://cheuclwcrxuofiomhtuz.supabase.co";',
+    '  const SK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw";',
+    '  window.__metaSave=async function(score,total,wrongWords){',
+    '    try{',
+    '      const user=JSON.parse(sessionStorage.getItem("qhub_user")||"null");',
+    '      if(!user)return;',
+    '      await fetch(SU+"/rest/v1/quiz_records",{',
+    '        method:"POST",',
+    '        headers:{"apikey":SK,"Authorization":"Bearer "+SK,"Content-Type":"application/json","Prefer":"return=minimal"},',
+    '        body:JSON.stringify({',
+    '          member_id:user.id,member_name:user.name,',
+    '          quiz_id:sessionStorage.getItem("qhub_current_quiz_id")||null,',
+    '          quiz_title:sessionStorage.getItem("qhub_current_quiz_title")||document.title,',
+    '          score:score,total:total,wrong_words:wrongWords||[]',
+    '        })',
+    '      });',
+    '    }catch(e){}',
+    '  };',
+    '})();',
+    '</'+'script>'
+  ];
+  const snippet = lines.join('\n');
   return html.replace('</head>', snippet+'\n</head>');
 }
 
