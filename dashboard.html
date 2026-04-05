@@ -120,7 +120,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="btn-close-quiz" onclick="closeQuiz()">✕ 닫기</button>
   </div>
   <div class="quiz-loading" id="quiz-loading">퀴즈 불러오는 중...</div>
-  <iframe id="quiz-iframe" style="display:none" onload="onIframeLoad()"></iframe>
+  <iframe id="quiz-iframe" style="display:none"></iframe>
 </div>
 
 <script>
@@ -178,6 +178,7 @@ async function openQuiz(id, title){
     if(!data||!data.length){ closeQuiz(); alert('퀴즈를 불러오지 못했어요'); return; }
     const iframe = document.getElementById('quiz-iframe');
     // srcdoc 방식 - 아이폰 포함 모든 기기에서 작동
+    iframe.onload = onIframeLoad;
     iframe.srcdoc = data[0].html_content;
   }catch(e){ closeQuiz(); alert('오류가 발생했어요') }
 }
