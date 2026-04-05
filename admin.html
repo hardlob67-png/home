@@ -319,22 +319,27 @@ function handleExcel(file){
 async function uploadExcelMembers(){
   if(!excelData.length) return;
   const btn = document.getElementById('btn-excel-upload');
-  btn.disabled=true; btn.textContent='등록 중...';
-  const payload = excelData.map(r=>({name:r.name,phone:r.phone,role:'user'}));
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/members`,{
-      method:'POST',
-      headers:{...HDR,'Prefer':'resolution=ignore-duplicates'},
-      body:JSON.stringify(payload)
-    });
-    if(!res.ok){ showToast('일부 등록 실패 (중복 제외됨)','err'); }
-    else{ showToast(`${excelData.length}명 등록 완료 ✓`,'ok'); }
-    excelData=[];
-    document.getElementById('excel-preview').style.display='none';
-    document.getElementById('excel-input').value='';
-    loadMembers();
-  }catch(e){ showToast('서버 오류','err') }
+  btn.disabled=true;
+  let added=0, skipped=0;
+  for(const r of excelData){
+    btn.textContent=`등록 중... (${added+skipped+1}/${excelData.length})`;
+    try{
+      const res = await fetch(`${SUPA_URL}/rest/v1/members`,{
+        method:'POST',
+        headers:{...HDR,'Prefer':'return=minimal'},
+        body:JSON.stringify({name:r.name,phone:r.phone,role:'user'})
+      });
+      if(res.status===409||res.status===400) skipped++;
+      else if(res.ok) added++;
+      else skipped++;
+    }catch(e){ skipped++ }
+  }
+  showToast(`${added}명 등록 완료${skipped?' ('+skipped+'명 중복 건너뜀)':''} ✓`,'ok');
+  excelData=[];
+  document.getElementById('excel-preview').style.display='none';
+  document.getElementById('excel-input').value='';
   btn.disabled=false; btn.textContent='엑셀 명단 등록하기';
+  loadMembers();
 }
 
 // ===== 퀴즈 관리 =====
