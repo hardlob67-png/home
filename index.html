@@ -24,7 +24,6 @@ body::before{
 .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
 .orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.18) 0%,transparent 70%);top:-100px;left:-100px}
 .orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(255,101,132,.12) 0%,transparent 70%);bottom:-50px;right:-50px}
-
 .container{position:relative;z-index:1;width:100%;max-width:420px;padding:20px}
 .logo{text-align:center;margin-bottom:40px}
 .logo-title{
@@ -33,11 +32,9 @@ body::before{
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .logo-sub{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
-
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .card-title{font-size:18px;font-weight:700;margin-bottom:6px}
 .card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
-
 .form{display:flex;flex-direction:column;gap:16px}
 .field{display:flex;flex-direction:column;gap:8px}
 label{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.5px}
@@ -48,7 +45,6 @@ input{
 }
 input:focus{border-color:var(--accent)}
 input::placeholder{color:var(--muted)}
-
 .btn{
   padding:15px;border:none;border-radius:10px;
   background:linear-gradient(135deg,var(--accent),#8b84ff);
@@ -58,7 +54,7 @@ input::placeholder{color:var(--muted)}
 }
 .btn:hover{opacity:.9}
 .btn:active{transform:scale(.98)}
-
+.btn:disabled{opacity:.5;cursor:not-allowed}
 .msg{text-align:center;font-size:13px;padding:10px;border-radius:8px;display:none}
 .msg.error{background:rgba(255,101,132,.1);color:var(--accent2);display:block}
 .hint{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;line-height:1.6}
@@ -67,13 +63,11 @@ input::placeholder{color:var(--muted)}
 <body>
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
-
 <div class="container">
   <div class="logo">
     <div class="logo-title">QuizHub</div>
     <div class="logo-sub">회원 전용 학습 공간</div>
   </div>
-
   <div class="card">
     <div class="card-title">로그인</div>
     <div class="card-sub">등록된 이름과 핸드폰 번호를 입력해주세요.<br>미등록 시 선생님께 문의하세요.</div>
@@ -89,34 +83,36 @@ input::placeholder{color:var(--muted)}
                onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <div class="msg" id="msg"></div>
-      <button class="btn" onclick="doLogin()">입장하기</button>
+      <button class="btn" id="login-btn" onclick="doLogin()">입장하기</button>
     </div>
   </div>
   <div class="hint">문제가 있으면 관리자에게 문의해주세요</div>
 </div>
 
 <script>
-// 이미 로그인된 경우
-const me = JSON.parse(localStorage.getItem('qhub_user')||'null');
+const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
+
+const me = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(me) location.href = me.role==='admin' ? 'admin.html' : 'dashboard.html';
 
-// 최초 실행 시 관리자 계정 자동 생성
-const users = JSON.parse(localStorage.getItem('qhub_users')||'[]');
-if(!users.find(u=>u.role==='admin')){
-  users.push({name:'관리자', phone:'01000000000', role:'admin', joined:Date.now()});
-  localStorage.setItem('qhub_users', JSON.stringify(users));
-}
+function showMsg(text){ const el=document.getElementById('msg'); el.textContent=text; el.className='msg error' }
 
-function doLogin(){
+async function doLogin(){
   const name  = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim().replace(/-/g,'');
-  const msg   = document.getElementById('msg');
-  if(!name||!phone){ msg.textContent='이름과 핸드폰 번호를 모두 입력해주세요.'; msg.className='msg error'; return; }
-  const users = JSON.parse(localStorage.getItem('qhub_users')||'[]');
-  const user  = users.find(u=>u.name===name && u.phone===phone);
-  if(!user){ msg.textContent='등록된 정보와 일치하지 않아요. 선생님께 문의해주세요.'; msg.className='msg error'; return; }
-  localStorage.setItem('qhub_user', JSON.stringify(user));
-  location.href = user.role==='admin' ? 'admin.html' : 'dashboard.html';
+  if(!name||!phone){ showMsg('이름과 핸드폰 번호를 모두 입력해주세요.'); return }
+  const btn = document.getElementById('login-btn');
+  btn.disabled=true; btn.textContent='확인 중...';
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&select=*`, {
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    });
+    const data = await res.json();
+    if(!data||!data.length){ showMsg('등록된 정보와 일치하지 않아요. 선생님께 문의해주세요.'); btn.disabled=false; btn.textContent='입장하기'; return }
+    sessionStorage.setItem('qhub_user', JSON.stringify(data[0]));
+    location.href = data[0].role==='admin' ? 'admin.html' : 'dashboard.html';
+  } catch(e){ showMsg('서버 연결 오류가 발생했어요. 잠시 후 다시 시도해주세요.'); btn.disabled=false; btn.textContent='입장하기' }
 }
 </script>
 </body>
