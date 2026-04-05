@@ -298,10 +298,14 @@ function handleExcel(file){
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws,{header:1});
     // 첫 행 헤더 건너뜀
-    excelData = rows.slice(1).map(r=>({
+    // 첫 행이 헤더인지 확인 (이름/전화번호 같은 텍스트면 건너뜀)
+    const firstRow = rows[0];
+    const hasHeader = firstRow && (String(firstRow[0]||'').match(/이름|name|성명/i) || String(firstRow[1]||'').match(/전화|phone|번호/i));
+    const dataRows = hasHeader ? rows.slice(1) : rows;
+    excelData = dataRows.map(r=>({
       name: String(r[0]||'').trim(),
-      phone: String(r[1]||'').trim().replace(/-/g,'')
-    })).filter(r=>r.name&&r.phone);
+      phone: String(r[1]||'').trim().replace(/-/g,'').replace(/\s/g,'')
+    })).filter(r=>r.name && r.phone && r.phone.length >= 10);
 
     const preview = document.getElementById('excel-preview');
     document.getElementById('excel-preview-title').textContent=`${file.name} — ${excelData.length}명 확인됨`;
