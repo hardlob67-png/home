@@ -12,52 +12,39 @@
   --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#6b6b80;--radius:14px;
 }
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);
-  background-size:40px 40px;pointer-events:none;z-index:0;
-}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
 .orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);top:-100px;right:-100px}
-.header{
-  position:sticky;top:0;z-index:10;
-  background:rgba(10,10,15,.85);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;
-}
+.header{position:sticky;top:0;z-index:10;background:rgba(10,10,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.header-right{display:flex;align-items:center;gap:16px}
+.header-right{display:flex;align-items:center;gap:12px}
 .user-badge{font-size:13px;color:var(--muted)}
 .user-badge span{color:var(--text);font-weight:500}
-.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-sm{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
-.btn-admin{padding:8px 16px;border:none;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-admin{padding:8px 14px;border:none;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
 .btn-admin:hover{background:rgba(108,99,255,.25)}
 .main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 24px}
-.hero{margin-bottom:48px}
+.hero{margin-bottom:40px}
 .hero-greeting{font-size:13px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
-.hero-title{font-size:32px;font-weight:700;line-height:1.3;margin-bottom:8px}
+.hero-title{font-size:30px;font-weight:700;line-height:1.3;margin-bottom:8px}
 .hero-title span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:15px;color:var(--muted)}
-.stats{display:flex;gap:16px;margin-bottom:40px;flex-wrap:wrap}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 28px;flex:1;min-width:160px}
-.stat-num{font-size:28px;font-weight:700;margin-bottom:4px}
+.hero-sub{font-size:14px;color:var(--muted)}
+.stats{display:flex;gap:16px;margin-bottom:36px;flex-wrap:wrap}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;flex:1;min-width:140px}
+.stat-num{font-size:26px;font-weight:700;margin-bottom:4px}
 .stat-label{font-size:13px;color:var(--muted)}
 .section-title{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-.quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.quiz-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-  padding:24px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;
-  position:relative;overflow:hidden;
-}
+.quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden}
 .quiz-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .2s}
 .quiz-card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 12px 40px rgba(108,99,255,.15)}
 .quiz-card:hover::before{opacity:1}
 .quiz-tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
 .tag-new{background:rgba(108,99,255,.15);color:#a0a7ff}
 .tag-hot{background:rgba(255,101,132,.15);color:#ff8fa3}
-.quiz-title{font-size:17px;font-weight:700;margin-bottom:8px;line-height:1.4}
+.quiz-title{font-size:16px;font-weight:700;margin-bottom:8px;line-height:1.4}
 .quiz-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px}
 .quiz-meta{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
 .quiz-arrow{color:var(--accent);font-size:18px;transition:transform .2s}
@@ -66,10 +53,43 @@ body::before{
 .empty-icon{font-size:48px;margin-bottom:16px}
 .empty-text{font-size:16px;margin-bottom:8px;color:var(--text)}
 .spinner{text-align:center;padding:60px;color:var(--muted);grid-column:1/-1}
+
+/* 퀴즈 전체화면 패널 */
+.quiz-panel{
+  display:none;
+  position:fixed;inset:0;z-index:100;
+  background:var(--bg);
+  flex-direction:column;
+}
+.quiz-panel.open{display:flex}
+.quiz-panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:56px;
+  background:rgba(10,10,15,.95);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.quiz-panel-title{font-size:15px;font-weight:700;color:var(--text)}
+.btn-close-quiz{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border:1px solid var(--border);border-radius:8px;
+  background:transparent;color:var(--muted);
+  font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;
+}
+.btn-close-quiz:hover{border-color:var(--accent2);color:var(--accent2)}
+.quiz-panel iframe{
+  flex:1;width:100%;border:none;
+  background:#fff;
+}
+.quiz-loading{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:14px;
+}
 </style>
 </head>
 <body>
 <div class="orb orb1"></div>
+
 <header class="header">
   <div class="header-logo">META ENGLISH</div>
   <div class="header-right">
@@ -78,6 +98,7 @@ body::before{
     <button class="btn-sm" onclick="logout()">로그아웃</button>
   </div>
 </header>
+
 <main class="main">
   <div class="hero">
     <div class="hero-greeting">오늘도 열심히 💪</div>
@@ -92,24 +113,33 @@ body::before{
   <div class="quiz-grid" id="quiz-grid"><div class="spinner">불러오는 중...</div></div>
 </main>
 
+<!-- 퀴즈 전체화면 패널 -->
+<div class="quiz-panel" id="quiz-panel">
+  <div class="quiz-panel-header">
+    <div class="quiz-panel-title" id="quiz-panel-title"></div>
+    <button class="btn-close-quiz" onclick="closeQuiz()">✕ 닫기</button>
+  </div>
+  <div class="quiz-loading" id="quiz-loading">퀴즈 불러오는 중...</div>
+  <iframe id="quiz-iframe" style="display:none" onload="onIframeLoad()"></iframe>
+</div>
+
 <script>
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
-
 document.getElementById('username').textContent = user.name;
 if(user.role==='admin') document.getElementById('admin-btn').style.display='';
 
 async function loadQuizzes(){
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`, {
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
     });
     const quizzes = await res.json();
     const grid = document.getElementById('quiz-grid');
-    const weekAgo = Date.now() - 7*24*60*60*1000;
+    const weekAgo = Date.now()-7*24*60*60*1000;
     document.getElementById('stat-total').textContent = quizzes.length;
     document.getElementById('stat-new').textContent = quizzes.filter(q=>new Date(q.added).getTime()>weekAgo).length;
     if(!quizzes.length){
@@ -118,9 +148,9 @@ async function loadQuizzes(){
     }
     grid.innerHTML = quizzes.map(q=>{
       const isNew = new Date(q.added).getTime()>weekAgo;
-      const tag = isNew ? '<span class="quiz-tag tag-new">NEW</span>' : '<span class="quiz-tag tag-hot">🔥 HOT</span>';
+      const tag = isNew?'<span class="quiz-tag tag-new">NEW</span>':'<span class="quiz-tag tag-hot">🔥 HOT</span>';
       const date = new Date(q.added).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-      return `<div class="quiz-card" onclick="openQuiz('${q.id}')">
+      return `<div class="quiz-card" onclick="openQuiz('${q.id}','${q.title.replace(/'/g,"\\'")}')">
         ${tag}
         <div class="quiz-title">${q.title}</div>
         <div class="quiz-desc">${q.description||'클릭해서 퀴즈를 시작하세요'}</div>
@@ -132,17 +162,42 @@ async function loadQuizzes(){
   }
 }
 
-async function openQuiz(id){
+async function openQuiz(id, title){
+  document.getElementById('quiz-panel').classList.add('open');
+  document.getElementById('quiz-panel-title').textContent = title;
+  document.getElementById('quiz-loading').style.display='flex';
+  document.getElementById('quiz-iframe').style.display='none';
+  document.body.style.overflow='hidden';
+  sessionStorage.setItem('qhub_current_quiz_id', id);
+  sessionStorage.setItem('qhub_current_quiz_title', title);
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}&select=html_content`, {
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}&select=html_content`,{
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
     });
     const data = await res.json();
-    if(!data||!data.length) return;
-    const blob = new Blob([data[0].html_content],{type:'text/html'});
-    window.open(URL.createObjectURL(blob),'_blank');
-  }catch(e){ alert('퀴즈를 열지 못했어요') }
+    if(!data||!data.length){ closeQuiz(); alert('퀴즈를 불러오지 못했어요'); return; }
+    const iframe = document.getElementById('quiz-iframe');
+    // srcdoc 방식 - 아이폰 포함 모든 기기에서 작동
+    iframe.srcdoc = data[0].html_content;
+  }catch(e){ closeQuiz(); alert('오류가 발생했어요') }
 }
+
+function onIframeLoad(){
+  document.getElementById('quiz-loading').style.display='none';
+  document.getElementById('quiz-iframe').style.display='block';
+}
+
+function closeQuiz(){
+  document.getElementById('quiz-panel').classList.remove('open');
+  document.getElementById('quiz-iframe').srcdoc='';
+  document.getElementById('quiz-iframe').style.display='none';
+  document.body.style.overflow='';
+}
+
+// 뒤로가기 버튼으로 퀴즈 닫기
+window.addEventListener('popstate', ()=>{
+  if(document.getElementById('quiz-panel').classList.contains('open')) closeQuiz();
+});
 
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
 loadQuizzes();
