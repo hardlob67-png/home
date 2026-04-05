@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizHub - 관리자</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--card:#1a1a24;--border:#2a2a3a;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#6b6b80;
+  --green:#22c55e;--red:#ff6584;--radius:14px;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);top:-50px;left:-50px}
+
+/* 헤더 */
+.header{
+  position:sticky;top:0;z-index:10;
+  background:rgba(10,10,15,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;
+}
+.header-logo{display:flex;align-items:center;gap:12px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+
+/* 탭 네비 */
+.tab-nav{position:relative;z-index:1;display:flex;gap:4px;padding:20px 24px 0;max-width:900px;margin:0 auto}
+.tab-btn{
+  padding:10px 24px;border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;
+  background:var(--surface);color:var(--muted);font-family:'Noto Sans KR',sans-serif;
+  font-size:14px;cursor:pointer;transition:all .2s;
+}
+.tab-btn.active{background:var(--card);color:var(--text);border-color:var(--border);font-weight:700}
+
+/* 메인 */
+.main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 40px}
+.tab-panel{display:none;background:var(--card);border:1px solid var(--border);border-radius:0 var(--radius) var(--radius) var(--radius);padding:32px}
+.tab-panel.active{display:block}
+
+.section-head{margin-bottom:24px}
+.section-head h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.section-head p{font-size:13px;color:var(--muted)}
+
+/* 회원 등록 */
+.add-row{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.add-row input{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;
+  font-size:14px;outline:none;transition:border-color .2s;flex:1;min-width:130px;
+}
+.add-row input:focus{border-color:var(--accent)}
+.add-row input::placeholder{color:var(--muted)}
+.btn-add{
+  padding:12px 20px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),#8b84ff);
+  color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:opacity .2s;
+}
+.btn-add:hover{opacity:.9}
+
+/* 일괄 등록 */
+.bulk-area{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:14px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);
+  width:100%;min-height:100px;resize:vertical;outline:none;transition:border-color .2s;margin-bottom:10px;
+}
+.bulk-area:focus{border-color:var(--accent)}
+.bulk-area::placeholder{color:var(--muted)}
+.btn-bulk{
+  padding:10px 20px;border:none;border-radius:10px;
+  background:rgba(108,99,255,.15);color:#a0a7ff;
+  font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .2s;margin-bottom:24px;
+}
+.btn-bulk:hover{background:rgba(108,99,255,.25)}
+
+/* 회원 목록 */
+.member-count{font-size:13px;color:var(--muted);margin-bottom:12px}
+.member-count span{color:var(--text);font-weight:700}
+
+.member-table{width:100%;border-collapse:collapse}
+.member-table th{
+  text-align:left;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.5px;text-transform:uppercase;
+  padding:10px 14px;border-bottom:1px solid var(--border);
+}
+.member-table td{
+  padding:12px 14px;border-bottom:1px solid rgba(42,42,58,.5);font-size:14px;vertical-align:middle;
+}
+.member-table tr:last-child td{border-bottom:none}
+.member-table tr:hover td{background:rgba(108,99,255,.04)}
+
+.badge-admin{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.badge-user{background:rgba(34,197,94,.1);color:#6ee7a0;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+.btn-del-sm{
+  padding:5px 12px;border:1px solid transparent;border-radius:6px;
+  background:rgba(255,101,132,.08);color:var(--red);
+  font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;
+}
+.btn-del-sm:hover{background:rgba(255,101,132,.18)}
+
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+/* 퀴즈 탭 (기존과 동일) */
+.upload-area{
+  background:var(--surface);border:2px dashed var(--border);border-radius:var(--radius);
+  padding:40px 24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;
+  margin-bottom:16px;position:relative;
+}
+.upload-area:hover,.upload-area.drag{border-color:var(--accent);background:rgba(108,99,255,.05)}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.upload-icon{font-size:36px;margin-bottom:10px}
+.upload-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.upload-sub{font-size:13px;color:var(--muted)}
+
+.meta-row{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:8px;flex:1;min-width:180px}
+.field label{font-size:13px;color:var(--muted);font-weight:500}
+.field input,.field textarea{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;
+  font-size:14px;outline:none;transition:border-color .2s;
+}
+.field input:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:64px}
+
+.btn-upload{
+  width:100%;padding:13px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),#8b84ff);
+  color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:opacity .2s;margin-bottom:32px;
+}
+.btn-upload:hover{opacity:.9}
+.btn-upload:disabled{opacity:.4;cursor:not-allowed}
+
+.file-selected{
+  background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.3);
+  border-radius:8px;padding:9px 14px;font-size:13px;color:#a0a7ff;
+  margin-top:8px;display:none;
+}
+
+.quiz-list{display:flex;flex-direction:column;gap:10px}
+.quiz-item{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 22px;display:flex;align-items:center;gap:16px;
+}
+.quiz-num{width:34px;height:34px;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.quiz-info{flex:1}
+.quiz-title{font-size:15px;font-weight:700;margin-bottom:3px}
+.quiz-desc{font-size:13px;color:var(--muted);margin-bottom:3px}
+.quiz-date{font-size:12px;color:var(--muted)}
+.quiz-actions{display:flex;gap:8px;flex-shrink:0}
+.btn-preview{padding:7px 13px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-preview:hover{border-color:var(--accent);color:var(--accent)}
+.btn-del{padding:7px 13px;border:1px solid transparent;border-radius:7px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-del:hover{background:rgba(255,101,132,.18)}
+
+.empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
+
+.section-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-text">QuizHub</div>
+    <div class="admin-badge">Admin</div>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn-sm" onclick="location.href='dashboard.html'">← 대시보드</button>
+    <button class="btn-sm" onclick="logout()">로그아웃</button>
+  </div>
+</header>
+
+<!-- 탭 -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('members')">👥 회원 명단</button>
+  <button class="tab-btn" onclick="switchTab('quizzes')">📂 퀴즈 관리</button>
+</div>
+
+<div class="main">
+
+  <!-- ===== 회원 명단 탭 ===== -->
+  <div class="tab-panel active" id="tab-members">
+    <div class="section-head">
+      <h2>회원 명단 관리</h2>
+      <p>이름과 핸드폰 번호를 등록해두면 이용자가 그대로 입력해서 로그인해요.</p>
+    </div>
+
+    <!-- 개별 등록 -->
+    <div class="section-title">개별 등록</div>
+    <div class="add-row">
+      <input type="text" id="new-name" placeholder="이름" autocomplete="off">
+      <input type="tel" id="new-phone" placeholder="핸드폰 번호 (숫자만)" maxlength="11"
+             oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+             onkeydown="if(event.key==='Enter')addMember()">
+      <button class="btn-add" onclick="addMember()">+ 추가</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 일괄 등록 -->
+    <div class="section-title">일괄 등록</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:10px">한 줄에 한 명씩 <strong style="color:var(--text)">이름,번호</strong> 형식으로 입력하세요.</p>
+    <textarea class="bulk-area" id="bulk-input" placeholder="홍길동,01012345678&#10;김철수,01087654321&#10;이영희,01011112222"></textarea>
+    <button class="btn-bulk" onclick="bulkAdd()">일괄 등록하기</button>
+
+    <div class="divider"></div>
+
+    <!-- 회원 목록 -->
+    <div class="section-title">등록된 회원</div>
+    <div class="member-count" id="member-count"></div>
+    <table class="member-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>이름</th>
+          <th>핸드폰 번호</th>
+          <th>구분</th>
+          <th>등록일</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="member-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ===== 퀴즈 관리 탭 ===== -->
+  <div class="tab-panel" id="tab-quizzes">
+    <div class="section-head">
+      <h2>퀴즈 관리</h2>
+      <p>HTML 파일을 업로드하면 대시보드에 자동으로 표시돼요.</p>
+    </div>
+
+    <div class="upload-area" id="drop-zone">
+      <input type="file" id="file-input" accept=".html" multiple onchange="handleFiles(this.files)">
+      <div class="upload-icon">📂</div>
+      <div class="upload-title">HTML 파일을 여기에 드래그하거나 클릭해서 선택</div>
+      <div class="upload-sub">여러 파일을 한 번에 올릴 수 있어요</div>
+    </div>
+    <div class="file-selected" id="file-selected"></div>
+
+    <div class="meta-row" style="margin-top:14px">
+      <div class="field">
+        <label>퀴즈 제목</label>
+        <input type="text" id="quiz-title" placeholder="예: 영어 단어 퀴즈 1~3강">
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label>설명 (선택)</label>
+      <textarea id="quiz-desc" placeholder="예: 1강~3강 핵심 단어 40개 퀴즈입니다"></textarea>
+    </div>
+    <button class="btn-upload" id="btn-upload" onclick="uploadQuiz()" disabled>업로드하기</button>
+
+    <div class="section-title">등록된 퀴즈</div>
+    <div class="quiz-list" id="quiz-list"></div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// 권한 확인
+const user = JSON.parse(localStorage.getItem('qhub_user')||'null');
+if(!user) location.href='index.html';
+if(user.role!=='admin'){ alert('관리자만 접근 가능합니다'); location.href='dashboard.html'; }
+
+// ===== 탭 전환 =====
+function switchTab(t){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active', (t==='members'?0:1)===i));
+  document.getElementById('tab-members').classList.toggle('active', t==='members');
+  document.getElementById('tab-quizzes').classList.toggle('active', t==='quizzes');
+}
+
+// ===== 회원 관리 =====
+function getUsers(){ return JSON.parse(localStorage.getItem('qhub_users')||'[]') }
+function saveUsers(u){ localStorage.setItem('qhub_users',JSON.stringify(u)) }
+
+function addMember(){
+  const name  = document.getElementById('new-name').value.trim();
+  const phone = document.getElementById('new-phone').value.trim().replace(/-/g,'');
+  if(!name||!phone){ showToast('이름과 번호를 모두 입력해주세요','err'); return }
+  if(!/^010[0-9]{7,8}$/.test(phone)){ showToast('올바른 핸드폰 번호를 입력해주세요','err'); return }
+  const users = getUsers();
+  if(users.find(u=>u.name===name&&u.phone===phone)){ showToast('이미 등록된 회원이에요','err'); return }
+  users.push({name, phone, role:'user', joined:Date.now()});
+  saveUsers(users);
+  document.getElementById('new-name').value='';
+  document.getElementById('new-phone').value='';
+  renderMembers();
+  showToast(`${name} 님을 등록했어요 ✓`,'ok');
+}
+
+function bulkAdd(){
+  const lines = document.getElementById('bulk-input').value.trim().split('\n');
+  const users = getUsers();
+  let added=0, skipped=0;
+  lines.forEach(line=>{
+    const parts = line.split(',').map(s=>s.trim());
+    if(parts.length<2) return;
+    const [name, phone] = [parts[0], parts[1].replace(/-/g,'')];
+    if(!name||!phone) return;
+    if(users.find(u=>u.name===name&&u.phone===phone)){ skipped++; return }
+    users.push({name, phone, role:'user', joined:Date.now()});
+    added++;
+  });
+  saveUsers(users);
+  document.getElementById('bulk-input').value='';
+  renderMembers();
+  showToast(`${added}명 등록${skipped?` (${skipped}명 중복 스킵)`:''}`, 'ok');
+}
+
+function deleteMember(name, phone){
+  if(!confirm(`${name} 님을 삭제할까요?`)) return;
+  let users = getUsers().filter(u=>!(u.name===name&&u.phone===phone));
+  saveUsers(users);
+  renderMembers();
+  showToast('삭제했어요','ok');
+}
+
+function renderMembers(){
+  const users = getUsers();
+  const nonAdmin = users.filter(u=>u.role!=='admin');
+  document.getElementById('member-count').innerHTML = `총 <span>${nonAdmin.length}</span>명 등록됨`;
+  const tbody = document.getElementById('member-tbody');
+  if(!users.length){ tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">등록된 회원이 없어요</td></tr>'; return }
+  tbody.innerHTML = users.map((u,i)=>`
+    <tr>
+      <td style="color:var(--muted)">${i+1}</td>
+      <td style="font-weight:500">${u.name}</td>
+      <td style="font-family:monospace;font-size:13px">${u.phone}</td>
+      <td>${u.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
+      <td style="color:var(--muted);font-size:12px">${new Date(u.joined).toLocaleDateString('ko-KR')}</td>
+      <td>${u.role!=='admin'?`<button class="btn-del-sm" onclick="deleteMember('${u.name}','${u.phone}')">삭제</button>`:''}</td>
+    </tr>
+  `).join('');
+}
+renderMembers();
+
+// ===== 퀴즈 관리 =====
+let selectedFile = null;
+
+const zone = document.getElementById('drop-zone');
+zone.addEventListener('dragover', e=>{ e.preventDefault(); zone.classList.add('drag') });
+zone.addEventListener('dragleave', ()=>zone.classList.remove('drag'));
+zone.addEventListener('drop', e=>{ e.preventDefault(); zone.classList.remove('drag'); handleFiles(e.dataTransfer.files) });
+
+function handleFiles(files){
+  if(!files||!files.length) return;
+  if(files.length===1){
+    selectedFile = files[0];
+    const sel = document.getElementById('file-selected');
+    sel.textContent = `선택된 파일: ${selectedFile.name}`;
+    sel.style.display='block';
+    if(!document.getElementById('quiz-title').value)
+      document.getElementById('quiz-title').value = selectedFile.name.replace(/\.html?$/i,'');
+    document.getElementById('btn-upload').disabled=false;
+  } else {
+    batchUpload(files);
+  }
+}
+
+function batchUpload(files){
+  let count=0;
+  Array.from(files).forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const quizzes = JSON.parse(localStorage.getItem('qhub_quizzes')||'[]');
+      quizzes.unshift({id:'q_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), title:file.name.replace(/\.html?$/i,''), desc:'', html:e.target.result, added:Date.now()});
+      localStorage.setItem('qhub_quizzes',JSON.stringify(quizzes));
+      if(++count===files.length){ renderQuizzes(); showToast(`${count}개 퀴즈 업로드 완료 ✓`,'ok') }
+    };
+    reader.readAsText(file);
+  });
+}
+
+function uploadQuiz(){
+  const title = document.getElementById('quiz-title').value.trim();
+  const desc  = document.getElementById('quiz-desc').value.trim();
+  if(!title){ showToast('퀴즈 제목을 입력해주세요','err'); return }
+  if(!selectedFile){ showToast('HTML 파일을 선택해주세요','err'); return }
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const quizzes = JSON.parse(localStorage.getItem('qhub_quizzes')||'[]');
+    quizzes.unshift({id:'q_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), title, desc, html:e.target.result, added:Date.now()});
+    localStorage.setItem('qhub_quizzes',JSON.stringify(quizzes));
+    selectedFile=null;
+    document.getElementById('quiz-title').value='';
+    document.getElementById('quiz-desc').value='';
+    document.getElementById('file-selected').style.display='none';
+    document.getElementById('btn-upload').disabled=true;
+    document.getElementById('file-input').value='';
+    renderQuizzes();
+    showToast('퀴즈를 업로드했어요 ✓','ok');
+  };
+  reader.readAsText(selectedFile);
+}
+
+function deleteQuiz(id){
+  if(!confirm('이 퀴즈를 삭제할까요?')) return;
+  let q = JSON.parse(localStorage.getItem('qhub_quizzes')||'[]').filter(x=>x.id!==id);
+  localStorage.setItem('qhub_quizzes',JSON.stringify(q));
+  renderQuizzes();
+  showToast('삭제했어요','ok');
+}
+
+function previewQuiz(id){
+  const q = JSON.parse(localStorage.getItem('qhub_quizzes')||'[]').find(x=>x.id===id);
+  if(!q) return;
+  window.open(URL.createObjectURL(new Blob([q.html],{type:'text/html'})),'_blank');
+}
+
+function renderQuizzes(){
+  const quizzes = JSON.parse(localStorage.getItem('qhub_quizzes')||'[]');
+  const list = document.getElementById('quiz-list');
+  if(!quizzes.length){ list.innerHTML='<div class="empty-state">아직 업로드된 퀴즈가 없어요</div>'; return }
+  list.innerHTML = quizzes.map((q,i)=>`
+    <div class="quiz-item">
+      <div class="quiz-num">${i+1}</div>
+      <div class="quiz-info">
+        <div class="quiz-title">${q.title}</div>
+        ${q.desc?`<div class="quiz-desc">${q.desc}</div>`:''}
+        <div class="quiz-date">${new Date(q.added).toLocaleString('ko-KR')} 업로드</div>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn-preview" onclick="previewQuiz('${q.id}')">미리보기</button>
+        <button class="btn-del" onclick="deleteQuiz('${q.id}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+}
+renderQuizzes();
+
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function logout(){ localStorage.removeItem('qhub_user'); location.href='index.html' }
+</script>
+</body>
+</html>

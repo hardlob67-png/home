@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--card:#1a1a24;--border:#2a2a3a;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#6b6b80;--radius:14px;
+}
+body{
+  font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;position:relative;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.18) 0%,transparent 70%);top:-100px;left:-100px}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(255,101,132,.12) 0%,transparent 70%);bottom:-50px;right:-50px}
+
+.container{position:relative;z-index:1;width:100%;max-width:420px;padding:20px}
+.logo{text-align:center;margin-bottom:40px}
+.logo-title{
+  font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;line-height:1;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo-sub{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+
+.form{display:flex;flex-direction:column;gap:16px}
+.field{display:flex;flex-direction:column;gap:8px}
+label{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.5px}
+input{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;
+  font-size:15px;outline:none;transition:border-color .2s;
+}
+input:focus{border-color:var(--accent)}
+input::placeholder{color:var(--muted)}
+
+.btn{
+  padding:15px;border:none;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),#8b84ff);
+  color:#fff;font-family:'Noto Sans KR',sans-serif;
+  font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;
+  transition:opacity .2s,transform .1s;letter-spacing:.5px;
+}
+.btn:hover{opacity:.9}
+.btn:active{transform:scale(.98)}
+
+.msg{text-align:center;font-size:13px;padding:10px;border-radius:8px;display:none}
+.msg.error{background:rgba(255,101,132,.1);color:var(--accent2);display:block}
+.hint{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="container">
+  <div class="logo">
+    <div class="logo-title">QuizHub</div>
+    <div class="logo-sub">회원 전용 학습 공간</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">로그인</div>
+    <div class="card-sub">등록된 이름과 핸드폰 번호를 입력해주세요.<br>미등록 시 선생님께 문의하세요.</div>
+    <div class="form">
+      <div class="field">
+        <label>이름</label>
+        <input type="text" id="name" placeholder="홍길동" autocomplete="off">
+      </div>
+      <div class="field">
+        <label>핸드폰 번호</label>
+        <input type="tel" id="phone" placeholder="01012345678" maxlength="11"
+               oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+               onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="msg" id="msg"></div>
+      <button class="btn" onclick="doLogin()">입장하기</button>
+    </div>
+  </div>
+  <div class="hint">문제가 있으면 관리자에게 문의해주세요</div>
+</div>
+
+<script>
+// 이미 로그인된 경우
+const me = JSON.parse(localStorage.getItem('qhub_user')||'null');
+if(me) location.href = me.role==='admin' ? 'admin.html' : 'dashboard.html';
+
+// 최초 실행 시 관리자 계정 자동 생성
+const users = JSON.parse(localStorage.getItem('qhub_users')||'[]');
+if(!users.find(u=>u.role==='admin')){
+  users.push({name:'관리자', phone:'01000000000', role:'admin', joined:Date.now()});
+  localStorage.setItem('qhub_users', JSON.stringify(users));
+}
+
+function doLogin(){
+  const name  = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim().replace(/-/g,'');
+  const msg   = document.getElementById('msg');
+  if(!name||!phone){ msg.textContent='이름과 핸드폰 번호를 모두 입력해주세요.'; msg.className='msg error'; return; }
+  const users = JSON.parse(localStorage.getItem('qhub_users')||'[]');
+  const user  = users.find(u=>u.name===name && u.phone===phone);
+  if(!user){ msg.textContent='등록된 정보와 일치하지 않아요. 선생님께 문의해주세요.'; msg.className='msg error'; return; }
+  localStorage.setItem('qhub_user', JSON.stringify(user));
+  location.href = user.role==='admin' ? 'admin.html' : 'dashboard.html';
+}
+</script>
+</body>
+</html>
