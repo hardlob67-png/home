@@ -482,68 +482,45 @@ async function loadHistory(){
   const quizVal = document.getElementById('filter-quiz').value;
   const list = document.getElementById('history-list');
   list.innerHTML='<div class="spinner">불러오는 중...</div>';
-
-  // 필터 옵션 채우기
   await Promise.all([fillMemberFilter(), fillQuizFilter()]);
-
-  let url = `${SUPA_URL}/rest/v1/quiz_records?select=*&order=played_at.desc&limit=200`;
-  if(memberVal) url += `&member_id=eq.${memberVal}`;
-  if(quizVal) url += `&quiz_id=eq.${quizVal}`;
-
+  let url = SUPA_URL+'/rest/v1/quiz_records?select=*&order=played_at.desc&limit=200';
+  if(memberVal) url += '&member_id=eq.'+memberVal;
+  if(quizVal) url += '&quiz_id=eq.'+quizVal;
   try{
     const res = await fetch(url,{headers:HDR});
     const records = await res.json();
     if(!records.length){ list.innerHTML='<div class="empty-state">아직 풀이 기록이 없어요</div>'; return; }
-
-    if(hView==='member'){
-      // 회원별 그룹
-      const byMember = {};
-      records.forEach(r=>{
-        if(!byMember[r.member_name]) byMember[r.member_name]=[];
-        byMember[r.member_name].push(r);
+    const grouped = {};
+    const groupKey = hView==='member' ? 'member_name' : 'quiz_title';
+    const labelKey = hView==='member' ? 'quiz_title' : 'member_name';
+    records.forEach(r=>{ if(!grouped[r[groupKey]]) grouped[r[groupKey]]=[]; grouped[r[groupKey]].push(r); });
+    let html='';
+    Object.entries(grouped).forEach(function(entry){
+      const key=entry[0], recs=entry[1];
+      const countLabel = hView==='member' ? recs.length+'회 풀이' : recs.length+'명 풀이';
+      html += '<div class="quiz-item" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:10px">';
+      html += '<div style="display:flex;justify-content:space-between;width:100%;align-items:center">';
+      html += '<div style="font-size:15px;font-weight:700">'+key+'</div>';
+      html += '<div style="font-size:12px;color:var(--muted)">'+countLabel+'</div></div>';
+      recs.forEach(function(r){
+        const pct = Math.round(r.score/r.total*100);
+        const color = pct>=80 ? 'var(--green)' : 'var(--accent2)';
+        const wrongHtml = (r.wrong_words&&r.wrong_words.length)
+          ? '<div style="font-size:12px;color:var(--accent2);margin-top:4px">틀린 단어: '+r.wrong_words.map(function(w){return w.eng||w;}).join(', ')+'</div>'
+          : '';
+        html += '<div style="width:100%;background:var(--surface);border-radius:8px;padding:12px 14px">';
+        html += '<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
+        html += '<span style="font-size:13px;font-weight:500">'+r[labelKey]+'</span>';
+        html += '<span style="font-size:13px;font-weight:700;color:'+color+'">'+r.score+'/'+r.total+' ('+pct+'%)</span></div>';
+        html += '<div style="font-size:12px;color:var(--muted)">'+new Date(r.played_at).toLocaleString('ko-KR')+'</div>';
+        html += wrongHtml+'</div>';
       });
-      list.innerHTML = Object.entries(byMember).map(([name,recs])=>`
-        <div class="quiz-item" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
-            <div style="font-size:15px;font-weight:700">${name}</div>
-            <div style="font-size:12px;color:var(--muted)">${recs.length}회 풀이</div>
-          </div>
-          ${recs.map(r=>`
-            <div style="width:100%;background:var(--surface);border-radius:8px;padding:12px 14px">
-              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-                <span style="font-size:13px;font-weight:500">${r.quiz_title}</span>
-                <span style="font-size:13px;color:${r.score/r.total>=0.8?'var(--green)':'var(--accent2)'};font-weight:700">${r.score}/${r.total} (${Math.round(r.score/r.total*100)}%)</span>
-              </div>
-              <div style="font-size:12px;color:var(--muted);margin-bottom:${r.wrong_words&&r.wrong_words.length?'6px':'0'}">${new Date(r.played_at).toLocaleString('ko-KR')}</div>
-              ${r.wrong_words&&r.wrong_words.length?`<div style="font-size:12px;color:var(--accent2)">틀린 단어: ${r.wrong_words.map(w=>w.eng||w).join(', ')}</div>`:''}
-            </div>`).join('')}
-        </div>`).join('');
-    } else {
-      // 퀴즈별 그룹
-      const byQuiz = {};
-      records.forEach(r=>{
-        if(!byQuiz[r.quiz_title]) byQuiz[r.quiz_title]=[];
-        byQuiz[r.quiz_title].push(r);
-      });
-      list.innerHTML = Object.entries(byQuiz).map(([title,recs])=>`
-        <div class="quiz-item" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
-            <div style="font-size:15px;font-weight:700">${title}</div>
-            <div style="font-size:12px;color:var(--muted)">${recs.length}명 풀이</div>
-          </div>
-          ${recs.map(r=>`
-            <div style="width:100%;background:var(--surface);border-radius:8px;padding:12px 14px">
-              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-                <span style="font-size:13px;font-weight:500">${r.member_name}</span>
-                <span style="font-size:13px;color:${r.score/r.total>=0.8?'var(--green)':'var(--accent2)'};font-weight:700">${r.score}/${r.total} (${Math.round(r.score/r.total*100)}%)</span>
-              </div>
-              <div style="font-size:12px;color:var(--muted);margin-bottom:${r.wrong_words&&r.wrong_words.length?'6px':'0'}">${new Date(r.played_at).toLocaleString('ko-KR')}</div>
-              ${r.wrong_words&&r.wrong_words.length?`<div style="font-size:12px;color:var(--accent2)">틀린 단어: ${r.wrong_words.map(w=>w.eng||w).join(', ')}</div>`:''}
-            </div>`).join('')}
-        </div>`).join('');
-    }
-  }catch(e){ list.innerHTML='<div class="empty-state">불러오기 실패</div>' }
+      html += '</div>';
+    });
+    list.innerHTML = html;
+  }catch(e){ list.innerHTML='<div class="empty-state">불러오기 실패</div>'; }
 }
+
 
 let memberOptions=[], quizOptions=[];
 async function fillMemberFilter(){
