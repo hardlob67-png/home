@@ -10,6 +10,7 @@
 :root{
   --bg:#0a0a0f;--surface:#13131a;--card:#1a1a24;--border:#2a2a3a;
   --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#6b6b80;--radius:14px;
+  --gold:#FFD700;--fire:#FF6B35;--green:#22c55e;
 }
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
@@ -36,6 +37,32 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .stat-label{font-size:13px;color:var(--muted)}
 .section-title{font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* BADGE COLLECTION */
+.badge-collection{margin-bottom:40px}
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.badge-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 16px;text-align:center;transition:all .2s;position:relative;overflow:hidden;
+}
+.badge-card.earned{border-color:rgba(255,215,0,.25)}
+.badge-card.earned::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--fire));
+}
+.badge-card.locked{opacity:.35}
+.badge-card .b-icon{font-size:36px;margin-bottom:8px;display:block}
+.badge-card .b-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.badge-card.earned .b-name{color:var(--gold)}
+.badge-card .b-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.badge-card .b-count{
+  display:inline-block;margin-top:8px;font-size:11px;font-weight:700;
+  background:rgba(255,215,0,.12);color:var(--gold);padding:2px 10px;border-radius:20px;
+}
+.badge-card.locked .b-count{display:none}
+.badge-empty{grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted)}
+
+/* QUIZ GRID */
 .quiz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
 .quiz-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden}
 .quiz-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .2s}
@@ -54,37 +81,28 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .empty-text{font-size:16px;margin-bottom:8px;color:var(--text)}
 .spinner{text-align:center;padding:60px;color:var(--muted);grid-column:1/-1}
 
-/* 퀴즈 전체화면 패널 */
-.quiz-panel{
-  display:none;
-  position:fixed;inset:0;z-index:100;
-  background:var(--bg);
-  flex-direction:column;
-}
+/* QUIZ FULLSCREEN PANEL */
+.quiz-panel{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column}
 .quiz-panel.open{display:flex}
-.quiz-panel-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 20px;height:56px;
-  background:rgba(10,10,15,.95);
-  border-bottom:1px solid var(--border);
-  flex-shrink:0;
-}
+.quiz-panel-header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:rgba(10,10,15,.95);border-bottom:1px solid var(--border);flex-shrink:0}
 .quiz-panel-title{font-size:15px;font-weight:700;color:var(--text)}
-.btn-close-quiz{
-  display:flex;align-items:center;gap:6px;
-  padding:8px 16px;border:1px solid var(--border);border-radius:8px;
-  background:transparent;color:var(--muted);
-  font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;
-}
+.btn-close-quiz{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
 .btn-close-quiz:hover{border-color:var(--accent2);color:var(--accent2)}
-.quiz-panel iframe{
-  flex:1;width:100%;border:none;
-  background:#fff;
+.quiz-panel iframe{flex:1;width:100%;border:none;background:#fff}
+.quiz-loading{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
+
+/* BADGE EARNED TOAST */
+.badge-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--card);border:1px solid rgba(255,215,0,.3);border-radius:14px;
+  padding:16px 24px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 12px 40px rgba(0,0,0,.5);z-index:200;
+  transition:transform .4s cubic-bezier(.17,.67,.21,1.2);pointer-events:none;
 }
-.quiz-loading{
-  flex:1;display:flex;align-items:center;justify-content:center;
-  color:var(--muted);font-size:14px;
-}
+.badge-toast.show{transform:translateX(-50%) translateY(0)}
+.badge-toast .bt-icon{font-size:32px}
+.badge-toast .bt-text{font-size:13px;font-weight:700;color:var(--gold)}
+.badge-toast .bt-sub{font-size:11px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -107,8 +125,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
   <div class="stats">
     <div class="stat-card"><div class="stat-num" id="stat-total">-</div><div class="stat-label">전체 퀴즈</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-badges">-</div><div class="stat-label">획득 뱃지</div></div>
     <div class="stat-card"><div class="stat-num" id="stat-new">-</div><div class="stat-label">이번 주 추가</div></div>
   </div>
+
+  <!-- BADGE COLLECTION -->
+  <div class="badge-collection">
+    <div class="section-title">🏆 내 뱃지</div>
+    <div class="badge-grid" id="badge-grid"><div class="spinner">불러오는 중...</div></div>
+  </div>
+
   <div class="section-title">퀴즈 목록</div>
   <div class="quiz-grid" id="quiz-grid"><div class="spinner">불러오는 중...</div></div>
 </main>
@@ -123,20 +149,166 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <iframe id="quiz-iframe" style="display:none"></iframe>
 </div>
 
+<!-- 뱃지 획득 토스트 -->
+<div class="badge-toast" id="badge-toast">
+  <span class="bt-icon" id="bt-icon">🏅</span>
+  <div>
+    <div class="bt-text" id="bt-text">뱃지 획득!</div>
+    <div class="bt-sub" id="bt-sub">완주 뱃지를 얻었어요</div>
+  </div>
+</div>
+
 <script>
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
+const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
 document.getElementById('username').textContent = user.name;
 if(user.role==='admin') document.getElementById('admin-btn').style.display='';
 
+// ── Badge definitions (same as quiz HTML) ──
+const BADGE_DEFS = [
+  { type:'complete', icon:'🏅', name:'완주', desc:'퀴즈 완료' },
+  { type:'perfect', icon:'💎', name:'퍼펙트', desc:'100% 정답' },
+  { type:'combo5', icon:'🔥', name:'콤보 마스터', desc:'5콤보 이상' },
+  { type:'combo_king', icon:'👑', name:'콤보 킹', desc:'10콤보 달성' },
+  { type:'speed', icon:'⚡', name:'스피드러너', desc:'30초 이내 완료' },
+  { type:'no_miss', icon:'🎯', name:'무실수', desc:'한 번도 안 틀림' },
+];
+
+// ── Load badges ──
+let myBadges = []; // [{badge_type, quiz_title, earned_at}, ...]
+
+async function loadBadges(){
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/badges?member_id=eq.${user.id}&select=badge_type,quiz_title,earned_at&order=earned_at.desc`,{headers:HDR});
+    myBadges = await res.json();
+  }catch(e){ myBadges = []; }
+  renderBadges();
+}
+
+function renderBadges(){
+  const grid = document.getElementById('badge-grid');
+  // Count per badge type
+  const counts = {};
+  myBadges.forEach(b => { counts[b.badge_type] = (counts[b.badge_type]||0)+1; });
+
+  const totalEarned = Object.keys(counts).length;
+  document.getElementById('stat-badges').textContent = myBadges.length;
+
+  grid.innerHTML = BADGE_DEFS.map(def => {
+    const earned = counts[def.type] || 0;
+    const cls = earned > 0 ? 'earned' : 'locked';
+    return `<div class="badge-card ${cls}">
+      <span class="b-icon">${def.icon}</span>
+      <div class="b-name">${def.name}</div>
+      <div class="b-desc">${def.desc}</div>
+      ${earned > 0 ? `<span class="b-count">×${earned}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Save badges from quiz result ──
+async function saveBadges(badges, quizTitle){
+  const quizId = sessionStorage.getItem('qhub_current_quiz_id') || null;
+  let newBadges = [];
+
+  for(const badgeType of badges){
+    try{
+      const res = await fetch(`${SUPA_URL}/rest/v1/badges`,{
+        method:'POST',
+        headers:{...HDR, 'Prefer':'return=representation'},
+        body:JSON.stringify({
+          member_id: user.id,
+          member_name: user.name,
+          badge_type: badgeType,
+          quiz_id: quizId,
+          quiz_title: quizTitle || ''
+        })
+      });
+      if(res.ok){
+        const data = await res.json();
+        newBadges.push(badgeType);
+      }
+      // 409 = already earned for this quiz, skip silently
+    }catch(e){}
+  }
+
+  // Show toast for new badges
+  if(newBadges.length > 0){
+    showBadgeToast(newBadges);
+    loadBadges(); // refresh collection
+  }
+}
+
+let toastQueue = [];
+let toastShowing = false;
+
+function showBadgeToast(badgeTypes){
+  badgeTypes.forEach(type => {
+    const def = BADGE_DEFS.find(d => d.type === type);
+    if(def) toastQueue.push(def);
+  });
+  if(!toastShowing) showNextToast();
+}
+
+function showNextToast(){
+  if(toastQueue.length === 0){ toastShowing = false; return; }
+  toastShowing = true;
+  const def = toastQueue.shift();
+  const toast = document.getElementById('badge-toast');
+  document.getElementById('bt-icon').textContent = def.icon;
+  document.getElementById('bt-text').textContent = '뱃지 획득!';
+  document.getElementById('bt-sub').textContent = `${def.name} — ${def.desc}`;
+  toast.classList.add('show');
+  setTimeout(()=>{
+    toast.classList.remove('show');
+    setTimeout(showNextToast, 400);
+  }, 2500);
+}
+
+// ── Save quiz record (with combo data) ──
+async function saveQuizRecord(data){
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/quiz_records`,{
+      method:'POST',
+      headers:{...HDR, 'Prefer':'return=minimal'},
+      body:JSON.stringify({
+        member_id: user.id,
+        member_name: user.name,
+        quiz_id: sessionStorage.getItem('qhub_current_quiz_id') || null,
+        quiz_title: sessionStorage.getItem('qhub_current_quiz_title') || '',
+        score: data.score,
+        total: data.total,
+        wrong_words: data.wrongWords || [],
+        max_combo: data.maxCombo || 0,
+        total_time: data.totalTime || 0
+      })
+    });
+  }catch(e){}
+}
+
+// ── Listen for quiz results from iframe ──
+window.addEventListener('message', function(e){
+  if(!e.data || e.data.type !== 'quiz-result') return;
+  const d = e.data;
+  const quizTitle = sessionStorage.getItem('qhub_current_quiz_title') || '';
+
+  // Save record
+  saveQuizRecord(d);
+
+  // Save badges
+  if(d.badges && d.badges.length > 0){
+    saveBadges(d.badges, quizTitle);
+  }
+});
+
+// ── Load quizzes ──
 async function loadQuizzes(){
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-    });
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{headers:HDR});
     const quizzes = await res.json();
     const grid = document.getElementById('quiz-grid');
     const weekAgo = Date.now()-7*24*60*60*1000;
@@ -171,13 +343,10 @@ async function openQuiz(id, title){
   sessionStorage.setItem('qhub_current_quiz_id', id);
   sessionStorage.setItem('qhub_current_quiz_title', title);
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}&select=html_content`,{
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-    });
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}&select=html_content`,{headers:HDR});
     const data = await res.json();
     if(!data||!data.length){ closeQuiz(); alert('퀴즈를 불러오지 못했어요'); return; }
     const iframe = document.getElementById('quiz-iframe');
-    // srcdoc 방식 - 아이폰 포함 모든 기기에서 작동
     iframe.onload = onIframeLoad;
     iframe.srcdoc = data[0].html_content;
   }catch(e){ closeQuiz(); alert('오류가 발생했어요') }
@@ -195,13 +364,14 @@ function closeQuiz(){
   document.body.style.overflow='';
 }
 
-// 뒤로가기 버튼으로 퀴즈 닫기
 window.addEventListener('popstate', ()=>{
   if(document.getElementById('quiz-panel').classList.contains('open')) closeQuiz();
 });
 
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
 loadQuizzes();
+loadBadges();
 </script>
 </body>
 </html>

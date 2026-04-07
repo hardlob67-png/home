@@ -213,6 +213,21 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div id="quiz-list"><div class="spinner">불러오는 중...</div></div>
   </div>
 
+  <!-- 풀이 기록 탭 -->
+  <div class="tab-panel" id="tab-history">
+    <div class="section-head">
+      <h2>풀이 기록</h2>
+      <p>학생들의 퀴즈 풀이 기록과 뱃지를 확인하세요.</p>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="btn-sm" id="hview-member" style="border-color:var(--accent);color:var(--accent)" onclick="setHView('member')">회원별</button>
+      <button class="btn-sm" id="hview-quiz" onclick="setHView('quiz')">퀴즈별</button>
+      <select id="filter-member" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"><option value="">전체 회원</option></select>
+      <select id="filter-quiz" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"><option value="">전체 퀴즈</option></select>
+    </div>
+    <div id="history-list"><div class="empty-state">탭을 클릭하면 기록을 불러옵니다</div></div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -438,28 +453,33 @@ async function loadQuizzes(){
   }catch(e){ document.getElementById('quiz-list').innerHTML='<div class="empty-state">불러오기 실패</div>' }
 }
 
-// 업로드 시 기록 코드 자동 삽입
+// 업로드 시 기록+뱃지 코드 자동 삽입
 function injectRecordCode(html){
+  // 이미 postMessage quiz-result가 있으면 (콤보 퀴즈 등) 삽입 안 함
+  if(html.includes('quiz-result')) return html;
+  // 기존 __metaSave만 있는 경우도 스킵
   if(html.includes('__metaSave')) return html;
   const lines = [
     '<scr'+'ipt>',
     '(function(){',
-    '  const SU="https://cheuclwcrxuofiomhtuz.supabase.co";',
-    '  const SK="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw";',
-    '  window.__metaSave=async function(score,total,wrongWords){',
+    '  window.__metaSave=function(score,total,wrongWords,extra){',
+    '    extra=extra||{};',
+    '    var pct=Math.round(score/total*100);',
+    '    var badges=["complete"];',
+    '    if(pct===100) badges.push("perfect");',
+    '    if(!wrongWords||wrongWords.length===0) badges.push("no_miss");',
+    '    if(extra.maxCombo>=5) badges.push("combo5");',
+    '    if(extra.maxCombo>=10) badges.push("combo_king");',
+    '    if(extra.totalTime && extra.totalTime<=30000 && pct>=80) badges.push("speed");',
     '    try{',
-    '      const user=JSON.parse(sessionStorage.getItem("qhub_user")||"null");',
-    '      if(!user)return;',
-    '      await fetch(SU+"/rest/v1/quiz_records",{',
-    '        method:"POST",',
-    '        headers:{"apikey":SK,"Authorization":"Bearer "+SK,"Content-Type":"application/json","Prefer":"return=minimal"},',
-    '        body:JSON.stringify({',
-    '          member_id:user.id,member_name:user.name,',
-    '          quiz_id:sessionStorage.getItem("qhub_current_quiz_id")||null,',
-    '          quiz_title:sessionStorage.getItem("qhub_current_quiz_title")||document.title,',
-    '          score:score,total:total,wrong_words:wrongWords||[]',
-    '        })',
-    '      });',
+    '      window.parent.postMessage({',
+    '        type:"quiz-result",',
+    '        score:score,total:total,pct:pct,',
+    '        maxCombo:extra.maxCombo||0,',
+    '        totalTime:extra.totalTime||0,',
+    '        badges:badges,',
+    '        wrongWords:wrongWords||[]',
+    '      },"*");',
     '    }catch(e){}',
     '  };',
     '})();',
