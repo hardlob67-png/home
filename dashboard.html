@@ -111,7 +111,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <header class="header">
   <div class="header-logo">META ENGLISH</div>
   <div class="header-right">
-    <div class="user-badge">안녕하세요, <span id="username">?</span>님</div>
+    <div class="user-badge"><span id="user-school" style="color:var(--accent);margin-right:6px"></span>안녕하세요, <span id="username">?</span>님</div>
     <button class="btn-admin" id="admin-btn" style="display:none" onclick="location.href='admin.html'">⚙ 관리</button>
     <button class="btn-sm" onclick="logout()">로그아웃</button>
   </div>
@@ -166,6 +166,7 @@ const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type'
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
 document.getElementById('username').textContent = user.name;
+if(user.school) document.getElementById('user-school').textContent = user.school;
 if(user.role==='admin') document.getElementById('admin-btn').style.display='';
 
 // ── Badge definitions (same as quiz HTML) ──
@@ -284,7 +285,8 @@ async function saveQuizRecord(data){
         total: data.total,
         wrong_words: data.wrongWords || [],
         max_combo: data.maxCombo || 0,
-        total_time: data.totalTime || 0
+        total_time: data.totalTime || 0,
+        school: user.school || ''
       })
     });
   }catch(e){}
@@ -308,7 +310,8 @@ window.addEventListener('message', function(e){
 // ── Load quizzes ──
 async function loadQuizzes(){
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{headers:HDR});
+    const schoolFilter = (user.role==='admin' || !user.school) ? '' : `&school=eq.${encodeURIComponent(user.school)}`;
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc${schoolFilter}`,{headers:HDR});
     const quizzes = await res.json();
     const grid = document.getElementById('quiz-grid');
     const weekAgo = Date.now()-7*24*60*60*1000;
