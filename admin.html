@@ -389,6 +389,7 @@ async function loadMembers(){
     const nonAdmin = members.filter(m=>m.role!=='admin');
     document.getElementById('member-count').innerHTML=`총 <span>${nonAdmin.length}</span>명 등록됨`;
     hideBulkBar();
+    lastCheckedIdx = -1;
     if(!members.length){
       document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">등록된 회원이 없어요</div>';
       return;
@@ -401,7 +402,7 @@ async function loadMembers(){
         </tr></thead>
         <tbody>${members.map((m,i)=>`
           <tr>
-            <td>${m.role!=='admin'?`<input type="checkbox" class="member-chk" data-id="${m.id}" data-name="${m.name}" onchange="updateBulkBar()" style="cursor:pointer">`:''}
+            <td>${m.role!=='admin'?`<input type="checkbox" class="member-chk" data-id="${m.id}" data-name="${m.name}" onclick="handleChkClick(event)" style="cursor:pointer">`:''}
             </td>
             <td style="color:var(--muted)">${i+1}</td>
             <td style="font-weight:500">${m.name}</td>
@@ -436,6 +437,20 @@ async function updateMemberSchool(id, school){
 
 function getCheckedIds(){
   return Array.from(document.querySelectorAll('.member-chk:checked')).map(c=>({id:c.dataset.id,name:c.dataset.name}));
+}
+
+let lastCheckedIdx = -1;
+function handleChkClick(e){
+  const chks = Array.from(document.querySelectorAll('.member-chk'));
+  const idx = chks.indexOf(e.target);
+  if(e.shiftKey && lastCheckedIdx >= 0 && idx >= 0){
+    const start = Math.min(lastCheckedIdx, idx);
+    const end = Math.max(lastCheckedIdx, idx);
+    const val = e.target.checked;
+    for(let i=start;i<=end;i++) chks[i].checked = val;
+  }
+  if(idx >= 0) lastCheckedIdx = idx;
+  updateBulkBar();
 }
 
 function toggleAll(checked){
@@ -667,7 +682,9 @@ async function loadQuizzes(){
         <div class="quiz-num">${i+1}</div>
         <div class="quiz-info">
           <div class="quiz-title">${q.title}</div>
-          <div style="font-size:12px;margin-bottom:3px"><span style="background:rgba(108,99,255,.1);color:#a0a7ff;padding:2px 8px;border-radius:6px">${q.school||'미지정'}</span></div>
+          <div style="margin:4px 0">
+            <select onchange="updateQuizSchool('${q.id}',this.value)" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-family:inherit;font-size:12px">${schoolOptionsForMember(q.school)}</select>
+          </div>
           ${q.description?`<div class="quiz-desc-text">${q.description}</div>`:''}
           <div class="quiz-date">${new Date(q.added).toLocaleString('ko-KR')} 업로드</div>
         </div>
@@ -677,6 +694,16 @@ async function loadQuizzes(){
         </div>
       </div>`).join('')}</div>`;
   }catch(e){ document.getElementById('quiz-list').innerHTML='<div class="empty-state">불러오기 실패</div>' }
+}
+
+async function updateQuizSchool(id, school){
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({school})
+    });
+    if(res.ok) showToast('퀴즈 학교 변경 완료 ✓','ok');
+    else showToast('변경 실패','err');
+  }catch(e){ showToast('서버 오류','err') }
 }
 
 // 업로드 시 기록+뱃지 코드 자동 삽입
