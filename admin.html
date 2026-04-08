@@ -139,7 +139,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <button class="tab-btn active" onclick="switchTab('members')">👥 회원 명단</button>
   <button class="tab-btn" onclick="switchTab('quizzes')">📂 퀴즈 관리</button>
   <button class="tab-btn" onclick="switchTab('history')">📊 풀이 기록</button>
-  <button class="tab-btn" onclick="switchTab('schools')">🏫 학교 관리</button>
+  <button class="tab-btn" onclick="switchTab('schools')">⚙ 설정</button>
 </div>
 
 <div class="main">
@@ -248,9 +248,24 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <!-- 학교 관리 탭 -->
   <div class="tab-panel" id="tab-schools">
     <div class="section-head">
-      <h2>학교 관리</h2>
-      <p>학교를 추가하거나 삭제할 수 있어요. 여기서 등록한 학교가 모든 드롭다운에 표시됩니다.</p>
+      <h2>설정</h2>
+      <p>학교 관리 및 관리자 비밀번호를 설정할 수 있어요.</p>
     </div>
+
+    <div class="section-title">🔒 관리자 비밀번호</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">비밀번호를 설정하면 관리자 로그인 시 비밀번호를 추가로 입력해야 해요.</p>
+    <div class="add-row">
+      <input type="password" id="admin-pw-new" placeholder="새 비밀번호" style="flex:1;min-width:140px">
+      <input type="password" id="admin-pw-confirm" placeholder="비밀번호 확인" style="flex:1;min-width:140px">
+      <button class="btn-add" onclick="changePassword()">변경</button>
+    </div>
+    <div style="margin-top:8px">
+      <button class="btn-del-sm" onclick="removePassword()" style="font-size:12px">비밀번호 해제</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">🏫 학교 관리</div>
     <div class="add-row">
       <input type="text" id="new-school-name" placeholder="학교 이름 (예: 한빛초)" autocomplete="off" onkeydown="if(event.key==='Enter')addSchool()">
       <button class="btn-add" onclick="addSchool()">+ 추가</button>
@@ -370,20 +385,38 @@ async function loadMembers(){
     }
     document.getElementById('member-table-wrap').innerHTML=`
       <table class="member-table">
-        <thead><tr><th>#</th><th>이름</th><th>학교</th><th>핸드폰 번호</th><th>구분</th><th>등록일</th><th></th></tr></thead>
+        <thead><tr><th>#</th><th>이름</th><th>학교</th><th>핸드폰 번호</th><th>구분</th><th></th></tr></thead>
         <tbody>${members.map((m,i)=>`
           <tr>
             <td style="color:var(--muted)">${i+1}</td>
             <td style="font-weight:500">${m.name}</td>
-            <td><span style="font-size:12px;background:rgba(108,99,255,.1);color:#a0a7ff;padding:2px 8px;border-radius:6px">${m.school||'-'}</span></td>
+            <td>${m.role!=='admin'
+              ? `<select onchange="updateMemberSchool('${m.id}',this.value)" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-family:inherit;font-size:12px">${schoolOptionsForMember(m.school)}</select>`
+              : '<span style="color:var(--muted);font-size:12px">-</span>'
+            }</td>
             <td style="font-family:monospace;font-size:13px">${m.phone}</td>
             <td>${m.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
-            <td style="color:var(--muted);font-size:12px">${new Date(m.joined).toLocaleDateString('ko-KR')}</td>
             <td>${m.role!=='admin'?`<button class="btn-del-sm" onclick="deleteMember('${m.id}','${m.name}')">삭제</button>`:''}</td>
           </tr>`).join('')}
         </tbody>
       </table>`;
   }catch(e){ document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">불러오기 실패</div>' }
+}
+
+function schoolOptionsForMember(current){
+  let html = '<option value="">미지정</option>';
+  SCHOOLS.forEach(s=>{ html+=`<option value="${s}"${s===current?' selected':''}>${s}</option>` });
+  return html;
+}
+
+async function updateMemberSchool(id, school){
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({school})
+    });
+    if(res.ok) showToast('학교 변경 완료 ✓','ok');
+    else showToast('변경 실패','err');
+  }catch(e){ showToast('서버 오류','err') }
 }
 
 async function addMember(){
@@ -690,6 +723,41 @@ function showToast(msg,type='ok'){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
+async function changePassword(){
+  const pw = document.getElementById('admin-pw-new').value;
+  const pw2 = document.getElementById('admin-pw-confirm').value;
+  if(!pw){ showToast('새 비밀번호를 입력해주세요','err'); return }
+  if(pw!==pw2){ showToast('비밀번호가 일치하지 않아요','err'); return }
+  if(pw.length<4){ showToast('4자 이상 입력해주세요','err'); return }
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${user.id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({password:pw})
+    });
+    if(res.ok){
+      showToast('비밀번호 변경 완료 ✓','ok');
+      document.getElementById('admin-pw-new').value='';
+      document.getElementById('admin-pw-confirm').value='';
+      // 세션 업데이트
+      user.password = pw;
+      sessionStorage.setItem('qhub_user', JSON.stringify(user));
+    } else showToast('변경 실패','err');
+  }catch(e){ showToast('서버 오류','err') }
+}
+
+async function removePassword(){
+  if(!confirm('비밀번호를 해제하면 이름+번호만으로 관리자 로그인이 가능해요. 해제할까요?')) return;
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${user.id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({password:''})
+    });
+    if(res.ok){
+      showToast('비밀번호 해제 완료','ok');
+      user.password = '';
+      sessionStorage.setItem('qhub_user', JSON.stringify(user));
+    } else showToast('실패','err');
+  }catch(e){ showToast('서버 오류','err') }
+}
 
 // Initialize: load schools first, then members and quizzes
 loadSchools().then(()=>{

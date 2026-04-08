@@ -58,6 +58,7 @@ input::placeholder{color:var(--muted)}
 .msg{text-align:center;font-size:13px;padding:10px;border-radius:8px;display:none}
 .msg.error{background:rgba(255,101,132,.1);color:var(--accent2);display:block}
 .hint{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;line-height:1.6}
+.hidden{display:none!important}
 </style>
 </head>
 <body>
@@ -72,15 +73,20 @@ input::placeholder{color:var(--muted)}
     <div class="card-title">로그인</div>
     <div class="card-sub">등록된 이름과 핸드폰 번호를 입력해주세요.<br>미등록 시 선생님께 문의하세요.</div>
     <div class="form">
-      <div class="field">
+      <div class="field" id="field-name">
         <label>이름</label>
         <input type="text" id="name" placeholder="홍길동" autocomplete="off">
       </div>
-      <div class="field">
+      <div class="field" id="field-phone">
         <label>핸드폰 번호</label>
         <input type="tel" id="phone" placeholder="01012345678" maxlength="11"
                oninput="this.value=this.value.replace(/[^0-9]/g,'')"
                onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="field hidden" id="field-password">
+        <label>관리자 비밀번호</label>
+        <input type="password" id="password" placeholder="비밀번호 입력"
+               onkeydown="if(event.key==='Enter')doAdminLogin()">
       </div>
       <div class="msg" id="msg"></div>
       <button class="btn" id="login-btn" onclick="doLogin()">입장하기</button>
@@ -96,9 +102,13 @@ const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 const me = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(me) location.href = me.role==='admin' ? 'admin.html' : 'dashboard.html';
 
+let pendingAdmin = null;
+
 function showMsg(text){ const el=document.getElementById('msg'); el.textContent=text; el.className='msg error' }
+function hideMsg(){ document.getElementById('msg').className='msg' }
 
 async function doLogin(){
+  hideMsg();
   const name  = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim().replace(/-/g,'');
   if(!name||!phone){ showMsg('이름과 핸드폰 번호를 모두 입력해주세요.'); return }
@@ -110,9 +120,34 @@ async function doLogin(){
     });
     const data = await res.json();
     if(!data||!data.length){ showMsg('등록된 정보와 일치하지 않아요. 선생님께 문의해주세요.'); btn.disabled=false; btn.textContent='입장하기'; return }
-    sessionStorage.setItem('qhub_user', JSON.stringify(data[0]));
-    location.href = data[0].role==='admin' ? 'admin.html' : 'dashboard.html';
+    const user = data[0];
+    // 관리자이고 비밀번호가 설정되어 있으면 비밀번호 입력 단계로
+    if(user.role==='admin' && user.password){
+      pendingAdmin = user;
+      document.getElementById('field-name').classList.add('hidden');
+      document.getElementById('field-phone').classList.add('hidden');
+      document.getElementById('field-password').classList.remove('hidden');
+      document.getElementById('password').focus();
+      btn.onclick = doAdminLogin;
+      btn.disabled=false; btn.textContent='입장하기';
+      return;
+    }
+    // 일반 회원 또는 비밀번호 미설정 관리자
+    sessionStorage.setItem('qhub_user', JSON.stringify(user));
+    location.href = user.role==='admin' ? 'admin.html' : 'dashboard.html';
   } catch(e){ showMsg('서버 연결 오류가 발생했어요. 잠시 후 다시 시도해주세요.'); btn.disabled=false; btn.textContent='입장하기' }
+}
+
+function doAdminLogin(){
+  hideMsg();
+  const pw = document.getElementById('password').value;
+  if(!pw){ showMsg('비밀번호를 입력해주세요.'); return }
+  if(pw !== pendingAdmin.password){
+    showMsg('비밀번호가 틀렸어요.');
+    return;
+  }
+  sessionStorage.setItem('qhub_user', JSON.stringify(pendingAdmin));
+  location.href = 'admin.html';
 }
 </script>
 </body>
