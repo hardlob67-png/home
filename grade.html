@@ -476,32 +476,40 @@ function applyBatch(){
 
 // 키보드 단축키
 document.addEventListener('keydown', function(e){
-  // Ctrl+C: 선택된 셀 값 복사
+  // Ctrl+C: 선택된 첫 번째 셀 값 복사
   if((e.ctrlKey||e.metaKey) && e.key==='c' && selectedCells.length>0){
     const el = getCellInput(selectedCells[0].row, selectedCells[0].col);
-    if(el && document.activeElement!==el){
+    if(el){
       clipboardValue = el.value;
-      showToast(`"${clipboardValue}" 복사됨`,'ok');
-      e.preventDefault();
-    } else if(el && selectedCells.length>1){
-      clipboardValue = el.value;
+      // 시스템 클립보드에도 복사
+      try{ navigator.clipboard.writeText(clipboardValue); }catch(ex){}
+      if(selectedCells.length>1){
+        showToast(`"${clipboardValue}" 복사됨`,'ok');
+        e.preventDefault();
+      }
     }
   }
   // Ctrl+V: 선택된 모든 셀에 붙여넣기
   if((e.ctrlKey||e.metaKey) && e.key==='v' && selectedCells.length>1){
-    if(clipboardValue!==undefined && clipboardValue!==''){
-      selectedCells.forEach(({row,col})=>{
-        const el = getCellInput(row,col);
-        if(el){
-          el.value = clipboardValue;
-          const memberId = el.getAttribute('data-member');
-          const colName = el.getAttribute('data-colname');
-          onCellEdit(memberId, colName, clipboardValue);
-        }
-      });
-      showToast(`${selectedCells.length}개 셀에 붙여넣기 완료`,'ok');
-      e.preventDefault();
-    }
+    e.preventDefault(); // 브라우저 기본 붙여넣기 차단
+    // 시스템 클립보드에서 읽기 시도, 실패하면 내부 clipboardValue 사용
+    (async function(){
+      let val = clipboardValue;
+      try{ val = await navigator.clipboard.readText(); }catch(ex){}
+      if(val===undefined||val==='') val = clipboardValue;
+      if(val){
+        selectedCells.forEach(({row,col})=>{
+          const el = getCellInput(row,col);
+          if(el){
+            el.value = val;
+            const memberId = el.getAttribute('data-member');
+            const colName = el.getAttribute('data-colname');
+            onCellEdit(memberId, colName, val);
+          }
+        });
+        showToast(`${selectedCells.length}개 셀에 붙여넣기 완료`,'ok');
+      }
+    })();
   }
   // Tab: 다음 셀로 이동
   if(e.key==='Tab' && lastClickedCell){
