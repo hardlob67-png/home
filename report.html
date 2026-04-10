@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>META ENGLISH - 성적표</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--card:#1a1a24;--border:#2a2a3a;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#6b6b80;
+  --green:#22c55e;--red:#ff6584;--radius:14px;
+}
+body{
+  font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.15) 0%,transparent 70%);top:-120px;left:-120px}
+.orb2{width:350px;height:350px;background:radial-gradient(circle,rgba(255,101,132,.1) 0%,transparent 70%);bottom:-80px;right:-80px}
+
+.container{position:relative;z-index:1;width:100%;max-width:480px;padding:24px 20px 40px}
+
+/* 로고 */
+.logo{text-align:center;margin-bottom:32px;padding-top:20px}
+.logo-title{
+  font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:3px;line-height:1;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo-sub{font-size:12px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+
+/* 카드 */
+.report-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+/* 상단 헤더 */
+.report-header{
+  padding:28px 24px;
+  background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(255,101,132,.08));
+  border-bottom:1px solid var(--border);
+}
+.report-session{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.report-name{font-size:26px;font-weight:700;margin-bottom:4px}
+.report-date{font-size:13px;color:var(--muted)}
+
+/* 성적 항목 */
+.grade-list{padding:8px 0}
+.grade-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 24px;border-bottom:1px solid rgba(42,42,58,.4);
+  transition:background .2s;
+}
+.grade-item:last-child{border-bottom:none}
+.grade-item:hover{background:rgba(108,99,255,.03)}
+.grade-label{font-size:15px;font-weight:500;display:flex;align-items:center;gap:10px}
+.grade-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  background:rgba(108,99,255,.1);flex-shrink:0;
+}
+.grade-value{font-size:16px;font-weight:700}
+.grade-value.pass{color:var(--green)}
+.grade-value.fail{color:var(--red)}
+.grade-value.score{color:var(--accent)}
+.grade-value.none{color:var(--muted)}
+
+/* 메모 */
+.memo-section{
+  margin:0 24px 20px;padding:16px 18px;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+}
+.memo-title{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.5px;margin-bottom:8px}
+.memo-text{font-size:14px;line-height:1.7;color:var(--text)}
+
+/* 하단 */
+.report-footer{
+  padding:20px 24px;border-top:1px solid var(--border);
+  text-align:center;
+}
+.report-footer p{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* 로딩 / 에러 */
+.state-msg{
+  text-align:center;padding:80px 20px;
+}
+.state-msg .icon{font-size:48px;margin-bottom:16px}
+.state-msg .title{font-size:18px;font-weight:700;margin-bottom:8px}
+.state-msg .desc{font-size:13px;color:var(--muted);line-height:1.6}
+.spinner-ring{
+  width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="container">
+  <div class="logo">
+    <div class="logo-title">META ENGLISH</div>
+    <div class="logo-sub">성적 리포트</div>
+  </div>
+
+  <div id="content">
+    <div class="state-msg">
+      <div class="spinner-ring"></div>
+      <div class="title">성적표를 불러오는 중...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
+const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
+
+const params = new URLSearchParams(location.search);
+const memberId = params.get('member');
+const sessionId = params.get('session');
+
+const ICONS = {
+  '리뷰테스트':'📝','과제':'📋','단어':'📖','암기':'🧠','리뷰 재시':'🔄',
+  'default':'📌'
+};
+
+function getValueClass(val){
+  if(!val || val==='-') return 'none';
+  if(val==='통과' || val==='완료') return 'pass';
+  if(val==='미통과' || val==='미완료' || val==='불합격') return 'fail';
+  // 숫자인 경우
+  const num = Number(val);
+  if(!isNaN(num)){
+    if(num >= 80) return 'pass';
+    if(num >= 50) return 'score';
+    return 'fail';
+  }
+  return 'score';
+}
+
+async function loadReport(){
+  const content = document.getElementById('content');
+
+  if(!memberId || !sessionId){
+    content.innerHTML = `<div class="state-msg">
+      <div class="icon">⚠️</div>
+      <div class="title">잘못된 링크입니다</div>
+      <div class="desc">올바른 성적표 링크로 다시 접속해주세요.</div>
+    </div>`;
+    return;
+  }
+
+  try{
+    // 세션 정보
+    const sRes = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${sessionId}&select=*`,{headers:HDR});
+    const sessions = await sRes.json();
+    if(!sessions.length){ throw new Error('no session'); }
+    const session = sessions[0];
+    const columns = typeof session.columns === 'string' ? JSON.parse(session.columns) : session.columns;
+
+    // 성적 데이터
+    const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${sessionId}&member_id=eq.${memberId}&select=*`,{headers:HDR});
+    const grades = await gRes.json();
+
+    if(!grades.length){
+      content.innerHTML = `<div class="state-msg">
+        <div class="icon">📭</div>
+        <div class="title">아직 입력된 성적이 없어요</div>
+        <div class="desc">성적이 입력되면 이 페이지에서 확인할 수 있습니다.</div>
+      </div>`;
+      return;
+    }
+
+    const grade = grades[0];
+    const scores = typeof grade.scores === 'string' ? JSON.parse(grade.scores) : grade.scores;
+    const name = grade.member_name || '학생';
+    const date = new Date(session.created_at).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+
+    let html = `<div class="report-card">
+      <div class="report-header">
+        <div class="report-session">${session.title}</div>
+        <div class="report-name">${name}</div>
+        <div class="report-date">${date}</div>
+      </div>
+      <div class="grade-list">`;
+
+    columns.forEach(col=>{
+      const val = scores[col] || '-';
+      const icon = ICONS[col] || ICONS['default'];
+      const cls = getValueClass(val);
+      html += `<div class="grade-item">
+        <div class="grade-label">
+          <div class="grade-icon">${icon}</div>
+          ${col}
+        </div>
+        <div class="grade-value ${cls}">${val || '-'}</div>
+      </div>`;
+    });
+
+    html += `</div>`;
+
+    // 메모
+    if(grade.memo && grade.memo.trim()){
+      html += `<div class="memo-section">
+        <div class="memo-title">📌 전달 사항</div>
+        <div class="memo-text">${grade.memo.replace(/\n/g,'<br>')}</div>
+      </div>`;
+    }
+
+    html += `<div class="report-footer">
+        <p>META ENGLISH<br>궁금한 점은 선생님께 문의해주세요.</p>
+      </div>
+    </div>`;
+
+    content.innerHTML = html;
+
+  }catch(e){
+    content.innerHTML = `<div class="state-msg">
+      <div class="icon">😥</div>
+      <div class="title">성적표를 불러올 수 없어요</div>
+      <div class="desc">링크가 올바른지 확인하시고,<br>문제가 계속되면 선생님께 문의해주세요.</div>
+    </div>`;
+  }
+}
+
+loadReport();
+</script>
+</body>
+</html>

@@ -136,10 +136,11 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 </header>
 
 <div class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('members')">👥 회원 명단</button>
-  <button class="tab-btn" onclick="switchTab('quizzes')">📂 퀴즈 관리</button>
-  <button class="tab-btn" onclick="switchTab('history')">📊 풀이 기록</button>
-  <button class="tab-btn" onclick="location.href='grade.html'" style="background:rgba(34,197,94,.08);color:#6ee7a0;border-color:rgba(34,197,94,.3)">📝 성적 입력</button>
+  <button class="tab-btn active" data-tab="members" onclick="switchTab('members')">👥 회원 명단</button>
+  <button class="tab-btn" data-tab="quizzes" onclick="switchTab('quizzes')">📂 퀴즈 관리</button>
+  <button class="tab-btn" data-tab="history" onclick="switchTab('history')">📊 풀이 기록</button>
+  <button class="tab-btn" style="background:rgba(34,197,94,.08);color:#6ee7a0;border-color:rgba(34,197,94,.3)" onclick="location.href='grade.html'">📝 성적 입력</button>
+  <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">⚙️ 설정</button>
 </div>
 
 <div class="main">
@@ -229,6 +230,30 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div id="history-list"><div class="empty-state">탭을 클릭하면 기록을 불러옵니다</div></div>
   </div>
 
+  <!-- 설정 탭 -->
+  <div class="tab-panel" id="tab-settings">
+    <div class="section-head">
+      <h2>설정</h2>
+      <p>관리자 계정 정보를 변경할 수 있어요.</p>
+    </div>
+    <div class="section-title">관리자 비밀번호 (핸드폰 번호) 변경</div>
+    <div style="max-width:400px">
+      <div class="field">
+        <label>현재 핸드폰 번호</label>
+        <input type="tel" id="cur-phone" placeholder="현재 번호 입력" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+      <div class="field">
+        <label>새 핸드폰 번호</label>
+        <input type="tel" id="new-phone" placeholder="새 번호 입력" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+      </div>
+      <div class="field">
+        <label>새 핸드폰 번호 확인</label>
+        <input type="tel" id="confirm-phone" placeholder="새 번호 다시 입력" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')changeAdminPhone()">
+      </div>
+      <button class="btn-add" onclick="changeAdminPhone()" style="width:100%;margin-top:8px">비밀번호 변경</button>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -243,8 +268,11 @@ if(!user) location.href='index.html';
 if(user.role!=='admin'){ alert('관리자만 접근 가능합니다'); location.href='dashboard.html' }
 
 function switchTab(t){
-  const tabs=['members','quizzes','history'];
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===t));
+  const tabs=['members','quizzes','history','settings'];
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    const tabName = b.getAttribute('data-tab');
+    if(tabName) b.classList.toggle('active', tabName===t);
+  });
   tabs.forEach(tab=>{
     const el=document.getElementById('tab-'+tab);
     if(el) el.classList.toggle('active',tab===t);
@@ -571,6 +599,29 @@ function showToast(msg,type='ok'){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
+async function changeAdminPhone(){
+  const cur = document.getElementById('cur-phone').value.trim();
+  const nw = document.getElementById('new-phone').value.trim();
+  const confirm = document.getElementById('confirm-phone').value.trim();
+  if(!cur||!nw||!confirm){ showToast('모든 항목을 입력해주세요','err'); return }
+  if(cur!==user.phone){ showToast('현재 번호가 일치하지 않아요','err'); return }
+  if(nw!==confirm){ showToast('새 번호가 서로 다릅니다','err'); return }
+  if(!/^010[0-9]{7,8}$/.test(nw)){ showToast('올바른 핸드폰 번호를 입력해주세요','err'); return }
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${user.id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({phone:nw})
+    });
+    if(res.ok){
+      user.phone = nw;
+      sessionStorage.setItem('qhub_user', JSON.stringify(user));
+      document.getElementById('cur-phone').value='';
+      document.getElementById('new-phone').value='';
+      document.getElementById('confirm-phone').value='';
+      showToast('비밀번호가 변경되었어요 ✓','ok');
+    } else { showToast('변경 실패','err') }
+  }catch(e){ showToast('서버 오류','err') }
+}
 
 loadMembers();
 loadQuizzes();
