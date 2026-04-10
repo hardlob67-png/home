@@ -57,6 +57,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .grid-table td{padding:0;border-bottom:1px solid rgba(42,42,58,.4);vertical-align:middle}
 .grid-table tr:hover td{background:rgba(108,99,255,.03)}
 .cell-name{padding:12px 14px;font-size:14px;font-weight:500;white-space:nowrap}
+.cell-name a{color:var(--text);text-decoration:none;border-bottom:1px dashed var(--muted);transition:all .2s}
+.cell-name a:hover{color:var(--accent);border-color:var(--accent)}
 .cell-num{padding:12px 14px;font-size:13px;color:var(--muted);text-align:center}
 .cell-input{
   width:100%;background:transparent;border:none;outline:none;
@@ -296,7 +298,7 @@ async function loadGrid(){
     const d = gradeData[m.id] || {scores:{},memo:''};
     return `<tr id="row-${m.id}">
       <td class="cell-num">${i+1}</td>
-      <td class="cell-name">${m.name}</td>
+      <td class="cell-name"><a href="report.html?member=${m.id}&session=${currentSession.id}" target="_blank" title="성적표 보기">${m.name}</a></td>
       ${cols.map(c=>`<td>
         <input class="cell-input" type="text" placeholder="·"
           value="${d.scores[c]||''}"
