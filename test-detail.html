@@ -224,6 +224,33 @@ async function load(){
       html += `</div>`;
     }
 
+    // 카테고리별 분석
+    const catStats = {};
+    questions.forEach((q,i)=>{
+      const cat = q.category || '기타';
+      if(!catStats[cat]) catStats[cat]={score:0,max:0,correct:0,total:0};
+      catStats[cat].max += q.points;
+      catStats[cat].total++;
+      const sc = studentScores[String(i+1)] || 0;
+      catStats[cat].score += sc;
+      if(sc >= q.points) catStats[cat].correct++;
+    });
+    const catKeys = Object.keys(catStats).filter(k=>k!=='기타').concat(catStats['기타']?['기타']:[]);
+    if(catKeys.length > 1 || (catKeys.length===1 && catKeys[0]!=='기타')){
+      html += `<div class="type-analysis" style="margin-top:4px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px">📂 카테고리별 분석</div>`;
+      catKeys.forEach(cat=>{
+        const s = catStats[cat];
+        const p = s.max>0 ? Math.round(s.score/s.max*100) : 0;
+        html += `<div class="type-row">
+          <div class="type-name">${cat}</div>
+          <div class="type-bar-wrap"><div class="type-bar ${p>=70?'green':'red'}" style="width:${p}%"></div></div>
+          <div class="type-pct" style="color:${p>=70?'var(--green)':'var(--red)'}">${s.score}/${s.max}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
     // 문항별 결과 그리드
     html += `<div style="font-size:14px;font-weight:700;margin-bottom:12px">📋 문항별 결과</div>
       <div class="q-results">`;

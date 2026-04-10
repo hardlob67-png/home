@@ -364,40 +364,55 @@ function showVersionDetail(){
   } else {
     // 문항 편집 그리드
     html += `<div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;min-width:500px">
+      <table style="width:100%;border-collapse:collapse;min-width:600px">
         <thead><tr>
-          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:50px">#</th>
-          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:100px">유형</th>
-          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:80px">배점</th>
-          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border)">정답</th>
-          <th style="width:40px;border-bottom:1px solid var(--border)"></th>
+          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:40px">#</th>
+          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:80px">유형</th>
+          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:90px">카테고리</th>
+          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:60px">배점</th>
+          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border)">정답</th>
+          <th style="width:36px;border-bottom:1px solid var(--border)"></th>
         </tr></thead>
         <tbody>${questions.map((q,i)=>`<tr>
-          <td style="text-align:center;padding:6px;font-size:13px;font-weight:700;color:var(--muted)">${i+1}</td>
-          <td style="text-align:center;padding:6px">
-            <button class="btn-outline ${q.type==='mc'?'active':''}" style="font-size:11px;padding:4px 10px;min-width:70px"
-              onclick="toggleQType(${i})">${q.type==='mc'?'객관식':'주관식'}</button>
+          <td style="text-align:center;padding:4px;font-size:12px;font-weight:700;color:var(--muted)">${i+1}</td>
+          <td style="padding:4px">
+            <select data-qi="${i}" data-field="type" onchange="updateQField(${i},'type',this.value);showVersionDetail()"
+              style="width:100%;padding:5px 4px;font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none">
+              <option value="mc" ${q.type==='mc'?'selected':''}>객관식</option>
+              <option value="sa" ${q.type!=='mc'?'selected':''}>주관식</option>
+            </select>
           </td>
-          <td style="padding:6px">
-            <input type="number" value="${q.points}" min="1" style="width:100%;text-align:center;padding:6px"
+          <td style="padding:4px">
+            <select data-qi="${i}" data-field="category" onchange="updateQField(${i},'category',this.value)"
+              style="width:100%;padding:5px 4px;font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none">
+              <option value="" ${!q.category?'selected':''}>-</option>
+              <option value="어휘" ${q.category==='어휘'?'selected':''}>어휘</option>
+              <option value="문법" ${q.category==='문법'?'selected':''}>문법</option>
+              <option value="독해" ${q.category==='독해'?'selected':''}>독해</option>
+              <option value="듣기" ${q.category==='듣기'?'selected':''}>듣기</option>
+              <option value="쓰기" ${q.category==='쓰기'?'selected':''}>쓰기</option>
+            </select>
+          </td>
+          <td style="padding:4px">
+            <input type="number" value="${q.points}" min="1" style="width:100%;text-align:center;padding:5px 2px;font-size:12px"
               data-qi="${i}" data-field="points" onchange="updateQField(${i},'points',this.value)">
           </td>
-          <td style="padding:6px">
+          <td style="padding:4px">
             ${q.type==='mc'
-              ?`<input type="text" value="${q.answer}" placeholder="정답 번호" style="width:100%;text-align:center;padding:6px"
+              ?`<input type="text" value="${q.answer}" placeholder="정답" style="width:100%;text-align:center;padding:5px 2px;font-size:12px"
                   data-qi="${i}" data-field="answer" onchange="updateQField(${i},'answer',this.value)">`
-              :'<span style="font-size:12px;color:var(--yellow);display:block;text-align:center">직접 채점</span>'}
+              :'<span style="font-size:11px;color:var(--yellow);display:block;text-align:center">직접채점</span>'}
           </td>
-          <td style="padding:6px;text-align:center">
-            <button class="btn-red" onclick="removeQuestion(${i})" style="font-size:11px;padding:3px 6px">×</button>
+          <td style="padding:4px;text-align:center">
+            <button class="btn-red" onclick="removeQuestion(${i})" style="font-size:10px;padding:2px 5px">×</button>
           </td>
         </tr>`).join('')}</tbody>
       </table>
     </div>
-    <div class="row" style="margin-top:14px;gap:10px">
+    <div class="row" style="margin-top:14px;gap:10px;flex-wrap:wrap">
       <button class="btn-outline" onclick="addMoreQuestions()">+ 문항 추가</button>
+      <button class="btn-outline" onclick="batchSetCategory()">📂 카테고리 일괄 설정</button>
       <button class="btn-green" onclick="saveQuestions()">💾 문항 저장</button>
-      <span style="font-size:12px;color:var(--muted);margin-left:8px">유형 클릭으로 객관식↔주관식 전환</span>
     </div>`;
   }
 
@@ -416,7 +431,8 @@ async function generateQuestions(){
     num: i+1,
     type: 'mc',
     points: 2,
-    answer: ''
+    answer: '',
+    category: ''
   }));
 
   await fetch(`${SUPA_URL}/rest/v1/test_versions?id=eq.${v.id}`,{
@@ -504,11 +520,32 @@ function addMoreQuestions(){
   const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
   const start = questions.length;
   for(let i=0;i<n;i++){
-    questions.push({num:start+i+1, type:'mc', points:2, answer:''});
+    questions.push({num:start+i+1, type:'mc', points:2, answer:'', category:''});
   }
   v.questions = questions;
   showVersionDetail();
   showToast(`${n}문항 추가됨 — 저장 버튼을 눌러주세요`,'ok');
+}
+
+// 카테고리 일괄 설정
+function batchSetCategory(){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const range = prompt('범위를 입력하세요 (예: 1-5)');
+  if(!range) return;
+  const cat = prompt('카테고리를 입력하세요 (어휘/문법/독해/듣기/쓰기)');
+  if(!cat) return;
+  const match = range.match(/(\d+)\s*-\s*(\d+)/);
+  if(!match){ showToast('범위 형식: 1-5','err'); return }
+  const from = parseInt(match[1])-1;
+  const to = parseInt(match[2])-1;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
+  for(let i=from;i<=to && i<questions.length;i++){
+    questions[i].category = cat;
+  }
+  v.questions = questions;
+  showVersionDetail();
+  showToast(`${from+1}~${to+1}번 → ${cat} 설정됨`,'ok');
 }
 
 // 문항 삭제
