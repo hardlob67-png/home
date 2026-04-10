@@ -365,8 +365,7 @@ async function loadGrid(){
           data-row="${ri}" data-col="${ci}" data-member="${m.id}" data-colname="${c}"
           value="${d.scores[c]||''}"
           oninput="onCellEdit('${m.id}','${c}',this.value)"
-          onclick="onCellClick(event,${ri},${ci})"
-          onfocus="onCellFocus(${ri},${ci})">
+          onmousedown="onCellMouseDown(event,${ri},${ci})">>
       </td>`).join('')}
       <td>
         <input class="cell-memo" type="text" placeholder="메모 입력..."
@@ -414,9 +413,10 @@ function updateSelectionUI(){
   }
 }
 
-function onCellClick(event, row, col){
+function onCellMouseDown(event, row, col){
   if(event.shiftKey && lastClickedCell){
     // Shift+클릭: 범위 선택
+    event.preventDefault(); // input 포커스 방지
     const r1 = Math.min(lastClickedCell.row, row);
     const r2 = Math.max(lastClickedCell.row, row);
     const c1 = Math.min(lastClickedCell.col, col);
@@ -429,21 +429,17 @@ function onCellClick(event, row, col){
         }
       }
     }
-    event.preventDefault();
+    updateSelectionUI();
   } else if(event.ctrlKey || event.metaKey){
     // Ctrl+클릭: 토글
+    event.preventDefault(); // input 포커스 방지
     const idx = selectedCells.findIndex(s=>s.row===row&&s.col===col);
     if(idx>=0) selectedCells.splice(idx,1);
     else selectedCells.push({row,col});
+    lastClickedCell = {row,col};
+    updateSelectionUI();
   } else {
-    selectedCells = [{row,col}];
-  }
-  lastClickedCell = {row,col};
-  updateSelectionUI();
-}
-
-function onCellFocus(row,col){
-  if(selectedCells.length <= 1){
+    // 일반 클릭: 단일 선택 (포커스는 브라우저가 처리)
     selectedCells = [{row,col}];
     lastClickedCell = {row,col};
     updateSelectionUI();
