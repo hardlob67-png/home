@@ -167,6 +167,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </select>
       <button class="btn-primary" onclick="openNewModal()">+ 새 성적표</button>
       <button class="btn-green" id="btn-delete-session" onclick="deleteSession()" style="display:none">🗑 성적표 삭제</button>
+      <button class="btn-green" id="btn-sms" onclick="openSmsModal()" style="display:none;background:rgba(108,99,255,.15);color:#a0a7ff">📱 문자 발송</button>
     </div>
   </div>
 
@@ -191,6 +192,27 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- 새 성적표 모달 -->
 <div class="modal-bg" id="modal-new">
+
+<!-- 문자 발송 모달 -->
+<div class="modal-bg" id="modal-sms">
+  <div class="modal" style="max-width:560px;max-height:80vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="margin:0">📱 성적표 문자 발송</h3>
+      <button class="btn-sm" onclick="closeSmsModal()">닫기</button>
+    </div>
+    <div style="margin-bottom:14px">
+      <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">발송 메시지 (학생별 링크 자동 포함)</label>
+      <textarea id="sms-template" style="width:100%;min-height:50px;font-size:13px" placeholder="메시지를 입력하세요">[META ENGLISH] {이름} 학생 성적표가 등록되었습니다.
+아래 링크에서 확인하세요:
+{링크}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="btn-primary" onclick="copyAllSms()" style="font-size:13px;padding:8px 16px">📋 전체 복사</button>
+      <span style="font-size:12px;color:var(--muted);align-self:center">또는 개별 발송 ↓</span>
+    </div>
+    <div style="flex:1;overflow-y:auto" id="sms-list"></div>
+  </div>
+</div>
   <div class="modal">
     <h3>새 성적표 만들기</h3>
     <div class="field">
@@ -306,6 +328,7 @@ async function onSessionChange(){
     document.getElementById('grid-wrap').style.display='none';
     document.getElementById('empty-msg').style.display='block';
     document.getElementById('btn-delete-session').style.display='none';
+    document.getElementById('btn-sms').style.display='none';
     return;
   }
   // 세션 정보 가져오기
@@ -315,6 +338,7 @@ async function onSessionChange(){
   currentSession = data[0];
   currentSession.columns = typeof currentSession.columns === 'string' ? JSON.parse(currentSession.columns) : currentSession.columns;
   document.getElementById('btn-delete-session').style.display='inline-block';
+  document.getElementById('btn-sms').style.display='inline-block';
   await loadGrid();
 }
 
@@ -620,6 +644,73 @@ function showToast(msg,type='ok'){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
+// ===== 문자 발송 =====
+async function openSmsModal(){
+  if(!currentSession) return;
+  document.getElementById('modal-sms').classList.add('show');
+
+  // 학생 전화번호 포함해서 로드
+  let memberList = [];
+  if(currentSession.class_id){
+    const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name,phone)&order=members(name)`,{headers:HDR});
+    const data = await res.json();
+    memberList = data.map(cm=>cm.members).filter(Boolean);
+  } else {
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name,phone&role=neq.admin&order=name`,{headers:HDR});
+    memberList = await res.json();
+  }
+
+  const baseUrl = window.location.origin || 'https://xn--oh5bnfltpyu64c.com';
+  const list = document.getElementById('sms-list');
+
+  list.innerHTML = memberList.map(m=>{
+    const link = `${baseUrl}/report.html?member=${m.id}&session=${currentSession.id}`;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500">${m.name}</div>
+        <div style="font-size:12px;color:var(--muted);font-family:monospace">${m.phone}</div>
+      </div>
+      <button class="btn-outline" style="font-size:11px;padding:4px 10px;flex-shrink:0"
+        onclick="copySingleSms('${m.name}','${link}')">복사</button>
+      <a href="sms:${m.phone}?body=${encodeURIComponent(getSmsText(m.name,link))}"
+        class="btn-outline" style="font-size:11px;padding:4px 10px;text-decoration:none;flex-shrink:0">보내기</a>
+    </div>`;
+  }).join('');
+}
+
+function closeSmsModal(){
+  document.getElementById('modal-sms').classList.remove('show');
+}
+
+function getSmsText(name, link){
+  const template = document.getElementById('sms-template').value;
+  return template.replace('{이름}',name).replace('{링크}',link);
+}
+
+function copySingleSms(name, link){
+  const text = getSmsText(name, link);
+  navigator.clipboard.writeText(text).then(()=>showToast(`${name} 메시지 복사됨`,'ok'));
+}
+
+async function copyAllSms(){
+  if(!currentSession) return;
+  let memberList = [];
+  if(currentSession.class_id){
+    const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name,phone)&order=members(name)`,{headers:HDR});
+    const data = await res.json();
+    memberList = data.map(cm=>cm.members).filter(Boolean);
+  } else {
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name,phone&role=neq.admin&order=name`,{headers:HDR});
+    memberList = await res.json();
+  }
+  const baseUrl = window.location.origin || 'https://xn--oh5bnfltpyu64c.com';
+  const lines = memberList.map(m=>{
+    const link = `${baseUrl}/report.html?member=${m.id}&session=${currentSession.id}`;
+    return `${m.phone}\t${getSmsText(m.name, link)}`;
+  }).join('\n');
+  navigator.clipboard.writeText(lines).then(()=>showToast(`${memberList.length}명 전체 복사 완료 ✓`,'ok'));
+}
 
 // 초기 로드
 loadSessions();
