@@ -78,6 +78,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .cell-memo:focus{background:rgba(108,99,255,.08)}
 .cell-memo::placeholder{color:rgba(107,107,128,.4)}
 
+.time-chip{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:11px;cursor:pointer;transition:all .12s}
+.time-chip:hover{border-color:var(--accent);color:var(--accent)}
+.time-chip.active{border-color:var(--accent);color:#fff;background:var(--accent)}
+
+.clinic-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:6px;background:rgba(108,99,255,.1);color:#a0a7ff;font-weight:600}
+
 /* 이름 팝업 메뉴 */
 .name-popup{
   position:fixed;z-index:50;background:var(--card);border:1px solid var(--border);
@@ -244,8 +250,25 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- 이름 클릭 팝업 -->
 <div class="name-popup" id="name-popup">
-  <a id="popup-report" target="_blank">📊 성적표 보기</a>
-  <button id="popup-sms" onclick="popupSendSms()">💬 문자 보내기</button>
+  <button onclick="popupSendSms()">💬 문자 보내기</button>
+  <button onclick="popupClinic()">🏥 클리닉 예약</button>
+</div>
+
+<!-- 클리닉 빠른 예약 팝업 -->
+<div class="name-popup" id="clinic-popup" style="min-width:220px;padding:14px">
+  <div style="font-size:13px;font-weight:700;margin-bottom:10px" id="clinic-popup-name"></div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <input type="date" id="clinic-popup-date" style="padding:8px;font-size:13px;border-radius:8px">
+    <div style="display:flex;gap:4px;flex-wrap:wrap" id="clinic-popup-times">
+      <button class="time-chip" onclick="setClinicTime(this,'15:00')">15:00</button>
+      <button class="time-chip" onclick="setClinicTime(this,'16:00')">16:00</button>
+      <button class="time-chip active" onclick="setClinicTime(this,'17:00')">17:00</button>
+      <button class="time-chip" onclick="setClinicTime(this,'18:00')">18:00</button>
+      <button class="time-chip" onclick="setClinicTime(this,'19:00')">19:00</button>
+    </div>
+    <input type="text" id="clinic-popup-memo" placeholder="메모 (선택)" style="padding:8px;font-size:12px;border-radius:8px">
+    <button class="btn-primary" onclick="saveClinicPopup()" style="padding:8px;font-size:13px">예약 등록</button>
+  </div>
 </div>
 
 <!-- 마킹지 입력 모달 -->
@@ -606,18 +629,20 @@ async function loadGrid(){
 
   document.getElementById('grid-wrap').style.display='block';
   clearSelection();
+  loadClinicSummary();
 }
 
 // ===== 이름 팝업 =====
 let popupMemberId='', popupMemberName='', popupMemberPhone='';
+let clinicSelectedTime='17:00';
 
 function showNamePopup(e, memberId, name, phone){
   e.preventDefault();
   popupMemberId=memberId; popupMemberName=name; popupMemberPhone=phone;
+  document.getElementById('clinic-popup').classList.remove('show');
   const popup = document.getElementById('name-popup');
   popup.style.left = Math.min(e.clientX, window.innerWidth-160)+'px';
   popup.style.top = e.clientY+'px';
-  document.getElementById('popup-report').href = `report.html?member=${memberId}&session=${currentSession.id}`;
   popup.classList.add('show');
 }
 
@@ -632,12 +657,111 @@ function popupSendSms(){
   },200);
 }
 
+function popupClinic(){
+  document.getElementById('name-popup').classList.remove('show');
+  const popup = document.getElementById('clinic-popup');
+  document.getElementById('clinic-popup-name').textContent = '🏥 '+popupMemberName+' 클리닉 예약';
+  document.getElementById('clinic-popup-date').value = new Date(Date.now()+86400000).toISOString().split('T')[0];
+  document.getElementById('clinic-popup-memo').value='';
+  clinicSelectedTime='17:00';
+  document.querySelectorAll('#clinic-popup-times .time-chip').forEach(b=>{
+    b.classList.toggle('active',b.textContent==='17:00');
+  });
+  const namePopup = document.getElementById('name-popup');
+  popup.style.left = namePopup.style.left;
+  popup.style.top = namePopup.style.top;
+  popup.classList.add('show');
+}
+
+function setClinicTime(btn,time){
+  clinicSelectedTime=time;
+  document.querySelectorAll('#clinic-popup-times .time-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+async function saveClinicPopup(){
+  const date = document.getElementById('clinic-popup-date').value;
+  if(!date){ showToast('날짜를 선택해주세요','err'); return; }
+  const memo = document.getElementById('clinic-popup-memo').value.trim();
+
+  await fetch(`${SUPA_URL}/rest/v1/clinics`,{
+    method:'POST',headers:HDR,
+    body:JSON.stringify({
+      member_id:popupMemberId,
+      member_name:popupMemberName,
+      member_phone:popupMemberPhone,
+      clinic_date:date,
+      clinic_time:clinicSelectedTime,
+      memo:memo
+    })
+  });
+
+  document.getElementById('clinic-popup').classList.remove('show');
+  showToast(`${popupMemberName} 클리닉 ${date} ${clinicSelectedTime} 예약 완료 ✓`,'ok');
+  loadClinicSummary();
+}
+
+// 아무 곳 클릭하면 팝업 닫기
 document.addEventListener('click', function(e){
-  const popup = document.getElementById('name-popup');
-  if(popup && !popup.contains(e.target) && !e.target.closest('.cell-name')){
-    popup.classList.remove('show');
-  }
+  ['name-popup','clinic-popup'].forEach(id=>{
+    const popup = document.getElementById(id);
+    if(popup && !popup.contains(e.target) && !e.target.closest('.cell-name')){
+      popup.classList.remove('show');
+    }
+  });
 });
+
+// ===== 클리닉 요약 (그리드 뷰 하단) =====
+async function loadClinicSummary(){
+  const today = new Date().toISOString().split('T')[0];
+  const res = await fetch(`${SUPA_URL}/rest/v1/clinics?clinic_date=gte.${today}&select=*&order=clinic_date.asc,clinic_time.asc&limit=50`,{headers:HDR});
+  const clinics = await res.json();
+
+  let el = document.getElementById('clinic-summary');
+  if(!el){
+    el = document.createElement('div');
+    el.id='clinic-summary';
+    el.style.cssText='margin-top:16px';
+    const gridView = document.getElementById('view-grid');
+    if(gridView) gridView.appendChild(el);
+  }
+
+  if(!clinics.length){ el.innerHTML=''; return; }
+
+  const days=['일','월','화','수','목','금','토'];
+  const grouped={};
+  clinics.forEach(c=>{
+    if(!grouped[c.clinic_date]) grouped[c.clinic_date]=[];
+    grouped[c.clinic_date].push(c);
+  });
+
+  let html = `<div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-top:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:15px;font-weight:700">🏥 예정된 클리닉</div>
+      <a href="clinic.html" style="font-size:12px;color:var(--accent);text-decoration:none">전체 보기 →</a>
+    </div>`;
+
+  Object.entries(grouped).forEach(([date,items])=>{
+    const d=new Date(date+'T00:00:00');
+    const dayName=days[d.getDay()];
+    const isToday=date===today;
+    const isTomorrow=date===new Date(Date.now()+86400000).toISOString().split('T')[0];
+    let tag='';
+    if(isToday) tag='<span style="color:var(--green);font-size:11px;margin-left:6px">오늘</span>';
+    if(isTomorrow) tag='<span style="color:#f0c040;font-size:11px;margin-left:6px">내일</span>';
+
+    html += `<div style="margin-bottom:12px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--accent)">${date} (${dayName})${tag}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">`;
+    items.forEach(c=>{
+      html += `<div class="clinic-badge">${c.clinic_time} ${c.member_name}${c.memo?' · '+c.memo:''}</div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  html += `</div>`;
+  el.innerHTML = html;
+}
 
 // ===== 셀 선택 (엑셀 스타일) =====
 let selectedCells = []; // [{row,col}]
