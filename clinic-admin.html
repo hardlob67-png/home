@@ -69,9 +69,13 @@
   .tpl-hint{font-size:11px;color:var(--muted);margin-top:6px}
   .tpl-save{margin-top:10px;padding:10px 20px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
 
-  .clinic-item{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px 16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-  .clinic-item .info{font-size:14px}
+  .clinic-item{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px 16px;margin-bottom:8px}
+  .clinic-top{display:flex;justify-content:space-between;align-items:center}
+  .clinic-item .info{font-size:14px;cursor:pointer;flex:1}
+  .clinic-item .info:active{opacity:.7}
   .clinic-item .info span{color:var(--muted);font-size:12px}
+  .clinic-sms{display:none;margin-top:10px}
+  .clinic-sms.open{display:flex;gap:8px}
   .del-btn{background:var(--danger-light);color:var(--danger);border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-family:inherit;cursor:pointer;white-space:nowrap}
 
   .empty-msg{text-align:center;color:var(--muted);padding:40px 0;font-size:14px}
@@ -278,15 +282,65 @@ async function loadRes(){
   const{data}=await sb.from('clinics').select('*').gte('clinic_date',today).order('clinic_date').order('clinic_time').limit(30);
   const el=document.getElementById('reservation-list');
   if(!data||!data.length){el.innerHTML='<div class="empty-msg">예약이 없습니다</div>';return}
-  const pm={};allStudents.forEach(s=>{pm[s.phone]=s.name});
-  el.innerHTML=data.map(r=>`
+  const pm={};const phoneToId={};
+  allStudents.forEach(s=>{pm[s.phone]=s.name;phoneToId[s.phone]=s.id});
+  el.innerHTML=data.map((r,i)=>{
+    const name=esc(pm[r.member_phone]||r.member_phone);
+    const sid=phoneToId[r.member_phone]||'';
+    return `
     <div class="clinic-item">
-      <div class="info">
-        <strong>${esc(pm[r.member_phone]||r.member_phone)}</strong> ${r.clinic_date} ${(r.clinic_time||'').slice(0,5)}
-        <br><span>${r.location||''} ${r.memo?'· '+esc(r.memo):''}</span>
+      <div class="clinic-top">
+        <div class="info" onclick="toggleClinicSms(${i})">
+          <strong>${name}</strong> ${r.clinic_date} ${(r.clinic_time||'').slice(0,5)}
+          <br><span>${r.location||''} ${r.memo?'· '+esc(r.memo):''}</span>
+        </div>
+        <button class="del-btn" onclick="delRes('${r.id}')">취소</button>
       </div>
-      <button class="del-btn" onclick="delRes('${r.id}')">취소</button>
-    </div>`).join('');
+      <div class="clinic-sms" id="csms-${i}">
+        <button class="sms-btn arrive" id="ca-${i}" onclick="clinicSms('${sid}','${r.member_phone}','a',${i})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M12 3v18"/></svg>등원</button>
+        <button class="sms-btn depart" id="cd-${i}" onclick="clinicSms('${sid}','${r.member_phone}','d',${i})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>하원</button>
+      </div>
+    </div>`}).join('');
+}
+
+function toggleClinicSms(i){
+  const el=document.getElementById('csms-'+i);
+  el.classList.toggle('open');
+}
+
+async function clinicSms(studentId,phone,type,i){
+  const student=allStudents.find(s=>s.id===studentId)||allStudents.find(s=>s.phone===phone);
+  const name=student?student.name:'학생';
+  const parentPhone=phone;
+  if(!parentPhone){toast('전화번호 없음',1);return}
+
+  const btn=document.getElementById((type==='a'?'ca-':'cd-')+i);
+  btn.classList.add('sending');
+
+  const now=new Date();
+  const t=`${now.getHours()}시 ${String(now.getMinutes()).padStart(2,'0')}분`;
+  const key=type==='a'?'tpl_arrive':'tpl_depart';
+  const tpl=localStorage.getItem(key)||(type==='a'?TPL_A:TPL_D);
+  const msg=tpl.replace(/{이름}/g,name).replace(/{시간}/g,t);
+
+  const targets=[parentPhone];
+  if(student&&student.student_phone) targets.push(student.student_phone);
+
+  try{
+    await Promise.allSettled(targets.map(to=>sb.functions.invoke('send-sms',{body:{to,text:msg}})));
+    btn.classList.remove('sending');btn.classList.add('sent');
+    const label=type==='a'?'등원':'하원';
+    btn.textContent=label+' ✓';
+    toast(`${name} ${label} 문자 발송 (${targets.length}건)`);
+    setTimeout(()=>{
+      btn.classList.remove('sent');
+      btn.innerHTML=type==='a'
+        ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M12 3v18"/></svg>등원'
+        :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>하원';
+    },3000);
+  }catch(e){btn.classList.remove('sending');toast('발송 실패',1)}
 }
 async function delRes(id){if(!confirm('예약을 취소할까요?'))return;await sb.from('clinics').delete().eq('id',id);toast('취소됨');await loadRes()}
 
