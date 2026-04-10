@@ -8,15 +8,15 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0f;--surface:#13131a;--card:#1a1a24;--border:#2a2a3a;
-  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#6b6b80;--radius:14px;
+  --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#8a8aa4;--radius:14px;
   --gold:#FFD700;--fire:#FF6B35;--green:#22c55e;
 }
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
 .orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);top:-100px;right:-100px}
-.header{position:sticky;top:0;z-index:10;background:rgba(10,10,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.header{position:sticky;top:0;z-index:10;background:rgba(20,20,34,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .header-right{display:flex;align-items:center;gap:12px}
 .user-badge{font-size:13px;color:var(--muted)}
@@ -84,7 +84,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 /* QUIZ FULLSCREEN PANEL */
 .quiz-panel{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column}
 .quiz-panel.open{display:flex}
-.quiz-panel-header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:rgba(10,10,15,.95);border-bottom:1px solid var(--border);flex-shrink:0}
+.quiz-panel-header{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;background:rgba(20,20,34,.95);border-bottom:1px solid var(--border);flex-shrink:0}
 .quiz-panel-title{font-size:15px;font-weight:700;color:var(--text)}
 .btn-close-quiz{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
 .btn-close-quiz:hover{border-color:var(--accent2);color:var(--accent2)}
@@ -111,7 +111,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <header class="header">
   <div class="header-logo">META ENGLISH</div>
   <div class="header-right">
-    <div class="user-badge"><span id="user-school" style="color:var(--accent);margin-right:6px"></span>안녕하세요, <span id="username">?</span>님</div>
+    <div class="user-badge">안녕하세요, <span id="username">?</span>님</div>
     <button class="btn-admin" id="admin-btn" style="display:none" onclick="location.href='admin.html'">⚙ 관리</button>
     <button class="btn-sm" onclick="logout()">로그아웃</button>
   </div>
@@ -166,7 +166,6 @@ const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type'
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
 document.getElementById('username').textContent = user.name;
-if(user.school) document.getElementById('user-school').textContent = user.school;
 if(user.role==='admin') document.getElementById('admin-btn').style.display='';
 
 // ── Badge definitions (same as quiz HTML) ──
@@ -285,8 +284,7 @@ async function saveQuizRecord(data){
         total: data.total,
         wrong_words: data.wrongWords || [],
         max_combo: data.maxCombo || 0,
-        total_time: data.totalTime || 0,
-        school: user.school || ''
+        total_time: data.totalTime || 0
       })
     });
   }catch(e){}
@@ -310,8 +308,7 @@ window.addEventListener('message', function(e){
 // ── Load quizzes ──
 async function loadQuizzes(){
   try{
-    const schoolFilter = (user.role==='admin' || !user.school) ? '' : `&school=eq.${encodeURIComponent(user.school)}`;
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc${schoolFilter}`,{headers:HDR});
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{headers:HDR});
     const quizzes = await res.json();
     const grid = document.getElementById('quiz-grid');
     const weekAgo = Date.now()-7*24*60*60*1000;
