@@ -407,7 +407,6 @@ function updateSelectionUI(){
   if(selectedCells.length > 1){
     bar.classList.add('show');
     info.textContent = `${selectedCells.length}개 선택`;
-    document.getElementById('batch-value').focus();
   } else {
     bar.classList.remove('show');
   }
