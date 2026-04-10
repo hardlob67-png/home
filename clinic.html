@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>META ENGLISH - 클리닉 관리</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
+  --accent:#6c63ff;--accent2:#ff6584;--accent-light:rgba(108,99,255,.1);
+  --text:#e8e8f0;--muted:#8a8aa4;
+  --green:#22c55e;--red:#ff6584;--yellow:#f0c040;--radius:14px;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+.header{position:sticky;top:0;z-index:10;background:rgba(20,20,34,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.header-logo{display:flex;align-items:center;gap:12px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+
+.main{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-primary:hover{opacity:.9}
+.btn-red{padding:6px 12px;border:1px solid transparent;border-radius:7px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer}
+.btn-red:hover{background:rgba(255,101,132,.18)}
+.btn-green{padding:8px 16px;border:none;border-radius:8px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.btn-green:hover{background:rgba(34,197,94,.25)}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
+
+/* 빠른 입력 */
+.quick-add{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.quick-add .field{display:flex;flex-direction:column;gap:4px}
+.quick-add .field label{font-size:11px;color:var(--muted);font-weight:600}
+.quick-add select,.quick-add input{min-width:120px}
+
+/* 일정 카드 */
+.date-group{margin-bottom:20px}
+.date-header{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.date-header .day{color:var(--accent)}
+.date-header .count{font-size:12px;color:var(--muted);font-weight:400}
+.clinic-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all .15s}
+.clinic-item:hover{border-color:var(--accent)}
+.clinic-time{font-size:14px;font-weight:700;color:var(--accent);min-width:55px}
+.clinic-name{font-size:14px;font-weight:500;flex:1}
+.clinic-phone{font-size:12px;color:var(--muted);font-family:monospace}
+.clinic-memo{font-size:12px;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clinic-status{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600}
+.clinic-status.sent{background:rgba(34,197,94,.1);color:var(--green)}
+.clinic-status.pending{background:rgba(240,192,64,.1);color:var(--yellow)}
+
+/* 시간 버튼 */
+.time-chips{display:flex;gap:6px;flex-wrap:wrap}
+.time-chip{padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all .15s}
+.time-chip:hover{border-color:var(--accent);color:var(--accent)}
+.time-chip.active{border-color:var(--accent);color:#fff;background:var(--accent)}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-text">META ENGLISH</div>
+    <div class="admin-badge">클리닉</div>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn-sm" onclick="location.href='admin.html'">← 관리자</button>
+    <button class="btn-sm" onclick="logout()">로그아웃</button>
+  </div>
+</header>
+
+<div class="main">
+  <!-- 빠른 등록 -->
+  <div class="card">
+    <h2 style="font-size:18px;margin-bottom:4px">🏥 클리닉 일정 등록</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">학생과 날짜/시간을 선택하면 전날 밤 10시에 리마인드 문자가 자동 발송됩니다.</p>
+
+    <div class="quick-add">
+      <div class="field">
+        <label>반</label>
+        <select id="c-class" onchange="loadClassStudents()" style="min-width:120px">
+          <option value="">반 선택</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>학생</label>
+        <select id="c-student" style="min-width:140px">
+          <option value="">학생 선택</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>날짜</label>
+        <input type="date" id="c-date" style="min-width:150px">
+      </div>
+      <div class="field">
+        <label>메모 (선택)</label>
+        <input type="text" id="c-memo" placeholder="예: 3강 보충" style="min-width:140px">
+      </div>
+      <button class="btn-primary" onclick="addClinic()">등록</button>
+    </div>
+
+    <div style="margin-top:14px">
+      <label style="font-size:11px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px">시간 선택</label>
+      <div class="time-chips" id="time-chips">
+        <button class="time-chip" onclick="setTime(this,'14:00')">14:00</button>
+        <button class="time-chip" onclick="setTime(this,'15:00')">15:00</button>
+        <button class="time-chip" onclick="setTime(this,'16:00')">16:00</button>
+        <button class="time-chip active" onclick="setTime(this,'17:00')">17:00</button>
+        <button class="time-chip" onclick="setTime(this,'18:00')">18:00</button>
+        <button class="time-chip" onclick="setTime(this,'19:00')">19:00</button>
+        <button class="time-chip" onclick="setTime(this,'20:00')">20:00</button>
+        <input type="time" id="c-time-custom" value="17:00" style="padding:6px 10px;font-size:12px;min-width:90px"
+          onchange="selectedTime=this.value;document.querySelectorAll('.time-chip').forEach(b=>b.classList.remove('active'))">
+      </div>
+    </div>
+
+    <!-- 여러 학생 한 번에 등록 -->
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn-green" onclick="addBulkClinic()">📋 반 전체 등록</button>
+        <span style="font-size:12px;color:var(--muted)">선택한 반 전체 학생을 같은 날짜/시간으로 등록</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 발송 -->
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px">
+    <div>
+      <span style="font-size:14px;font-weight:700">📱 수동 리마인드 발송</span>
+      <span style="font-size:12px;color:var(--muted);margin-left:8px">자동은 전날 밤 10시</span>
+    </div>
+    <button class="btn-green" onclick="sendRemindersNow()">지금 내일 일정 발송</button>
+  </div>
+
+  <!-- 일정 목록 -->
+  <div id="clinic-list"><div style="text-align:center;padding:40px;color:var(--muted)">불러오는 중...</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
+const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+
+const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
+if(!user) location.href='index.html';
+
+let selectedTime = '17:00';
+let classStudents = [];
+
+// 오늘 날짜 기본값
+document.getElementById('c-date').value = new Date().toISOString().split('T')[0];
+
+function setTime(btn, time){
+  selectedTime = time;
+  document.getElementById('c-time-custom').value = time;
+  document.querySelectorAll('.time-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// 반 로드
+async function loadClasses(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/classes?select=*&order=name`,{headers:HDR});
+  const classes = await res.json();
+  document.getElementById('c-class').innerHTML = '<option value="">반 선택</option>' +
+    classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+async function loadClassStudents(){
+  const classId = document.getElementById('c-class').value;
+  if(!classId){ document.getElementById('c-student').innerHTML='<option value="">학생 선택</option>'; classStudents=[]; return; }
+  const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${classId}&select=member_id,members(id,name,phone)&order=members(name)`,{headers:HDR});
+  const data = await res.json();
+  classStudents = data.map(cm=>cm.members).filter(Boolean);
+  document.getElementById('c-student').innerHTML = '<option value="">학생 선택</option>' +
+    classStudents.map(m=>`<option value="${m.id}" data-name="${m.name}" data-phone="${m.phone}">${m.name}</option>`).join('');
+}
+
+async function addClinic(){
+  const studentSel = document.getElementById('c-student');
+  const opt = studentSel.selectedOptions[0];
+  if(!opt||!opt.value){ showToast('학생을 선택해주세요','err'); return; }
+  const date = document.getElementById('c-date').value;
+  if(!date){ showToast('날짜를 선택해주세요','err'); return; }
+  const memo = document.getElementById('c-memo').value.trim();
+
+  await fetch(`${SUPA_URL}/rest/v1/clinics`,{
+    method:'POST',headers:HDR,
+    body:JSON.stringify({
+      member_id:opt.value,
+      member_name:opt.getAttribute('data-name'),
+      member_phone:opt.getAttribute('data-phone'),
+      clinic_date:date,
+      clinic_time:selectedTime,
+      memo:memo
+    })
+  });
+
+  document.getElementById('c-memo').value='';
+  showToast(`${opt.getAttribute('data-name')} 클리닉 등록 완료 ✓`,'ok');
+  loadClinics();
+}
+
+async function addBulkClinic(){
+  const classId = document.getElementById('c-class').value;
+  if(!classId){ showToast('반을 선택해주세요','err'); return; }
+  if(!classStudents.length){ showToast('학생이 없어요','err'); return; }
+  const date = document.getElementById('c-date').value;
+  if(!date){ showToast('날짜를 선택해주세요','err'); return; }
+  const memo = document.getElementById('c-memo').value.trim();
+
+  let count=0;
+  for(const m of classStudents){
+    await fetch(`${SUPA_URL}/rest/v1/clinics`,{
+      method:'POST',headers:HDR,
+      body:JSON.stringify({
+        member_id:m.id, member_name:m.name, member_phone:m.phone,
+        clinic_date:date, clinic_time:selectedTime, memo:memo
+      })
+    });
+    count++;
+  }
+  showToast(`${count}명 전체 등록 완료 ✓`,'ok');
+  loadClinics();
+}
+
+async function deleteClinic(id){
+  await fetch(`${SUPA_URL}/rest/v1/clinics?id=eq.${id}`,{method:'DELETE',headers:HDR});
+  showToast('삭제했어요','ok');
+  loadClinics();
+}
+
+async function loadClinics(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/clinics?select=*&order=clinic_date.asc,clinic_time.asc&clinic_date=gte.${new Date().toISOString().split('T')[0]}`,{headers:HDR});
+  const clinics = await res.json();
+  const list = document.getElementById('clinic-list');
+
+  if(!clinics.length){ list.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)">등록된 클리닉 일정이 없어요</div>'; return; }
+
+  // 날짜별 그룹
+  const grouped = {};
+  clinics.forEach(c=>{
+    if(!grouped[c.clinic_date]) grouped[c.clinic_date]=[];
+    grouped[c.clinic_date].push(c);
+  });
+
+  const days = ['일','월','화','수','목','금','토'];
+  let html = '';
+  Object.entries(grouped).forEach(([date, items])=>{
+    const d = new Date(date+'T00:00:00');
+    const dayName = days[d.getDay()];
+    const isToday = date === new Date().toISOString().split('T')[0];
+    const isTomorrow = date === new Date(Date.now()+86400000).toISOString().split('T')[0];
+    let label = `${date} (${dayName})`;
+    if(isToday) label += ' <span style="color:var(--green);font-size:12px">오늘</span>';
+    if(isTomorrow) label += ' <span style="color:var(--yellow);font-size:12px">내일</span>';
+
+    html += `<div class="date-group">
+      <div class="date-header"><span class="day">${label}</span><span class="count">${items.length}명</span></div>`;
+
+    items.forEach(c=>{
+      html += `<div class="clinic-item">
+        <div class="clinic-time">${c.clinic_time}</div>
+        <div class="clinic-name">${c.member_name}</div>
+        <div class="clinic-phone">${c.member_phone||''}</div>
+        ${c.memo?`<div class="clinic-memo" title="${c.memo}">${c.memo}</div>`:''}
+        <div class="clinic-status ${c.reminder_sent?'sent':'pending'}">${c.reminder_sent?'발송됨':'대기'}</div>
+        <button class="btn-red" onclick="deleteClinic('${c.id}')" style="font-size:11px;padding:3px 8px">×</button>
+      </div>`;
+    });
+
+    html += `</div>`;
+  });
+
+  list.innerHTML = html;
+}
+
+// 수동 리마인드 발송 (내일 일정)
+async function sendRemindersNow(){
+  const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
+  const res = await fetch(`${SUPA_URL}/rest/v1/clinics?clinic_date=eq.${tomorrow}&reminder_sent=eq.false&select=*`,{headers:HDR});
+  const clinics = await res.json();
+
+  if(!clinics.length){ showToast('내일 일정이 없거나 이미 발송됨','err'); return; }
+
+  let sent=0;
+  for(const c of clinics){
+    if(!c.member_phone) continue;
+    const msg = `[META ENGLISH] ${c.member_name} 학생, 내일 ${c.clinic_time} 클리닉이 있습니다.${c.memo?' ('+c.memo+')':''} 잊지 마세요!`;
+
+    try{
+      const smsRes = await fetch(`${SUPA_URL}/functions/v1/send-sms`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
+        body:JSON.stringify({to:c.member_phone, text:msg})
+      });
+      const data = await smsRes.json();
+      if(data.success){
+        await fetch(`${SUPA_URL}/rest/v1/clinics?id=eq.${c.id}`,{
+          method:'PATCH',headers:HDR,body:JSON.stringify({reminder_sent:true})
+        });
+        sent++;
+      }
+    }catch(e){}
+  }
+
+  showToast(`${sent}명 리마인드 발송 완료 ✓`,'ok');
+  loadClinics();
+}
+
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
+loadClasses();
+loadClinics();
+</script>
+</body>
+</html>
