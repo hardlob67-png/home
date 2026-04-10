@@ -248,6 +248,29 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <button id="popup-sms" onclick="popupSendSms()">💬 문자 보내기</button>
 </div>
 
+<!-- 마킹지 입력 모달 -->
+<div class="modal-bg" id="modal-scoring">
+  <div class="modal" style="max-width:560px;max-height:85vh;display:flex;flex-direction:column;padding:24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <h3 style="margin:0" id="scoring-modal-title"></h3>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px" id="scoring-modal-sub"></div>
+      </div>
+      <button class="btn-sm" onclick="closeScoringModal()" style="padding:4px 12px">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
+      <label style="font-size:12px;color:var(--muted)">버전:</label>
+      <select id="scoring-modal-version" onchange="renderScoringModal()" style="padding:6px 10px;font-size:12px;min-width:100px"></select>
+      <span style="margin-left:auto;font-size:15px;font-weight:700" id="scoring-modal-total"></span>
+    </div>
+    <div style="flex:1;overflow-y:auto" id="scoring-modal-body"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn-primary" onclick="saveScoringModal()">💾 저장</button>
+      <a id="scoring-modal-detail" target="_blank" class="btn-sm" style="text-decoration:none;display:flex;align-items:center">📊 상세 분석</a>
+    </div>
+  </div>
+</div>
+
 <!-- 문자 발송 모달 -->
 <div class="modal-bg" id="modal-sms">
   <div class="modal" style="max-width:600px;max-height:85vh;display:flex;flex-direction:column;padding:24px">
@@ -558,7 +581,7 @@ async function loadGrid(){
         const val = d.scores[c]||'';
         if(testId && val){
           return `<td style="text-align:center;padding:8px">
-            <a href="test-detail.html?test=${testId}&member=${m.id}" target="_blank"
+            <a href="#" onclick="openScoringModal(event,'${testId}','${m.id}','${m.name}')"
               style="color:#a0a7ff;text-decoration:underline;text-decoration-style:dotted;font-weight:600;font-size:14px">${val}</a>
           </td>`;
         }
@@ -853,6 +876,179 @@ function showToast(msg,type='ok'){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
+// ===== 마킹지 입력 모달 =====
+let scoringModalTestId='', scoringModalMemberId='', scoringModalMemberName='';
+let scoringModalVersions=[], scoringModalResp={};
+
+async function openScoringModal(e, testSetId, memberId, memberName){
+  e.preventDefault();
+  scoringModalTestId=testSetId;
+  scoringModalMemberId=memberId;
+  scoringModalMemberName=memberName;
+
+  document.getElementById('scoring-modal-title').textContent=memberName+' 마킹지';
+  document.getElementById('scoring-modal-detail').href=`test-detail.html?test=${testSetId}&member=${memberId}`;
+
+  // 버전 로드
+  const vRes = await fetch(`${SUPA_URL}/rest/v1/test_versions?test_set_id=eq.${testSetId}&select=*&order=created_at`,{headers:HDR});
+  scoringModalVersions = await vRes.json();
+  const vSel = document.getElementById('scoring-modal-version');
+  vSel.innerHTML = scoringModalVersions.map(v=>`<option value="${v.id}">${v.name}</option>`).join('');
+
+  // 기존 응답 로드
+  const rRes = await fetch(`${SUPA_URL}/rest/v1/test_responses?test_set_id=eq.${testSetId}&member_id=eq.${memberId}&select=*`,{headers:HDR});
+  const existing = await rRes.json();
+  if(existing.length){
+    const r = existing[0];
+    scoringModalResp = {
+      version_id: r.test_version_id,
+      responses: typeof r.responses==='string'?JSON.parse(r.responses):r.responses,
+      scores: typeof r.scores==='string'?JSON.parse(r.scores):r.scores
+    };
+    vSel.value = r.test_version_id;
+  } else {
+    scoringModalResp = {version_id:scoringModalVersions[0]?.id, responses:{}, scores:{}};
+  }
+
+  document.getElementById('modal-scoring').classList.add('show');
+  renderScoringModal();
+}
+
+function closeScoringModal(){
+  document.getElementById('modal-scoring').classList.remove('show');
+}
+
+function renderScoringModal(){
+  const vId = document.getElementById('scoring-modal-version').value;
+  scoringModalResp.version_id = vId;
+  const v = scoringModalVersions.find(v=>v.id===vId);
+  if(!v){ document.getElementById('scoring-modal-body').innerHTML='<div style="text-align:center;color:var(--muted);padding:20px">버전 없음</div>'; return; }
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+
+  const sub = document.getElementById('scoring-modal-sub');
+  const totalPts = questions.reduce((s,q)=>s+(q.points||0),0);
+  sub.textContent = `${v.name} · ${questions.length}문항 · 만점 ${totalPts}점`;
+
+  let html = '';
+  questions.forEach((q,i)=>{
+    const qnum = String(i+1);
+    const resp = scoringModalResp.responses[qnum]||'';
+    const sc = scoringModalResp.scores[qnum];
+    let status = '';
+    if(q.type==='mc' && resp){
+      status = String(resp).trim()===String(q.answer).trim()
+        ? '<span style="color:var(--green);font-weight:700">O</span>'
+        : '<span style="color:var(--red);font-weight:700">X</span>';
+    }
+
+    html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:28px;height:28px;border-radius:8px;background:rgba(108,99,255,.12);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${i+1}</div>
+      <div style="font-size:11px;color:var(--muted);width:50px;flex-shrink:0">${q.type==='mc'?'객관식':'주관식'}<br>${q.points}점</div>
+      <input type="text" value="${resp}" placeholder="${q.type==='mc'?'답 번호':'점수'}"
+        style="flex:1;text-align:center;padding:8px;font-size:14px"
+        data-sqnum="${qnum}"
+        oninput="onScoringModalInput(${i},this.value)"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();focusScoringNext(${i})}">
+      ${q.type==='mc'?`<div style="width:24px;text-align:center">${status}</div>`:''}
+      ${q.type==='mc'?`<div style="font-size:11px;color:var(--muted);width:30px;text-align:center">→${q.answer}</div>`:''}
+    </div>`;
+  });
+
+  document.getElementById('scoring-modal-body').innerHTML = html;
+  recalcScoringModal();
+}
+
+function onScoringModalInput(idx, value){
+  const vId = document.getElementById('scoring-modal-version').value;
+  const v = scoringModalVersions.find(v=>v.id===vId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+  const qnum = String(idx+1);
+  scoringModalResp.responses[qnum] = value;
+
+  const q = questions[idx];
+  if(q.type==='mc'){
+    scoringModalResp.scores[qnum] = String(value).trim()===String(q.answer).trim() ? q.points : 0;
+  } else {
+    const pts = Number(value);
+    if(!isNaN(pts)) scoringModalResp.scores[qnum] = Math.min(pts, q.points);
+  }
+
+  recalcScoringModal();
+  // O/X 업데이트
+  renderScoringModal();
+}
+
+function recalcScoringModal(){
+  const vId = document.getElementById('scoring-modal-version').value;
+  const v = scoringModalVersions.find(v=>v.id===vId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+  let total=0, max=0;
+  questions.forEach((q,i)=>{
+    max+=q.points;
+    total+=(scoringModalResp.scores[String(i+1)]||0);
+  });
+  document.getElementById('scoring-modal-total').textContent=`${total} / ${max}점`;
+}
+
+function focusScoringNext(idx){
+  const next = document.querySelector('#scoring-modal-body input[data-sqnum="'+(idx+2)+'"]');
+  if(next) next.focus();
+}
+
+async function saveScoringModal(){
+  const vId = document.getElementById('scoring-modal-version').value;
+  const v = scoringModalVersions.find(v=>v.id===vId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+  let total=0, max=0;
+  questions.forEach((q,i)=>{ max+=q.points; total+=(scoringModalResp.scores[String(i+1)]||0); });
+
+  // test_responses 저장
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_responses?on_conflict=test_set_id,member_id`,{
+    method:'POST',
+    headers:{...HDR,'Prefer':'resolution=merge-duplicates, return=minimal'},
+    body:JSON.stringify({
+      test_set_id: scoringModalTestId,
+      test_version_id: vId,
+      member_id: scoringModalMemberId,
+      member_name: scoringModalMemberName,
+      responses: scoringModalResp.responses,
+      scores: scoringModalResp.scores,
+      total_score: total,
+      total_points: max,
+      scored_at: new Date().toISOString()
+    })
+  });
+
+  if(res.ok){
+    // 성적표에도 반영
+    const testRes = await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${scoringModalTestId}&select=grade_session_id,grade_column`,{headers:HDR});
+    const testData = await testRes.json();
+    if(testData.length && testData[0].grade_session_id && testData[0].grade_column){
+      const ts = testData[0];
+      const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${ts.grade_session_id}&member_id=eq.${scoringModalMemberId}&select=scores`,{headers:HDR});
+      const gData = await gRes.json();
+      let scores = {};
+      if(gData.length) scores = typeof gData[0].scores==='string'?JSON.parse(gData[0].scores):gData[0].scores;
+      scores[ts.grade_column] = `${total}/${max}`;
+      await fetch(`${SUPA_URL}/rest/v1/grades?on_conflict=session_id,member_id`,{
+        method:'POST',
+        headers:{...HDR,'Prefer':'resolution=merge-duplicates, return=minimal'},
+        body:JSON.stringify({
+          session_id:ts.grade_session_id, member_id:scoringModalMemberId,
+          member_name:scoringModalMemberName, scores:scores,
+          updated_at:new Date().toISOString(), updated_by:user.name||''
+        })
+      });
+    }
+    showToast(`${scoringModalMemberName} 채점 저장 완료 ✓`,'ok');
+    closeScoringModal();
+    await loadGrid(); // 그리드 새로고침
+  } else { showToast('저장 실패','err'); }
+}
 
 // ===== 문자 발송 =====
 let smsMemberList = [];
