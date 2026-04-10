@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>META ENGLISH - 실전테스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#8a8aa4;
+  --green:#22c55e;--red:#ff6584;--yellow:#f0c040;--radius:14px;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);top:-50px;left:-50px}
+
+.header{position:sticky;top:0;z-index:10;background:rgba(20,20,34,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.header-logo{display:flex;align-items:center;gap:12px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+
+.main{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:24px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
+.card h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.card p{font-size:13px;color:var(--muted);margin-bottom:20px}
+
+input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+textarea{resize:vertical;min-height:60px}
+
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.btn-primary:hover{opacity:.9}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-green:hover{background:rgba(34,197,94,.25)}
+.btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.btn-red:hover{background:rgba(255,101,132,.18)}
+.btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.1)}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.divider{height:1px;background:var(--border);margin:24px 0}
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
+
+/* 문항 목록 */
+.q-item{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface);border-radius:10px;margin-bottom:8px}
+.q-num{width:32px;height:32px;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.q-type{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.q-type.mc{background:rgba(34,197,94,.1);color:var(--green)}
+.q-type.sa{background:rgba(240,192,64,.1);color:var(--yellow)}
+.q-pts{font-size:12px;color:var(--muted)}
+.q-ans{font-size:13px;color:var(--text);font-weight:500}
+
+/* 채점 그리드 */
+.score-grid{width:100%;border-collapse:collapse}
+.score-grid th{text-align:center;font-size:12px;color:var(--muted);font-weight:600;padding:10px 8px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:64px;z-index:2}
+.score-grid td{padding:4px;border-bottom:1px solid rgba(60,60,88,.4);text-align:center;vertical-align:middle}
+.score-grid .name-cell{text-align:left;padding:10px 14px;font-weight:500;font-size:14px;white-space:nowrap}
+.score-grid input{width:100%;background:transparent;border:1px solid transparent;border-radius:6px;padding:8px 6px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;text-align:center;outline:none;transition:all .2s}
+.score-grid input:focus{background:rgba(108,99,255,.08);border-color:var(--accent)}
+.score-grid .correct{background:rgba(34,197,94,.08);color:var(--green)}
+.score-grid .wrong{background:rgba(255,101,132,.08);color:var(--red)}
+.score-grid .total-cell{font-weight:700;font-size:14px;padding:10px 8px}
+.score-grid select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:12px;outline:none}
+
+/* 화면 전환 */
+.screen{display:none}
+.screen.active{display:block}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-text">META ENGLISH</div>
+    <div class="admin-badge">실전테스트</div>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn-sm" onclick="location.href='admin.html'">← 관리자</button>
+    <button class="btn-sm" onclick="logout()">로그아웃</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- 화면 1: 시험 목록 -->
+  <div class="screen active" id="screen-list">
+    <div class="card">
+      <h2>📝 실전테스트 관리</h2>
+      <p>시험을 만들고, 버전별 문항을 등록한 뒤, 학생 답안을 채점하세요.</p>
+      <button class="btn-primary" onclick="showCreate()">+ 새 시험 만들기</button>
+    </div>
+    <div id="test-list"><div class="empty">불러오는 중...</div></div>
+  </div>
+
+  <!-- 화면 2: 시험 생성 -->
+  <div class="screen" id="screen-create">
+    <div class="card">
+      <h2>새 시험 만들기</h2>
+      <p>시험 정보를 입력하고 성적표 연결을 설정하세요.</p>
+      <div style="display:flex;flex-direction:column;gap:14px;max-width:500px">
+        <div>
+          <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">시험 제목</label>
+          <input type="text" id="c-title" placeholder="예: 4월 2주차 리뷰테스트" style="width:100%">
+        </div>
+        <div>
+          <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">성적표 연결 (선택)</label>
+          <select id="c-session" style="width:100%" onchange="loadSessionColumns()">
+            <option value="">-- 연결 안 함 --</option>
+          </select>
+        </div>
+        <div id="c-col-wrap" style="display:none">
+          <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">입력할 항목</label>
+          <select id="c-column" style="width:100%"></select>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn-primary" onclick="createTest()">만들기</button>
+          <button class="btn-outline" onclick="showScreen('screen-list')">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 화면 3: 시험 상세 (버전 관리 + 채점) -->
+  <div class="screen" id="screen-detail">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:16px">
+        <div>
+          <h2 id="d-title"></h2>
+          <p id="d-link" style="margin-bottom:0"></p>
+        </div>
+        <div class="row">
+          <button class="btn-outline" onclick="showScreen('screen-list')">← 목록</button>
+          <button class="btn-red" onclick="deleteTest()">삭제</button>
+        </div>
+      </div>
+
+      <!-- 버전 탭 -->
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px">📋 시험 버전</div>
+      <div class="row" style="margin-bottom:12px">
+        <div id="version-tabs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        <button class="btn-outline" onclick="addVersion()">+ 버전 추가</button>
+      </div>
+      <div id="version-detail"></div>
+    </div>
+
+    <!-- 채점 영역 -->
+    <div class="card" id="scoring-card" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div>
+          <div style="font-size:15px;font-weight:700">✏️ 채점</div>
+          <div style="font-size:13px;color:var(--muted)">학생 답안을 입력하면 객관식은 자동 채점됩니다</div>
+        </div>
+        <div class="row">
+          <select id="score-class" style="min-width:140px" onchange="loadScoringGrid()">
+            <option value="">-- 반 선택 --</option>
+          </select>
+          <button class="btn-green" onclick="saveAllScores()">전체 저장</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="score-grid" id="score-table">
+          <thead id="score-head"></thead>
+          <tbody id="score-body"></tbody>
+        </table>
+      </div>
+      <div id="score-empty" class="empty" style="display:none">반을 선택하세요</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
+const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+
+const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
+if(!user) location.href='index.html';
+
+let currentTest = null;
+let currentVersions = [];
+let selectedVersionId = null;
+let scoringMembers = [];
+let scoringResponses = {};
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ===== 시험 목록 =====
+async function loadTests(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_sets?select=*,grade_sessions(title)&order=created_at.desc`,{headers:HDR});
+  const tests = await res.json();
+  const el = document.getElementById('test-list');
+  if(!tests.length){ el.innerHTML='<div class="empty">아직 등록된 시험이 없어요</div>'; return }
+  el.innerHTML = tests.map(t=>{
+    const link = t.grade_sessions ? `→ ${t.grade_sessions.title} / ${t.grade_column||''}` : '연결 없음';
+    return `<div class="card" style="cursor:pointer;padding:20px 24px;margin-bottom:10px" onclick="openTest('${t.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:16px;font-weight:700">${t.title}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">${link} · ${new Date(t.created_at).toLocaleDateString('ko-KR')}</div>
+        </div>
+        <div style="font-size:20px;color:var(--muted)">→</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== 시험 생성 =====
+async function showCreate(){
+  showScreen('screen-create');
+  document.getElementById('c-title').value='';
+  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?select=id,title,columns,classes(name)&order=created_at.desc`,{headers:HDR});
+  const sessions = await res.json();
+  const sel = document.getElementById('c-session');
+  sel.innerHTML = '<option value="">-- 연결 안 함 --</option>' +
+    sessions.map(s=>{
+      const cn = s.classes ? `[${s.classes.name}] ` : '';
+      return `<option value="${s.id}" data-cols='${JSON.stringify(typeof s.columns==='string'?JSON.parse(s.columns):s.columns)}'>${cn}${s.title}</option>`;
+    }).join('');
+  document.getElementById('c-col-wrap').style.display='none';
+}
+
+function loadSessionColumns(){
+  const sel = document.getElementById('c-session');
+  const opt = sel.selectedOptions[0];
+  const wrap = document.getElementById('c-col-wrap');
+  if(!opt || !opt.value){ wrap.style.display='none'; return }
+  const cols = JSON.parse(opt.getAttribute('data-cols')||'[]');
+  const colSel = document.getElementById('c-column');
+  colSel.innerHTML = cols.map(c=>`<option value="${c}">${c}</option>`).join('');
+  wrap.style.display='block';
+}
+
+async function createTest(){
+  const title = document.getElementById('c-title').value.trim();
+  if(!title){ showToast('제목을 입력해주세요','err'); return }
+  const sessionId = document.getElementById('c-session').value || null;
+  const column = document.getElementById('c-column').value || '';
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_sets`,{
+    method:'POST',headers:{...HDR,'Prefer':'return=representation'},
+    body:JSON.stringify({title, grade_session_id:sessionId, grade_column:column})
+  });
+  const data = await res.json();
+  if(res.ok && data.length){
+    showToast('시험 생성 완료 ✓','ok');
+    await loadTests();
+    openTest(data[0].id);
+  } else { showToast('생성 실패','err') }
+}
+
+async function deleteTest(){
+  if(!currentTest) return;
+  if(!confirm('이 시험과 모든 채점 데이터가 삭제됩니다. 계속할까요?')) return;
+  await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${currentTest.id}`,{method:'DELETE',headers:HDR});
+  currentTest=null;
+  showScreen('screen-list');
+  loadTests();
+  showToast('삭제했어요','ok');
+}
+
+// ===== 시험 상세 =====
+async function openTest(id){
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${id}&select=*,grade_sessions(title)`,{headers:HDR});
+  const data = await res.json();
+  if(!data.length) return;
+  currentTest = data[0];
+  document.getElementById('d-title').textContent = currentTest.title;
+  const linkText = currentTest.grade_sessions
+    ? `성적표 연결: ${currentTest.grade_sessions.title} → ${currentTest.grade_column}`
+    : '성적표 연결 없음';
+  document.getElementById('d-link').textContent = linkText;
+
+  await loadVersions();
+  await loadClassesForScoring();
+  showScreen('screen-detail');
+}
+
+async function loadVersions(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_versions?test_set_id=eq.${currentTest.id}&select=*&order=created_at`,{headers:HDR});
+  currentVersions = await res.json();
+
+  const tabs = document.getElementById('version-tabs');
+  if(!currentVersions.length){
+    tabs.innerHTML='';
+    selectedVersionId=null;
+    document.getElementById('version-detail').innerHTML='<div class="empty">버전을 추가하세요 (예: 월요일, 화요일, 수요일)</div>';
+    document.getElementById('scoring-card').style.display='none';
+    return;
+  }
+
+  if(!selectedVersionId || !currentVersions.find(v=>v.id===selectedVersionId)){
+    selectedVersionId = currentVersions[0].id;
+  }
+
+  tabs.innerHTML = currentVersions.map(v=>
+    `<button class="btn-outline ${v.id===selectedVersionId?'active':''}" onclick="selectVersion('${v.id}')">${v.name}</button>`
+  ).join('');
+
+  showVersionDetail();
+}
+
+async function addVersion(){
+  const name = prompt('버전 이름을 입력하세요 (예: 월요일)');
+  if(!name) return;
+  await fetch(`${SUPA_URL}/rest/v1/test_versions`,{
+    method:'POST',headers:HDR,
+    body:JSON.stringify({test_set_id:currentTest.id, name, questions:[]})
+  });
+  await loadVersions();
+  showToast(`${name} 버전 추가 완료 ✓`,'ok');
+}
+
+function selectVersion(id){
+  selectedVersionId = id;
+  document.querySelectorAll('#version-tabs .btn-outline').forEach(b=>{
+    b.classList.toggle('active', b.textContent===currentVersions.find(v=>v.id===id)?.name);
+  });
+  showVersionDetail();
+}
+
+function showVersionDetail(){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+  const totalPts = questions.reduce((s,q)=>s+(q.points||0),0);
+
+  let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="font-size:13px;color:var(--muted)">${v.name} · ${questions.length}문항 · 총 ${totalPts}점</div>
+    <div class="row">
+      <button class="btn-outline" onclick="addQuestion()">+ 문항 추가</button>
+      <button class="btn-red" onclick="deleteVersion('${v.id}')">버전 삭제</button>
+    </div>
+  </div>`;
+
+  if(questions.length){
+    html += questions.map((q,i)=>`<div class="q-item">
+      <div class="q-num">${q.num||i+1}</div>
+      <span class="q-type ${q.type==='mc'?'mc':'sa'}">${q.type==='mc'?'객관식':'주관식'}</span>
+      <span class="q-pts">${q.points}점</span>
+      ${q.type==='mc'?`<span class="q-ans">정답: ${q.answer}</span>`:'<span class="q-ans" style="color:var(--yellow)">직접 채점</span>'}
+      <span style="margin-left:auto"><button class="btn-red" onclick="removeQuestion(${i})" style="font-size:11px;padding:4px 8px">×</button></span>
+    </div>`).join('');
+  } else {
+    html += '<div class="empty" style="padding:20px">문항을 추가하세요</div>';
+  }
+
+  document.getElementById('version-detail').innerHTML = html;
+  document.getElementById('scoring-card').style.display = questions.length ? 'block' : 'none';
+}
+
+async function addQuestion(){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
+
+  const type = prompt('유형을 입력하세요:\n1 = 객관식\n2 = 주관식','1');
+  if(!type) return;
+  const ismc = type.trim()==='1';
+  const points = prompt('배점을 입력하세요:','2');
+  if(!points) return;
+  const answer = ismc ? prompt('정답 번호를 입력하세요 (예: 3):') : '';
+  if(ismc && !answer) return;
+
+  questions.push({
+    num: questions.length+1,
+    type: ismc?'mc':'sa',
+    points: Number(points),
+    answer: answer||''
+  });
+
+  await fetch(`${SUPA_URL}/rest/v1/test_versions?id=eq.${v.id}`,{
+    method:'PATCH',headers:HDR,
+    body:JSON.stringify({questions})
+  });
+
+  v.questions = questions;
+  showVersionDetail();
+  showToast('문항 추가 완료 ✓','ok');
+}
+
+async function removeQuestion(idx){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
+  questions.splice(idx,1);
+  questions.forEach((q,i)=>q.num=i+1);
+
+  await fetch(`${SUPA_URL}/rest/v1/test_versions?id=eq.${v.id}`,{
+    method:'PATCH',headers:HDR,
+    body:JSON.stringify({questions})
+  });
+
+  v.questions = questions;
+  showVersionDetail();
+}
+
+async function deleteVersion(id){
+  if(!confirm('이 버전을 삭제할까요?')) return;
+  await fetch(`${SUPA_URL}/rest/v1/test_versions?id=eq.${id}`,{method:'DELETE',headers:HDR});
+  if(selectedVersionId===id) selectedVersionId=null;
+  await loadVersions();
+  showToast('삭제했어요','ok');
+}
+
+// ===== 채점 =====
+async function loadClassesForScoring(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/classes?select=*&order=name`,{headers:HDR});
+  const classes = await res.json();
+  const sel = document.getElementById('score-class');
+  sel.innerHTML = '<option value="">-- 반 선택 --</option>' +
+    classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+async function loadScoringGrid(){
+  const classId = document.getElementById('score-class').value;
+  const body = document.getElementById('score-body');
+  const empty = document.getElementById('score-empty');
+
+  if(!classId || !currentVersions.length){
+    body.innerHTML='';
+    empty.style.display='block';
+    return;
+  }
+  empty.style.display='none';
+
+  // 반 학생 로드
+  const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${classId}&select=member_id,members(id,name)&order=members(name)`,{headers:HDR});
+  const cmData = await cmRes.json();
+  scoringMembers = cmData.map(cm=>cm.members).filter(Boolean);
+
+  // 기존 응답 로드
+  const rRes = await fetch(`${SUPA_URL}/rest/v1/test_responses?test_set_id=eq.${currentTest.id}&select=*`,{headers:HDR});
+  const existing = await rRes.json();
+  scoringResponses = {};
+  existing.forEach(r=>{
+    scoringResponses[r.member_id] = {
+      version_id: r.test_version_id,
+      responses: typeof r.responses==='string'?JSON.parse(r.responses):r.responses,
+      scores: typeof r.scores==='string'?JSON.parse(r.scores):r.scores,
+      total_score: r.total_score,
+      total_points: r.total_points
+    };
+  });
+
+  // 첫 번째 버전의 문항 수로 헤더 구성 (최대 문항 수)
+  const maxQ = Math.max(...currentVersions.map(v=>{
+    const qs = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+    return qs.length;
+  }));
+
+  // 헤더
+  document.getElementById('score-head').innerHTML = `<tr>
+    <th style="min-width:50px">#</th>
+    <th style="min-width:90px;text-align:left">이름</th>
+    <th style="min-width:100px">버전</th>
+    ${Array.from({length:maxQ},(_,i)=>`<th style="min-width:50px">${i+1}</th>`).join('')}
+    <th style="min-width:60px">총점</th>
+    <th style="min-width:60px"></th>
+  </tr>`;
+
+  // 바디
+  body.innerHTML = scoringMembers.map((m,mi)=>{
+    const r = scoringResponses[m.id] || {};
+    const vId = r.version_id || currentVersions[0].id;
+
+    return `<tr>
+      <td style="color:var(--muted);font-size:13px;padding:8px">${mi+1}</td>
+      <td class="name-cell">${m.name}</td>
+      <td>
+        <select data-member="${m.id}" onchange="onVersionSelect(this)">
+          ${currentVersions.map(v=>`<option value="${v.id}" ${v.id===vId?'selected':''}>${v.name}</option>`).join('')}
+        </select>
+      </td>
+      ${Array.from({length:maxQ},(_,qi)=>{
+        const resp = r.responses || {};
+        const scores = r.scores || {};
+        const val = resp[String(qi+1)] || '';
+        const sc = scores[String(qi+1)];
+        let cls = '';
+        if(val && sc!==undefined){
+          const v = currentVersions.find(v=>v.id===vId);
+          const qs = v?(typeof v.questions==='string'?JSON.parse(v.questions):v.questions):[];
+          const q = qs[qi];
+          if(q && q.type==='mc') cls = sc>0?'correct':'wrong';
+        }
+        return `<td><input class="${cls}" data-member="${m.id}" data-qnum="${qi+1}"
+          value="${val}" placeholder="·"
+          oninput="onResponseInput('${m.id}',${qi+1},this)"
+          onfocus="this.select()"></td>`;
+      }).join('')}
+      <td class="total-cell" id="total-${m.id}">${r.total_score!==undefined?r.total_score+'/'+r.total_points:'-'}</td>
+      <td><button class="btn-outline" style="font-size:11px;padding:4px 10px" onclick="saveStudentScore('${m.id}')">저장</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function onVersionSelect(selectEl){
+  const memberId = selectEl.getAttribute('data-member');
+  if(!scoringResponses[memberId]) scoringResponses[memberId]={responses:{},scores:{}};
+  scoringResponses[memberId].version_id = selectEl.value;
+  recalcStudent(memberId);
+}
+
+function onResponseInput(memberId, qnum, inputEl){
+  if(!scoringResponses[memberId]) scoringResponses[memberId]={version_id:currentVersions[0].id,responses:{},scores:{}};
+  scoringResponses[memberId].responses[String(qnum)] = inputEl.value;
+  recalcStudent(memberId);
+}
+
+function recalcStudent(memberId){
+  const r = scoringResponses[memberId];
+  if(!r) return;
+  const v = currentVersions.find(v=>v.id===r.version_id);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+
+  let total=0, maxPts=0;
+  const scores = {};
+
+  questions.forEach((q,i)=>{
+    const qnum = String(i+1);
+    const resp = (r.responses[qnum]||'').trim();
+    maxPts += q.points;
+
+    if(q.type==='mc'){
+      // 객관식 자동 채점
+      const isCorrect = resp === String(q.answer).trim();
+      scores[qnum] = isCorrect ? q.points : 0;
+      total += scores[qnum];
+      // UI 업데이트
+      const inp = document.querySelector(`input[data-member="${memberId}"][data-qnum="${qnum}"]`);
+      if(inp && resp){
+        inp.className = isCorrect ? 'correct' : 'wrong';
+      } else if(inp){ inp.className=''; }
+    } else {
+      // 주관식: 응답에 숫자가 입력되면 그것을 점수로 사용
+      const pts = Number(resp);
+      if(!isNaN(pts) && resp!==''){
+        scores[qnum] = Math.min(pts, q.points);
+        total += scores[qnum];
+      }
+    }
+  });
+
+  r.scores = scores;
+  r.total_score = total;
+  r.total_points = maxPts;
+
+  const totalEl = document.getElementById('total-'+memberId);
+  if(totalEl) totalEl.textContent = total+'/'+maxPts;
+}
+
+async function saveStudentScore(memberId){
+  const r = scoringResponses[memberId];
+  if(!r) return;
+  const member = scoringMembers.find(m=>m.id===memberId);
+
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_responses?on_conflict=test_set_id,member_id`,{
+    method:'POST',
+    headers:{...HDR,'Prefer':'resolution=merge-duplicates, return=minimal'},
+    body:JSON.stringify({
+      test_set_id: currentTest.id,
+      test_version_id: r.version_id,
+      member_id: memberId,
+      member_name: member?member.name:'',
+      responses: r.responses,
+      scores: r.scores,
+      total_score: r.total_score||0,
+      total_points: r.total_points||0,
+      scored_at: new Date().toISOString()
+    })
+  });
+
+  if(res.ok){
+    showToast(`${member?member.name:''} 저장 완료 ✓`,'ok');
+    // 성적표 연동
+    if(currentTest.grade_session_id && currentTest.grade_column){
+      await pushToGrade(memberId, r.total_score, r.total_points);
+    }
+  } else { showToast('저장 실패','err') }
+}
+
+async function saveAllScores(){
+  let count=0;
+  for(const m of scoringMembers){
+    if(scoringResponses[m.id] && Object.keys(scoringResponses[m.id].responses||{}).length){
+      await saveStudentScore(m.id);
+      count++;
+    }
+  }
+  showToast(`${count}명 전체 저장 완료 ✓`,'ok');
+}
+
+// 성적표 자동 반영
+async function pushToGrade(memberId, score, total){
+  const member = scoringMembers.find(m=>m.id===memberId);
+  const scoreText = `${score}/${total}`;
+
+  // 기존 성적 가져오기
+  const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${currentTest.grade_session_id}&member_id=eq.${memberId}&select=scores`,{headers:HDR});
+  const gData = await gRes.json();
+  let scores = {};
+  if(gData.length){
+    scores = typeof gData[0].scores==='string'?JSON.parse(gData[0].scores):gData[0].scores;
+  }
+  scores[currentTest.grade_column] = scoreText;
+
+  await fetch(`${SUPA_URL}/rest/v1/grades?on_conflict=session_id,member_id`,{
+    method:'POST',
+    headers:{...HDR,'Prefer':'resolution=merge-duplicates, return=minimal'},
+    body:JSON.stringify({
+      session_id: currentTest.grade_session_id,
+      member_id: memberId,
+      member_name: member?member.name:'',
+      scores: scores,
+      updated_at: new Date().toISOString(),
+      updated_by: user.name||''
+    })
+  });
+}
+
+// ===== 유틸 =====
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
+loadTests();
+</script>
+</body>
+</html>
