@@ -176,6 +176,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .modal .field input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none}
 .modal .field input:focus{border-color:var(--accent)}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.admin-tab-nav{position:sticky;top:0;z-index:30;display:flex;flex-wrap:nowrap;gap:4px;padding:12px 24px;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.admin-tab-nav::-webkit-scrollbar{display:none}
+.admin-tab-nav .t{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:none;transition:all .2s}
+.admin-tab-nav .t:hover{color:var(--text)}
+.admin-tab-nav .t.on{background:var(--card);color:var(--text);font-weight:700}
 </style>
 </head>
 <body>
@@ -192,6 +197,17 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="btn-sm" onclick="logout()">로그아웃</button>
   </div>
 </header>
+
+<div class="admin-tab-nav">
+  <a class="t" href="admin.html">👥 회원 명단</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','quizzes')">📂 퀴즈 관리</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','history')">📊 풀이 기록</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','classes')">🏫 분반 관리</a>
+  <a class="t on" href="grade.html">📝 성적 입력</a>
+  <a class="t" href="test.html">✏️ 실전테스트</a>
+  <a class="t" href="clinic.html">🏥 클리닉</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','settings')">⚙️ 설정</a>
+</div>
 
 <div class="main">
   <!-- 분반 카드 뷰 -->
