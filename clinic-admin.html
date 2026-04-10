@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>META ENGLISH · 클리닉 관리</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #f6f5f0;
+    --card: #ffffff;
+    --primary: #1a5632;
+    --primary-light: #e8f0eb;
+    --accent: #d4a843;
+    --text: #1e1e1e;
+    --text-muted: #6b6b6b;
+    --border: #e0ddd5;
+    --danger: #c0392b;
+    --danger-light: #fdecea;
+    --arrive: #2563eb;
+    --arrive-light: #eff4ff;
+    --depart: #7c3aed;
+    --depart-light: #f3eeff;
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── Login ── */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100dvh; padding: 24px;
+  }
+  .login-box {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 40px 32px; width: 100%; max-width: 380px;
+    text-align: center;
+  }
+  .login-box h1 { font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+  .login-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
+  .login-box input {
+    width: 100%; padding: 14px 16px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-size: 15px; font-family: inherit;
+    outline: none; transition: border .2s;
+  }
+  .login-box input:focus { border-color: var(--primary); }
+  .login-box input + input { margin-top: 12px; }
+  .login-box button {
+    width: 100%; margin-top: 20px; padding: 14px;
+    background: var(--primary); color: #fff; border: none;
+    border-radius: 10px; font-size: 15px; font-weight: 600;
+    font-family: inherit; cursor: pointer; transition: opacity .2s;
+  }
+  .login-box button:active { opacity: .8; }
+  .login-error { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+
+  /* ── App Shell ── */
+  #app { display: none; }
+
+  .top-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--primary); color: #fff;
+    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .top-bar h2 { font-size: 17px; font-weight: 600; }
+  .top-bar .logout-btn {
+    background: rgba(255,255,255,.15); border: none; color: #fff;
+    padding: 6px 14px; border-radius: 8px; font-size: 13px;
+    font-family: inherit; cursor: pointer;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; background: var(--card);
+    border-bottom: 1.5px solid var(--border);
+    position: sticky; top: 53px; z-index: 40;
+  }
+  .tab-btn {
+    flex: 1; padding: 13px 0; border: none; background: none;
+    font-size: 14px; font-weight: 500; font-family: inherit;
+    color: var(--text-muted); cursor: pointer;
+    border-bottom: 2.5px solid transparent; transition: all .2s;
+  }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .tab-panel { display: none; padding: 16px 16px 100px; }
+  .tab-panel.active { display: block; }
+
+  /* ── Search ── */
+  .search-bar {
+    position: relative; margin-bottom: 14px;
+  }
+  .search-bar input {
+    width: 100%; padding: 12px 16px 12px 40px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-size: 14px; font-family: inherit; background: var(--card); outline: none;
+  }
+  .search-bar input:focus { border-color: var(--primary); }
+  .search-bar svg {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    width: 18px; height: 18px; color: var(--text-muted);
+  }
+
+  /* ── Student Cards ── */
+  .student-card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 16px; margin-bottom: 10px;
+  }
+  .student-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .student-name { font-size: 16px; font-weight: 600; }
+  .student-phone { font-size: 12px; color: var(--text-muted); }
+  .student-parent { font-size: 12px; color: var(--text-muted); }
+  .sms-row { display: flex; gap: 8px; }
+  .sms-btn {
+    flex: 1; padding: 11px 0; border: none; border-radius: 10px;
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: all .15s; display: flex;
+    align-items: center; justify-content: center; gap: 6px;
+  }
+  .sms-btn:active { transform: scale(.97); }
+  .sms-btn.arrive { background: var(--arrive-light); color: var(--arrive); }
+  .sms-btn.depart { background: var(--depart-light); color: var(--depart); }
+  .sms-btn.sending { opacity: .5; pointer-events: none; }
+  .sms-btn.sent { background: var(--primary-light); color: var(--primary); }
+  .sms-btn svg { width: 16px; height: 16px; }
+
+  /* ── Clinic Reservation ── */
+  .form-section { margin-bottom: 20px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+  .form-select, .form-input, .form-textarea {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-size: 14px; font-family: inherit;
+    background: var(--card); outline: none; transition: border .2s;
+  }
+  .form-select:focus, .form-input:focus, .form-textarea:focus { border-color: var(--primary); }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .submit-btn {
+    width: 100%; padding: 14px; background: var(--primary); color: #fff;
+    border: none; border-radius: 10px; font-size: 15px; font-weight: 600;
+    font-family: inherit; cursor: pointer;
+  }
+  .submit-btn:active { opacity: .85; }
+  .submit-btn:disabled { opacity: .5; pointer-events: none; }
+
+  /* ── Template Settings ── */
+  .tpl-card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 18px; margin-bottom: 12px;
+  }
+  .tpl-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .tpl-card .badge {
+    font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500;
+  }
+  .badge.arrive-badge { background: var(--arrive-light); color: var(--arrive); }
+  .badge.depart-badge { background: var(--depart-light); color: var(--depart); }
+  .tpl-card textarea {
+    width: 100%; padding: 12px; border: 1.5px solid var(--border);
+    border-radius: 10px; font-size: 13px; font-family: inherit;
+    resize: vertical; min-height: 70px; outline: none;
+  }
+  .tpl-card textarea:focus { border-color: var(--primary); }
+  .tpl-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+  .tpl-save {
+    margin-top: 10px; padding: 10px 20px; background: var(--primary); color: #fff;
+    border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+    font-family: inherit; cursor: pointer;
+  }
+  .tpl-save:active { opacity: .85; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: #333; color: #fff; padding: 12px 24px; border-radius: 10px;
+    font-size: 14px; font-weight: 500; z-index: 999;
+    opacity: 0; transition: all .3s ease;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--danger); }
+
+  /* ── Clinic List ── */
+  .clinic-item {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 14px 16px; margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .clinic-item .info { font-size: 14px; }
+  .clinic-item .info span { color: var(--text-muted); font-size: 12px; }
+  .clinic-item .del-btn {
+    background: var(--danger-light); color: var(--danger); border: none;
+    padding: 6px 12px; border-radius: 8px; font-size: 12px;
+    font-family: inherit; cursor: pointer;
+  }
+
+  .empty-msg { text-align: center; color: var(--text-muted); padding: 40px 0; font-size: 14px; }
+
+  @media (min-width: 600px) {
+    .tab-panel { max-width: 540px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>META ENGLISH</h1>
+    <p>클리닉 관리자 로그인</p>
+    <input id="login-id" type="text" placeholder="아이디">
+    <input id="login-pw" type="password" placeholder="비밀번호">
+    <button onclick="doLogin()">로그인</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app">
+  <div class="top-bar">
+    <h2>클리닉 관리</h2>
+    <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="students">학생 명단</button>
+    <button class="tab-btn" data-tab="reservations">클리닉 예약</button>
+    <button class="tab-btn" data-tab="templates">메시지 설정</button>
+  </div>
+
+  <!-- ── Tab 1: Students ── -->
+  <div id="tab-students" class="tab-panel active">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="search-input" type="text" placeholder="학생 이름 검색..." oninput="filterStudents()">
+    </div>
+    <div id="student-list"></div>
+  </div>
+
+  <!-- ── Tab 2: Clinic Reservations ── -->
+  <div id="tab-reservations" class="tab-panel">
+    <div class="form-section">
+      <div class="form-label">학생 선택</div>
+      <select id="res-student" class="form-select"><option value="">학생을 선택하세요</option></select>
+    </div>
+    <div class="form-section">
+      <div class="form-label">클리닉 장소</div>
+      <select id="res-location" class="form-select"><option value="">장소를 선택하세요</option></select>
+    </div>
+    <div class="form-section">
+      <div class="form-label">날짜</div>
+      <input id="res-date" type="date" class="form-input">
+    </div>
+    <div class="form-section">
+      <div class="form-label">시간</div>
+      <input id="res-time" type="time" class="form-input">
+    </div>
+    <div class="form-section">
+      <div class="form-label">메모 (선택)</div>
+      <textarea id="res-note" class="form-textarea" placeholder="예: 단어 시험 재시험"></textarea>
+    </div>
+    <button class="submit-btn" onclick="createReservation()">예약 등록</button>
+
+    <div style="margin-top:24px;">
+      <div class="form-label" style="margin-bottom:10px;">최근 예약</div>
+      <div id="reservation-list"></div>
+    </div>
+  </div>
+
+  <!-- ── Tab 3: Templates ── -->
+  <div id="tab-templates" class="tab-panel">
+    <div class="tpl-card">
+      <h3><span class="badge arrive-badge">등원</span> 등원 메시지</h3>
+      <textarea id="tpl-arrive" placeholder="등원 메시지 템플릿"></textarea>
+      <div class="tpl-hint">사용 가능 변수: {이름}, {시간}</div>
+      <button class="tpl-save" onclick="saveTemplates()">저장</button>
+    </div>
+    <div class="tpl-card">
+      <h3><span class="badge depart-badge">하원</span> 하원 메시지</h3>
+      <textarea id="tpl-depart" placeholder="하원 메시지 템플릿"></textarea>
+      <div class="tpl-hint">사용 가능 변수: {이름}, {시간}</div>
+      <button class="tpl-save" onclick="saveTemplates()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE1NTQxNTcsImV4cCI6MjA2NzEzMDE1N30.wHMqfMOHfNwGHnxSJvCUbrexiGJMaFsWxuS9VBReeKY';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let allStudents = [];
+let currentAdmin = null;
+
+// ── Default templates ──
+const DEFAULT_ARRIVE = '안녕하세요, META ENGLISH입니다.\n{이름} 학생이 {시간}에 등원했습니다.';
+const DEFAULT_DEPART = '안녕하세요, META ENGLISH입니다.\n{이름} 학생이 {시간}에 하원합니다. 안전 귀가 바랍니다.';
+
+// ── Login ──
+async function doLogin() {
+  const id = document.getElementById('login-id').value.trim();
+  const pw = document.getElementById('login-pw').value.trim();
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  if (!id || !pw) { errEl.textContent = '아이디와 비밀번호를 입력해주세요.'; errEl.style.display = 'block'; return; }
+
+  // Check members table for clinic_admin role
+  const { data, error } = await sb.from('members').select('*')
+    .eq('login_id', id).eq('password', pw).eq('role', 'clinic_admin').single();
+
+  if (error || !data) {
+    errEl.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  currentAdmin = data;
+  localStorage.setItem('clinic_admin', JSON.stringify(data));
+  showApp();
+}
+
+function doLogout() {
+  localStorage.removeItem('clinic_admin');
+  currentAdmin = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ── Auto-login ──
+(function checkSession() {
+  const saved = localStorage.getItem('clinic_admin');
+  if (saved) {
+    currentAdmin = JSON.parse(saved);
+    showApp();
+  }
+})();
+
+async function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadTemplates();
+  await loadStudents();
+  await loadLocations();
+  await loadReservations();
+
+  // Set default date to today
+  document.getElementById('res-date').value = new Date().toISOString().slice(0, 10);
+}
+
+// ── Students ──
+async function loadStudents() {
+  const { data } = await sb.from('members').select('*').eq('role', 'student').order('name');
+  allStudents = data || [];
+  renderStudents(allStudents);
+
+  // Populate reservation dropdown
+  const sel = document.getElementById('res-student');
+  sel.innerHTML = '<option value="">학생을 선택하세요</option>';
+  allStudents.forEach(s => {
+    sel.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+  });
+}
+
+function filterStudents() {
+  const q = document.getElementById('search-input').value.trim().toLowerCase();
+  const filtered = q ? allStudents.filter(s => s.name.toLowerCase().includes(q)) : allStudents;
+  renderStudents(filtered);
+}
+
+function renderStudents(list) {
+  const el = document.getElementById('student-list');
+  if (!list.length) { el.innerHTML = '<div class="empty-msg">학생이 없습니다</div>'; return; }
+
+  el.innerHTML = list.map(s => `
+    <div class="student-card">
+      <div class="student-top">
+        <div>
+          <div class="student-name">${esc(s.name)}</div>
+          <div class="student-parent">${s.parent_phone ? '보호자 ' + maskPhone(s.parent_phone) : ''}</div>
+        </div>
+      </div>
+      <div class="sms-row">
+        <button class="sms-btn arrive" id="arr-${s.id}" onclick="sendSMS('${s.id}','arrive')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M12 3v18"/></svg>
+          등원
+        </button>
+        <button class="sms-btn depart" id="dep-${s.id}" onclick="sendSMS('${s.id}','depart')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          하원
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── SMS ──
+async function sendSMS(studentId, type) {
+  const student = allStudents.find(s => s.id === studentId);
+  if (!student) return;
+
+  const phone = student.parent_phone || student.phone;
+  if (!phone) { toast('전화번호가 없습니다', true); return; }
+
+  const btnId = type === 'arrive' ? `arr-${studentId}` : `dep-${studentId}`;
+  const btn = document.getElementById(btnId);
+  btn.classList.add('sending');
+
+  const now = new Date();
+  const timeStr = `${now.getHours()}시 ${String(now.getMinutes()).padStart(2,'0')}분`;
+
+  const tplKey = type === 'arrive' ? 'tpl_arrive' : 'tpl_depart';
+  const tpl = localStorage.getItem(tplKey) || (type === 'arrive' ? DEFAULT_ARRIVE : DEFAULT_DEPART);
+  const message = tpl.replace(/{이름}/g, student.name).replace(/{시간}/g, timeStr);
+
+  try {
+    const res = await sb.functions.invoke('send-sms', {
+      body: { to: phone, text: message }
+    });
+
+    if (res.error) throw res.error;
+    btn.classList.remove('sending');
+    btn.classList.add('sent');
+    btn.innerHTML = (type === 'arrive' ? '등원' : '하원') + ' ✓';
+    toast(`${student.name} ${type === 'arrive' ? '등원' : '하원'} 문자 발송 완료`);
+
+    // Reset after 3s
+    setTimeout(() => {
+      btn.classList.remove('sent');
+      btn.innerHTML = type === 'arrive'
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M12 3v18"/></svg> 등원'
+        : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> 하원';
+    }, 3000);
+  } catch(e) {
+    btn.classList.remove('sending');
+    toast('문자 발송 실패: ' + (e.message || e), true);
+  }
+}
+
+// ── Clinic Locations ──
+async function loadLocations() {
+  const { data } = await sb.from('clinic_locations').select('*').order('name');
+  const sel = document.getElementById('res-location');
+  sel.innerHTML = '<option value="">장소를 선택하세요</option>';
+  (data || []).forEach(l => {
+    sel.innerHTML += `<option value="${l.id}">${esc(l.name)}</option>`;
+  });
+}
+
+// ── Reservations ──
+async function createReservation() {
+  const studentId = document.getElementById('res-student').value;
+  const locationId = document.getElementById('res-location').value;
+  const date = document.getElementById('res-date').value;
+  const time = document.getElementById('res-time').value;
+  const note = document.getElementById('res-note').value.trim();
+
+  if (!studentId || !date || !time) { toast('학생, 날짜, 시간은 필수입니다', true); return; }
+
+  const payload = {
+    member_id: studentId,
+    scheduled_date: date,
+    scheduled_time: time,
+    note: note || null,
+    status: 'scheduled',
+    created_by: currentAdmin?.id || null
+  };
+  if (locationId) payload.location_id = locationId;
+
+  const { error } = await sb.from('clinics').insert(payload);
+  if (error) { toast('등록 실패: ' + error.message, true); return; }
+
+  toast('클리닉 예약이 등록되었습니다');
+  document.getElementById('res-note').value = '';
+  await loadReservations();
+}
+
+async function loadReservations() {
+  const today = new Date().toISOString().slice(0, 10);
+  const { data } = await sb.from('clinics')
+    .select('*, members(name), clinic_locations(name)')
+    .gte('scheduled_date', today)
+    .order('scheduled_date').order('scheduled_time')
+    .limit(30);
+
+  const el = document.getElementById('reservation-list');
+  if (!data || !data.length) { el.innerHTML = '<div class="empty-msg">예약이 없습니다</div>'; return; }
+
+  el.innerHTML = data.map(r => `
+    <div class="clinic-item">
+      <div class="info">
+        <strong>${esc(r.members?.name || '?')}</strong>
+        &nbsp;${r.scheduled_date} ${r.scheduled_time?.slice(0,5) || ''}
+        <br><span>${r.clinic_locations?.name || ''} ${r.note ? '· ' + esc(r.note) : ''}</span>
+      </div>
+      <button class="del-btn" onclick="deleteRes('${r.id}')">취소</button>
+    </div>
+  `).join('');
+}
+
+async function deleteRes(id) {
+  if (!confirm('이 예약을 취소할까요?')) return;
+  await sb.from('clinics').delete().eq('id', id);
+  toast('예약이 취소되었습니다');
+  await loadReservations();
+}
+
+// ── Templates ──
+function loadTemplates() {
+  document.getElementById('tpl-arrive').value = localStorage.getItem('tpl_arrive') || DEFAULT_ARRIVE;
+  document.getElementById('tpl-depart').value = localStorage.getItem('tpl_depart') || DEFAULT_DEPART;
+}
+
+function saveTemplates() {
+  localStorage.setItem('tpl_arrive', document.getElementById('tpl-arrive').value);
+  localStorage.setItem('tpl_depart', document.getElementById('tpl-depart').value);
+  toast('메시지 템플릿이 저장되었습니다');
+}
+
+// ── Tabs ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Helpers ──
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function maskPhone(p) { return p.length > 7 ? p.slice(0,3) + '-****-' + p.slice(-4) : p; }
+
+function toast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (isError ? ' error' : '');
+  setTimeout(() => el.classList.add('show'), 10);
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
