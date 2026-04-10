@@ -67,6 +67,8 @@ body::after{
 .grade-value.pass{color:var(--green);background:var(--green-bg);border:1px solid var(--green-border)}
 .grade-value.fail{color:var(--red);background:var(--red-bg);border:1px solid var(--red-border)}
 .grade-value.score{color:var(--accent);background:var(--accent-light);border:1px solid #c7d2fe}
+.grade-value.clickable{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+.grade-value.clickable:hover{opacity:.8;transform:scale(1.05);transition:all .15s}
 .grade-value.none{color:var(--muted);background:#f8fafc}
 .memo-section{
   margin:0 24px 20px;padding:16px 18px;
@@ -176,6 +178,14 @@ async function loadReport(){
     const name = grade.member_name||'학생';
     const date = new Date(session.created_at).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
 
+    // 연결된 시험 로드
+    const testRes = await fetch(`${SUPA_URL}/rest/v1/test_sets?grade_session_id=eq.${sessionId}&select=id,grade_column`,{headers:HDR});
+    const testSets = await testRes.json();
+    const testMap = {};
+    testSets.forEach(t=>{ if(t.grade_column) testMap[t.grade_column]=t.id; });
+
+    const fromUrl = encodeURIComponent(window.location.href);
+
     let html = `<div class="report-card">
       <div class="report-header">
         <div class="report-session">${session.title}</div>
@@ -188,10 +198,19 @@ async function loadReport(){
       const val = scores[col]||'-';
       const icon = ICONS[col]||ICONS['default'];
       const cls = getValueClass(val);
-      html += `<div class="grade-item">
-        <div class="grade-label"><div class="grade-icon">${icon}</div>${col}</div>
-        <div class="grade-value ${cls}">${val||'-'}</div>
-      </div>`;
+      const testId = testMap[col];
+      if(testId && val && val!=='-'){
+        html += `<a href="test-detail.html?test=${testId}&member=${memberId}&from=${fromUrl}" style="text-decoration:none;color:inherit;display:block">
+          <div class="grade-item">
+            <div class="grade-label"><div class="grade-icon">${icon}</div>${col}</div>
+            <div class="grade-value ${cls} clickable">${val} →</div>
+          </div></a>`;
+      } else {
+        html += `<div class="grade-item">
+          <div class="grade-label"><div class="grade-icon">${icon}</div>${col}</div>
+          <div class="grade-value ${cls}">${val||'-'}</div>
+        </div>`;
+      }
     });
 
     html += `</div>`;
