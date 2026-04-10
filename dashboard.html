@@ -249,15 +249,27 @@ async function loadGrades(){
   const el=document.getElementById('grade-list');
   el.innerHTML='<div class="spinner">불러오는 중...</div>';
   try{
-    const res=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${user.id}&select=*,grade_sessions(id,title,created_at)&order=created_at.desc`,{headers:HDR});
-    const grades=await res.json();
-    if(!grades.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">아직 등록된 성적표가 없어요</div>';return}
+    // 1) 이 학생의 성적 조회
+    const gRes=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${user.id}&select=session_id,scores&order=session_id.desc`,{headers:HDR});
+    const grades=await gRes.json();
+    if(!Array.isArray(grades)||!grades.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">아직 등록된 성적표가 없어요</div>';return}
+
+    // 2) 관련 세션 정보 조회
+    const sessionIds=[...new Set(grades.map(g=>g.session_id).filter(Boolean))];
+    let sessions=[];
+    if(sessionIds.length){
+      const sRes=await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=in.(${sessionIds.join(',')})&select=id,title,created_at`,{headers:HDR});
+      sessions=await sRes.json();
+    }
+    const sessionMap={};
+    if(Array.isArray(sessions)) sessions.forEach(s=>{sessionMap[s.id]=s});
+
     el.innerHTML=grades.map(g=>{
-      const s=g.grade_sessions;
+      const s=sessionMap[g.session_id];
       if(!s) return '';
       const date=new Date(s.created_at).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
-      const scores=typeof g.scores==='string'?JSON.parse(g.scores):g.scores;
-      const chips=Object.entries(scores||{}).map(([k,v])=>{
+      const scores=typeof g.scores==='string'?JSON.parse(g.scores):(g.scores||{});
+      const chips=Object.entries(scores).map(([k,v])=>{
         if(!v||v==='-') return '';
         const cls=(v==='통과'||v==='완료'||Number(v)>=80)?'pass':'fail';
         return `<span class="gs-chip ${cls}">${k}: ${v}</span>`;
@@ -267,8 +279,11 @@ async function loadGrades(){
         <div class="gs-date">${date}</div>
         <div class="gs-scores">${chips}</div>
       </div>`;
-    }).join('');
-  }catch(e){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">불러오기 실패</div>';}
+    }).join('')||'<div style="text-align:center;color:var(--muted);padding:40px">아직 등록된 성적표가 없어요</div>';
+  }catch(e){
+    console.log('성적표 로드 실패',e);
+    el.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">불러오기 실패</div>';
+  }
 }
 
 // ── Badge definitions (same as quiz HTML) ──

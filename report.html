@@ -249,7 +249,7 @@ async function loadReport(){
   // session 없으면 최신 성적 자동 조회
   if(!sessionId){
     try{
-      const latestRes = await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id&order=created_at.desc&limit=1`,{headers:HDR});
+      const latestRes = await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id&order=session_id.desc&limit=1`,{headers:HDR});
       const latest = await latestRes.json();
       if(Array.isArray(latest)&&latest.length&&latest[0].session_id){
         sessionId = String(latest[0].session_id);
@@ -425,7 +425,7 @@ async function sendChat(){
 async function loadPastReports(){
   if(!memberId) return;
   try{
-    const gRes=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id&order=created_at.desc`,{headers:HDR});
+    const gRes=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id&order=session_id.desc`,{headers:HDR});
     const grades=await gRes.json();
     if(!Array.isArray(grades)||grades.length<=1) return;
 
