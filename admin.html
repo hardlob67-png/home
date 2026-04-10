@@ -139,6 +139,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <button class="tab-btn active" data-tab="members" onclick="switchTab('members')">👥 회원 명단</button>
   <button class="tab-btn" data-tab="quizzes" onclick="switchTab('quizzes')">📂 퀴즈 관리</button>
   <button class="tab-btn" data-tab="history" onclick="switchTab('history')">📊 풀이 기록</button>
+  <button class="tab-btn" data-tab="classes" onclick="switchTab('classes')">🏫 분반 관리</button>
   <button class="tab-btn" style="background:rgba(34,197,94,.08);color:#6ee7a0;border-color:rgba(34,197,94,.3)" onclick="location.href='grade.html'">📝 성적 입력</button>
   <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">⚙️ 설정</button>
 </div>
@@ -230,6 +231,62 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div id="history-list"><div class="empty-state">탭을 클릭하면 기록을 불러옵니다</div></div>
   </div>
 
+  <!-- 분반 관리 탭 -->
+  <div class="tab-panel" id="tab-classes">
+    <div class="section-head">
+      <h2>분반 관리</h2>
+      <p>반을 만들고 학생을 배정하세요. 엑셀로 일괄 등록 시 새 학생은 자동으로 회원 등록됩니다.</p>
+    </div>
+
+    <div class="section-title">반 만들기</div>
+    <div class="add-row">
+      <input type="text" id="new-class-name" placeholder="반 이름 (예: 중등A)" autocomplete="off" onkeydown="if(event.key==='Enter')addClass()">
+      <button class="btn-add" onclick="addClass()">+ 반 추가</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">등록된 반</div>
+    <div id="class-list"><div class="spinner">불러오는 중...</div></div>
+
+    <div class="divider"></div>
+
+    <!-- 반 상세 (선택 시 표시) -->
+    <div id="class-detail" style="display:none">
+      <div class="section-title"><span id="class-detail-name"></span></div>
+
+      <!-- 엑셀 업로드 -->
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">엑셀 파일 1열: 이름 &nbsp;|&nbsp; 2열: 핸드폰 번호 &nbsp;(헤더 행 자동 건너뜀)<br>이미 등록된 번호는 기존 학생을 반에 추가하고, 새 번호는 회원 등록 후 추가합니다.</p>
+
+      <div class="excel-drop" id="class-excel-drop">
+        <input type="file" id="class-excel-input" accept=".xlsx,.xls" onchange="handleClassExcel(this.files[0])">
+        <div class="excel-drop-icon">📊</div>
+        <div class="excel-drop-title">엑셀 파일을 여기에 드래그하거나 클릭</div>
+        <div class="excel-drop-sub">.xlsx / .xls 파일</div>
+      </div>
+
+      <div class="excel-preview" id="class-excel-preview">
+        <div class="excel-preview-title" id="class-excel-preview-title"></div>
+        <div class="excel-preview-list" id="class-excel-preview-list"></div>
+      </div>
+      <button class="btn-excel-upload" id="btn-class-excel-upload" onclick="uploadClassExcel()" disabled>학생 일괄 등록</button>
+
+      <div style="margin-top:16px"></div>
+
+      <!-- 개별 추가 -->
+      <div class="add-row" style="margin-top:12px">
+        <input type="text" id="class-add-name" placeholder="이름" autocomplete="off" style="flex:1;min-width:120px">
+        <input type="tel" id="class-add-phone" placeholder="01012345678" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')addStudentToClass()" style="flex:1;min-width:140px">
+        <button class="btn-add" onclick="addStudentToClass()">+ 추가</button>
+      </div>
+
+      <div style="margin-top:20px">
+        <div class="member-count" id="class-member-count"></div>
+        <div id="class-member-list"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- 설정 탭 -->
   <div class="tab-panel" id="tab-settings">
     <div class="section-head">
@@ -268,7 +325,7 @@ if(!user) location.href='index.html';
 if(user.role!=='admin'){ alert('관리자만 접근 가능합니다'); location.href='dashboard.html' }
 
 function switchTab(t){
-  const tabs=['members','quizzes','history','settings'];
+  const tabs=['members','quizzes','history','classes','settings'];
   document.querySelectorAll('.tab-btn').forEach(b=>{
     const tabName = b.getAttribute('data-tab');
     if(tabName) b.classList.toggle('active', tabName===t);
@@ -278,6 +335,7 @@ function switchTab(t){
     if(el) el.classList.toggle('active',tab===t);
   });
   if(t==='history') loadHistory();
+  if(t==='classes') loadClasses();
 }
 
 // ===== 회원 관리 =====
@@ -625,6 +683,219 @@ async function changeAdminPhone(){
 
 loadMembers();
 loadQuizzes();
+loadClasses();
+
+// ===== 분반 관리 =====
+let selectedClassId = null;
+let classExcelData = [];
+
+async function loadClasses(){
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/classes?select=*&order=created_at.asc`,{headers:HDR});
+    const classes = await res.json();
+    const list = document.getElementById('class-list');
+    if(!classes.length){ list.innerHTML='<div class="empty-state">아직 등록된 반이 없어요</div>'; return }
+
+    // 각 반의 학생 수 가져오기
+    const countRes = await fetch(`${SUPA_URL}/rest/v1/class_members?select=class_id`,{headers:HDR});
+    const allCm = await countRes.json();
+    const countMap = {};
+    allCm.forEach(cm=>{ countMap[cm.class_id] = (countMap[cm.class_id]||0)+1; });
+
+    list.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:10px">${classes.map(c=>{
+      const cnt = countMap[c.id]||0;
+      const isSelected = c.id === selectedClassId;
+      return `<div style="
+        background:${isSelected?'rgba(108,99,255,.15)':'var(--surface)'};
+        border:1px solid ${isSelected?'var(--accent)':'var(--border)'};
+        border-radius:10px;padding:14px 20px;cursor:pointer;transition:all .2s;min-width:120px;
+      " onclick="selectClass('${c.id}','${c.name.replace(/'/g,"\\'")}')">
+        <div style="font-size:15px;font-weight:700;margin-bottom:4px">${c.name}</div>
+        <div style="font-size:12px;color:var(--muted)">${cnt}명</div>
+        <button class="btn-del-sm" style="margin-top:8px;font-size:11px" onclick="event.stopPropagation();deleteClass('${c.id}','${c.name.replace(/'/g,"\\'")}')">삭제</button>
+      </div>`;
+    }).join('')}</div>`;
+  }catch(e){ document.getElementById('class-list').innerHTML='<div class="empty-state">불러오기 실패</div>' }
+}
+
+async function addClass(){
+  const name = document.getElementById('new-class-name').value.trim();
+  if(!name){ showToast('반 이름을 입력해주세요','err'); return }
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/classes`,{method:'POST',headers:HDR,body:JSON.stringify({name})});
+    if(res.status===409){ showToast('이미 같은 이름의 반이 있어요','err'); return }
+    if(!res.ok){ showToast('생성 실패','err'); return }
+    document.getElementById('new-class-name').value='';
+    showToast(`${name} 반 생성 완료 ✓`,'ok');
+    loadClasses();
+  }catch(e){ showToast('서버 오류','err') }
+}
+
+async function deleteClass(id, name){
+  if(!confirm(`"${name}" 반을 삭제할까요? (학생은 삭제되지 않습니다)`)) return;
+  await fetch(`${SUPA_URL}/rest/v1/classes?id=eq.${id}`,{method:'DELETE',headers:HDR});
+  if(selectedClassId===id){ selectedClassId=null; document.getElementById('class-detail').style.display='none'; }
+  showToast('삭제했어요','ok');
+  loadClasses();
+}
+
+async function selectClass(id, name){
+  selectedClassId = id;
+  document.getElementById('class-detail').style.display='block';
+  document.getElementById('class-detail-name').textContent = name+' 학생 관리';
+  // 엑셀 초기화
+  classExcelData=[];
+  document.getElementById('class-excel-preview').style.display='none';
+  document.getElementById('class-excel-input').value='';
+  document.getElementById('btn-class-excel-upload').disabled=true;
+  loadClasses(); // 선택 상태 갱신
+  loadClassMembers();
+}
+
+async function loadClassMembers(){
+  if(!selectedClassId) return;
+  const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${selectedClassId}&select=id,member_id,members(id,name,phone)`,{headers:HDR});
+  const data = await res.json();
+  document.getElementById('class-member-count').innerHTML = `<span>${data.length}</span>명 등록됨`;
+  if(!data.length){
+    document.getElementById('class-member-list').innerHTML='<div class="empty-state" style="padding:20px">아직 학생이 없어요. 엑셀이나 개별 추가로 등록하세요.</div>';
+    return;
+  }
+  document.getElementById('class-member-list').innerHTML = `
+    <table class="member-table">
+      <thead><tr><th>#</th><th>이름</th><th>핸드폰 번호</th><th></th></tr></thead>
+      <tbody>${data.map((cm,i)=>{
+        const m = cm.members;
+        return `<tr>
+          <td style="color:var(--muted)">${i+1}</td>
+          <td style="font-weight:500">${m?m.name:'(삭제됨)'}</td>
+          <td style="font-family:monospace;font-size:13px">${m?m.phone:'-'}</td>
+          <td><button class="btn-del-sm" onclick="removeFromClass('${cm.id}')">제외</button></td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>`;
+}
+
+async function removeFromClass(cmId){
+  await fetch(`${SUPA_URL}/rest/v1/class_members?id=eq.${cmId}`,{method:'DELETE',headers:HDR});
+  showToast('제외했어요','ok');
+  loadClassMembers();
+  loadClasses();
+}
+
+// 개별 추가
+async function addStudentToClass(){
+  if(!selectedClassId){ showToast('반을 먼저 선택해주세요','err'); return }
+  const name = document.getElementById('class-add-name').value.trim();
+  const phone = document.getElementById('class-add-phone').value.trim().replace(/-/g,'');
+  if(!name||!phone){ showToast('이름과 번호를 모두 입력해주세요','err'); return }
+
+  // 기존 회원 찾기
+  let memberId = await findOrCreateMember(name, phone);
+  if(!memberId){ showToast('등록 실패','err'); return }
+
+  // 반에 추가
+  const added = await addMemberToClass(memberId);
+  if(added){
+    document.getElementById('class-add-name').value='';
+    document.getElementById('class-add-phone').value='';
+    showToast(`${name} 추가 완료 ✓`,'ok');
+    loadClassMembers();
+    loadClasses();
+    loadMembers();
+  }
+}
+
+async function findOrCreateMember(name, phone){
+  // 전화번호로 기존 회원 검색
+  const res = await fetch(`${SUPA_URL}/rest/v1/members?phone=eq.${encodeURIComponent(phone)}&select=id,name`,{headers:HDR});
+  const existing = await res.json();
+  if(existing.length) return existing[0].id;
+
+  // 새 회원 등록
+  const createRes = await fetch(`${SUPA_URL}/rest/v1/members`,{
+    method:'POST', headers:{...HDR,'Prefer':'return=representation'},
+    body:JSON.stringify({name, phone, role:'user'})
+  });
+  if(!createRes.ok) return null;
+  const created = await createRes.json();
+  return created.length ? created[0].id : null;
+}
+
+async function addMemberToClass(memberId){
+  const res = await fetch(`${SUPA_URL}/rest/v1/class_members`,{
+    method:'POST', headers:{...HDR,'Prefer':'return=minimal'},
+    body:JSON.stringify({class_id:selectedClassId, member_id:memberId})
+  });
+  if(res.status===409){ showToast('이미 이 반에 등록된 학생이에요','err'); return false }
+  if(!res.ok){ showToast('추가 실패','err'); return false }
+  return true;
+}
+
+// 엑셀 일괄 등록
+const classExcelDrop = document.getElementById('class-excel-drop');
+classExcelDrop.addEventListener('dragover',e=>{e.preventDefault();classExcelDrop.classList.add('drag')});
+classExcelDrop.addEventListener('dragleave',()=>classExcelDrop.classList.remove('drag'));
+classExcelDrop.addEventListener('drop',e=>{e.preventDefault();classExcelDrop.classList.remove('drag');handleClassExcel(e.dataTransfer.files[0])});
+
+function handleClassExcel(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const wb = XLSX.read(e.target.result,{type:'binary'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws,{header:1});
+    const firstRow = rows[0];
+    const hasHeader = firstRow && (String(firstRow[0]||'').match(/이름|name|성명/i) || String(firstRow[1]||'').match(/전화|phone|번호/i));
+    const dataRows = hasHeader ? rows.slice(1) : rows;
+    classExcelData = dataRows.map(r=>({
+      name: String(r[0]||'').trim(),
+      phone: String(r[1]||'').trim().replace(/-/g,'').replace(/\s/g,'')
+    })).filter(r=>r.name && r.phone && r.phone.length >= 10);
+
+    document.getElementById('class-excel-preview-title').textContent=`${file.name} — ${classExcelData.length}명 확인됨`;
+    document.getElementById('class-excel-preview-list').innerHTML = classExcelData.slice(0,10).map(r=>`${r.name} · ${r.phone}`).join('<br>') + (classExcelData.length>10?`<br>... 외 ${classExcelData.length-10}명`:'');
+    document.getElementById('class-excel-preview').style.display='block';
+    document.getElementById('btn-class-excel-upload').disabled = classExcelData.length===0;
+  };
+  reader.readAsBinaryString(file);
+}
+
+async function uploadClassExcel(){
+  if(!classExcelData.length||!selectedClassId) return;
+  const btn = document.getElementById('btn-class-excel-upload');
+  btn.disabled=true;
+  let added=0, existed=0, failed=0;
+
+  for(const r of classExcelData){
+    btn.textContent=`등록 중... (${added+existed+failed+1}/${classExcelData.length})`;
+    try{
+      const memberId = await findOrCreateMember(r.name, r.phone);
+      if(!memberId){ failed++; continue }
+      const res = await fetch(`${SUPA_URL}/rest/v1/class_members`,{
+        method:'POST', headers:{...HDR,'Prefer':'return=minimal'},
+        body:JSON.stringify({class_id:selectedClassId, member_id:memberId})
+      });
+      if(res.status===409) existed++;
+      else if(res.ok) added++;
+      else failed++;
+    }catch(e){ failed++ }
+  }
+
+  let msg = `${added}명 등록 완료`;
+  if(existed) msg += ` (${existed}명 이미 등록됨)`;
+  if(failed) msg += ` (${failed}명 실패)`;
+  showToast(msg+' ✓','ok');
+
+  classExcelData=[];
+  document.getElementById('class-excel-preview').style.display='none';
+  document.getElementById('class-excel-input').value='';
+  btn.disabled=false; btn.textContent='학생 일괄 등록';
+  loadClassMembers();
+  loadClasses();
+  loadMembers();
+}
 </script>
 </body>
 </html>
