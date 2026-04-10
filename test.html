@@ -362,12 +362,16 @@ function showVersionDetail(){
       </div>
     </div>`;
   } else {
+    // 기존 카테고리 수집 (자동완성용)
+    const usedCats = [...new Set(questions.map(q=>q.category).filter(Boolean))];
+
     // 문항 편집 그리드
-    html += `<div style="overflow-x:auto">
+    html += `<datalist id="cat-list">${usedCats.map(c=>`<option value="${c}">`).join('')}</datalist>
+    <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;min-width:600px">
         <thead><tr>
           <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:40px">#</th>
-          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:80px">유형</th>
+          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:70px">유형</th>
           <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:90px">카테고리</th>
           <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:60px">배점</th>
           <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border)">정답</th>
@@ -375,23 +379,19 @@ function showVersionDetail(){
         </tr></thead>
         <tbody>${questions.map((q,i)=>`<tr>
           <td style="text-align:center;padding:4px;font-size:12px;font-weight:700;color:var(--muted)">${i+1}</td>
-          <td style="padding:4px">
-            <select data-qi="${i}" data-field="type" onchange="updateQField(${i},'type',this.value);showVersionDetail()"
-              style="width:100%;padding:5px 4px;font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none">
-              <option value="mc" ${q.type==='mc'?'selected':''}>객관식</option>
-              <option value="sa" ${q.type!=='mc'?'selected':''}>주관식</option>
-            </select>
+          <td style="padding:4px;text-align:center">
+            <button onclick="toggleQType(${i})" style="
+              width:100%;padding:5px 4px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid;
+              font-family:'Noto Sans KR',sans-serif;transition:all .15s;
+              ${q.type==='mc'
+                ?'background:rgba(79,70,229,.12);color:#6c63ff;border-color:rgba(79,70,229,.3)'
+                :'background:rgba(240,192,64,.12);color:#d97706;border-color:rgba(240,192,64,.3)'}
+            ">${q.type==='mc'?'객관식':'주관식'}</button>
           </td>
           <td style="padding:4px">
-            <select data-qi="${i}" data-field="category" onchange="updateQField(${i},'category',this.value)"
-              style="width:100%;padding:5px 4px;font-size:11px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text);outline:none">
-              <option value="" ${!q.category?'selected':''}>-</option>
-              <option value="어휘" ${q.category==='어휘'?'selected':''}>어휘</option>
-              <option value="문법" ${q.category==='문법'?'selected':''}>문법</option>
-              <option value="독해" ${q.category==='독해'?'selected':''}>독해</option>
-              <option value="듣기" ${q.category==='듣기'?'selected':''}>듣기</option>
-              <option value="쓰기" ${q.category==='쓰기'?'selected':''}>쓰기</option>
-            </select>
+            <input type="text" list="cat-list" value="${q.category||''}" placeholder="-"
+              style="width:100%;text-align:center;padding:5px 2px;font-size:11px"
+              data-qi="${i}" data-field="category" onchange="updateQField(${i},'category',this.value)">
           </td>
           <td style="padding:4px">
             <input type="number" value="${q.points}" min="1" style="width:100%;text-align:center;padding:5px 2px;font-size:12px"
