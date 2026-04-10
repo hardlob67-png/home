@@ -255,7 +255,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 
 <!-- 클리닉 빠른 예약 팝업 -->
-<div class="name-popup" id="clinic-popup" style="min-width:220px;padding:14px" onclick="event.stopPropagation()">
+<div class="name-popup" id="clinic-popup" style="min-width:260px;padding:14px" onclick="event.stopPropagation()">
   <div style="font-size:13px;font-weight:700;margin-bottom:10px" id="clinic-popup-name"></div>
   <div style="display:flex;flex-direction:column;gap:8px">
     <input type="date" id="clinic-popup-date" style="padding:8px;font-size:13px;border-radius:8px">
@@ -265,7 +265,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <button class="time-chip active" onclick="setClinicTime(this,'17:00')">17:00</button>
       <button class="time-chip" onclick="setClinicTime(this,'18:00')">18:00</button>
       <button class="time-chip" onclick="setClinicTime(this,'19:00')">19:00</button>
+      <button class="time-chip" onclick="setClinicTime(this,'20:00')">20:00</button>
+      <button class="time-chip" onclick="setClinicTime(this,'21:00')">21:00</button>
     </div>
+    <select id="clinic-popup-location" style="padding:8px;font-size:12px;border-radius:8px">
+      <option value="">장소 선택 (선택사항)</option>
+    </select>
     <input type="text" id="clinic-popup-memo" placeholder="메모 (선택)" style="padding:8px;font-size:12px;border-radius:8px">
     <button class="btn-primary" onclick="saveClinicPopup()" style="padding:8px;font-size:13px">예약 등록</button>
   </div>
@@ -657,8 +662,20 @@ function popupSendSms(){
   },200);
 }
 
-function popupClinic(){
+let clinicLocations = [];
+
+async function popupClinic(){
   document.getElementById('name-popup').classList.remove('show');
+
+  // 장소 로드
+  if(!clinicLocations.length){
+    const res = await fetch(`${SUPA_URL}/rest/v1/clinic_locations?select=*&order=created_at`,{headers:HDR});
+    clinicLocations = await res.json();
+  }
+  const locSel = document.getElementById('clinic-popup-location');
+  locSel.innerHTML = '<option value="">장소 선택 (선택사항)</option>' +
+    clinicLocations.map(l=>`<option value="${l.id}">${l.name}</option>`).join('');
+
   const popup = document.getElementById('clinic-popup');
   document.getElementById('clinic-popup-name').textContent = '🏥 '+popupMemberName+' 클리닉 예약';
   document.getElementById('clinic-popup-date').value = new Date(Date.now()+86400000).toISOString().split('T')[0];
@@ -683,6 +700,12 @@ async function saveClinicPopup(){
   const date = document.getElementById('clinic-popup-date').value;
   if(!date){ showToast('날짜를 선택해주세요','err'); return; }
   const memo = document.getElementById('clinic-popup-memo').value.trim();
+  const locId = document.getElementById('clinic-popup-location').value;
+  let location = '';
+  if(locId){
+    const loc = clinicLocations.find(l=>l.id===locId);
+    if(loc) location = JSON.stringify({name:loc.name, address:loc.address, link:loc.naver_link});
+  }
 
   await fetch(`${SUPA_URL}/rest/v1/clinics`,{
     method:'POST',headers:HDR,
@@ -692,7 +715,8 @@ async function saveClinicPopup(){
       member_phone:popupMemberPhone,
       clinic_date:date,
       clinic_time:clinicSelectedTime,
-      memo:memo
+      memo:memo,
+      location:location
     })
   });
 

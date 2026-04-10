@@ -119,9 +119,18 @@ input:focus,select:focus{border-color:var(--accent)}
         <button class="time-chip" onclick="setTime(this,'18:00')">18:00</button>
         <button class="time-chip" onclick="setTime(this,'19:00')">19:00</button>
         <button class="time-chip" onclick="setTime(this,'20:00')">20:00</button>
+        <button class="time-chip" onclick="setTime(this,'21:00')">21:00</button>
         <input type="time" id="c-time-custom" value="17:00" style="padding:6px 10px;font-size:12px;min-width:90px"
           onchange="selectedTime=this.value;document.querySelectorAll('.time-chip').forEach(b=>b.classList.remove('active'))">
       </div>
+    </div>
+
+    <!-- 장소 선택 -->
+    <div style="margin-top:14px">
+      <label style="font-size:11px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px">장소 (선택)</label>
+      <select id="c-location" style="min-width:250px;padding:8px 12px;font-size:13px">
+        <option value="">장소 선택 안 함</option>
+      </select>
     </div>
 
     <!-- 여러 학생 한 번에 등록 -->
@@ -131,6 +140,21 @@ input:focus,select:focus{border-color:var(--accent)}
         <span style="font-size:12px;color:var(--muted)">선택한 반 전체 학생을 같은 날짜/시간으로 등록</span>
       </div>
     </div>
+  </div>
+
+  <!-- 장소 관리 -->
+  <div class="card">
+    <h2 style="font-size:16px;margin-bottom:4px">📍 장소 관리</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">클리닉 장소를 등록하면 예약 시 선택할 수 있고, 리마인드 문자에 주소와 네이버 링크가 포함됩니다.</p>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <input type="text" id="loc-name" placeholder="장소 이름" style="min-width:120px;flex:1">
+      <input type="text" id="loc-address" placeholder="주소" style="min-width:180px;flex:2">
+      <input type="text" id="loc-link" placeholder="네이버 지도 링크" style="min-width:200px;flex:2">
+      <button class="btn-primary" onclick="addLocation()" style="white-space:nowrap">추가</button>
+    </div>
+
+    <div id="location-list"></div>
   </div>
 
   <!-- 발송 -->
@@ -158,6 +182,7 @@ if(!user) location.href='index.html';
 
 let selectedTime = '17:00';
 let classStudents = [];
+let locations = [];
 
 // 오늘 날짜 기본값
 document.getElementById('c-date').value = new Date().toISOString().split('T')[0];
@@ -167,6 +192,60 @@ function setTime(btn, time){
   document.getElementById('c-time-custom').value = time;
   document.querySelectorAll('.time-chip').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+}
+
+// ===== 장소 관리 =====
+async function loadLocations(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/clinic_locations?select=*&order=created_at`,{headers:HDR});
+  locations = await res.json();
+
+  // 드롭다운 업데이트
+  const sel = document.getElementById('c-location');
+  sel.innerHTML = '<option value="">장소 선택 안 함</option>' +
+    locations.map(l=>`<option value="${l.id}">${l.name} — ${l.address||''}</option>`).join('');
+
+  // 목록 표시
+  const list = document.getElementById('location-list');
+  if(!locations.length){ list.innerHTML='<div style="font-size:13px;color:var(--muted)">등록된 장소가 없어요</div>'; return; }
+  list.innerHTML = locations.map(l=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border-radius:8px;margin-bottom:6px;border:1px solid var(--border)">
+    <div style="flex:1">
+      <div style="font-size:14px;font-weight:600">${l.name}</div>
+      <div style="font-size:12px;color:var(--muted)">${l.address||''}</div>
+      ${l.naver_link?`<a href="${l.naver_link}" target="_blank" style="font-size:11px;color:var(--accent)">🗺 네이버 지도</a>`:''}
+    </div>
+    <button class="btn-red" onclick="deleteLocation('${l.id}')" style="font-size:11px;padding:4px 8px">삭제</button>
+  </div>`).join('');
+}
+
+async function addLocation(){
+  const name = document.getElementById('loc-name').value.trim();
+  const address = document.getElementById('loc-address').value.trim();
+  const link = document.getElementById('loc-link').value.trim();
+  if(!name){ showToast('장소 이름을 입력해주세요','err'); return; }
+  await fetch(`${SUPA_URL}/rest/v1/clinic_locations`,{
+    method:'POST',headers:HDR,
+    body:JSON.stringify({name, address, naver_link:link})
+  });
+  document.getElementById('loc-name').value='';
+  document.getElementById('loc-address').value='';
+  document.getElementById('loc-link').value='';
+  showToast(`${name} 장소 등록 완료 ✓`,'ok');
+  loadLocations();
+}
+
+async function deleteLocation(id){
+  await fetch(`${SUPA_URL}/rest/v1/clinic_locations?id=eq.${id}`,{method:'DELETE',headers:HDR});
+  showToast('삭제했어요','ok');
+  loadLocations();
+}
+
+function getSelectedLocationJson(){
+  const sel = document.getElementById('c-location');
+  const locId = sel.value;
+  if(!locId) return '';
+  const loc = locations.find(l=>l.id===locId);
+  if(!loc) return '';
+  return JSON.stringify({name:loc.name, address:loc.address, link:loc.naver_link});
 }
 
 // 반 로드
@@ -194,6 +273,7 @@ async function addClinic(){
   const date = document.getElementById('c-date').value;
   if(!date){ showToast('날짜를 선택해주세요','err'); return; }
   const memo = document.getElementById('c-memo').value.trim();
+  const location = getSelectedLocationJson();
 
   await fetch(`${SUPA_URL}/rest/v1/clinics`,{
     method:'POST',headers:HDR,
@@ -203,7 +283,8 @@ async function addClinic(){
       member_phone:opt.getAttribute('data-phone'),
       clinic_date:date,
       clinic_time:selectedTime,
-      memo:memo
+      memo:memo,
+      location:location
     })
   });
 
@@ -219,6 +300,7 @@ async function addBulkClinic(){
   const date = document.getElementById('c-date').value;
   if(!date){ showToast('날짜를 선택해주세요','err'); return; }
   const memo = document.getElementById('c-memo').value.trim();
+  const location = getSelectedLocationJson();
 
   let count=0;
   for(const m of classStudents){
@@ -226,7 +308,7 @@ async function addBulkClinic(){
       method:'POST',headers:HDR,
       body:JSON.stringify({
         member_id:m.id, member_name:m.name, member_phone:m.phone,
-        clinic_date:date, clinic_time:selectedTime, memo:memo
+        clinic_date:date, clinic_time:selectedTime, memo:memo, location:location
       })
     });
     count++;
@@ -275,6 +357,7 @@ async function loadClinics(){
         <div class="clinic-name">${c.member_name}</div>
         <div class="clinic-phone">${c.member_phone||''}</div>
         ${c.memo?`<div class="clinic-memo" title="${c.memo}">${c.memo}</div>`:''}
+        ${c.location?(()=>{try{const l=JSON.parse(c.location);return `<div style="font-size:11px;color:var(--accent);background:rgba(108,99,255,.08);padding:2px 8px;border-radius:4px">📍${l.name||c.location}</div>`;}catch(e){return `<div style="font-size:11px;color:var(--accent)">📍${c.location}</div>`;}})():''}
         <div class="clinic-status ${c.reminder_sent?'sent':'pending'}">${c.reminder_sent?'발송됨':'대기'}</div>
         <button class="btn-red" onclick="deleteClinic('${c.id}')" style="font-size:11px;padding:3px 8px">×</button>
       </div>`;
@@ -297,7 +380,7 @@ async function sendRemindersNow(){
   let sent=0;
   for(const c of clinics){
     if(!c.member_phone) continue;
-    const msg = `[META ENGLISH] ${c.member_name} 학생, 내일 ${c.clinic_time} 클리닉이 있습니다.${c.memo?' ('+c.memo+')':''} 잊지 마세요!`;
+    const msg = buildClinicSms(c);
 
     try{
       const smsRes = await fetch(`${SUPA_URL}/functions/v1/send-sms`,{
@@ -319,6 +402,23 @@ async function sendRemindersNow(){
   loadClinics();
 }
 
+function buildClinicSms(c){
+  let msg = `[META ENGLISH] ${c.member_name} 학생, 내일 ${c.clinic_time} 클리닉이 있습니다.`;
+  if(c.location){
+    try{
+      const loc = typeof c.location==='string'?JSON.parse(c.location):c.location;
+      if(loc.name) msg += `\n장소: ${loc.name}`;
+      if(loc.address) msg += `\n주소: ${loc.address}`;
+      if(loc.link) msg += `\n지도: ${loc.link}`;
+    }catch(e){
+      msg += `\n장소: ${c.location}`;
+    }
+  }
+  if(c.memo) msg += `\n(${c.memo})`;
+  msg += `\n잊지 마세요!`;
+  return msg;
+}
+
 function showToast(msg,type='ok'){
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast '+type+' show';
@@ -327,6 +427,7 @@ function showToast(msg,type='ok'){
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
 
 loadClasses();
+loadLocations();
 loadClinics();
 </script>
 </body>
