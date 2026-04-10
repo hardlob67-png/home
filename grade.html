@@ -577,14 +577,14 @@ async function saveRow(memberId){
   setSaveStatus('saving','저장 중...');
 
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/grades`,{
+    const res = await fetch(`${SUPA_URL}/rest/v1/grades?on_conflict=session_id,member_id`,{
       method:'POST',
-      headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+      headers:{...HDR,'Prefer':'resolution=merge-duplicates, return=minimal'},
       body:JSON.stringify({
         session_id: currentSession.id,
         member_id: memberId,
         member_name: memberName,
-        scores: JSON.stringify(d.scores),
+        scores: d.scores,
         memo: d.memo,
         updated_at: new Date().toISOString(),
         updated_by: user.name || ''
