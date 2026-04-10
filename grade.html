@@ -78,6 +78,24 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .cell-memo:focus{background:rgba(108,99,255,.08)}
 .cell-memo::placeholder{color:rgba(107,107,128,.4)}
 
+/* 카드 */
+.nav-card{
+  padding:18px;border-radius:12px;cursor:pointer;
+  border:1px solid var(--border);background:var(--card);
+  transition:all .15s;
+}
+.nav-card:hover{border-color:var(--accent);background:rgba(108,99,255,.05);transform:translateY(-2px)}
+.nav-card.active{border:2px solid var(--accent);background:rgba(108,99,255,.1)}
+.nav-card .card-label{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:4px}
+.nav-card .card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.nav-card .card-sub{font-size:11px;color:var(--muted)}
+.nav-card-add{
+  padding:18px;border-radius:12px;cursor:pointer;
+  border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;
+  color:var(--accent);font-size:14px;font-weight:700;transition:all .15s;min-height:90px;
+}
+.nav-card-add:hover{border-color:var(--accent);background:rgba(108,99,255,.05)}
+
 /* 일괄 입력 툴바 */
 .batch-bar{
   display:none;position:sticky;bottom:0;left:0;right:0;z-index:5;
@@ -157,36 +175,57 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </header>
 
 <div class="main">
-  <!-- 세션 선택 -->
-  <div class="top-bar">
-    <h2>📊 성적 입력</h2>
-    <p>성적표를 선택하거나 새로 만들어 입력하세요. 각 행은 개별 저장되어 동시 입력이 가능합니다.</p>
-    <div class="session-row">
-      <select id="session-select" onchange="onSessionChange()">
-        <option value="">-- 성적표 선택 --</option>
-      </select>
-      <button class="btn-primary" onclick="openNewModal()">+ 새 성적표</button>
-      <button class="btn-green" id="btn-delete-session" onclick="deleteSession()" style="display:none">🗑 성적표 삭제</button>
-      <button class="btn-green" id="btn-sms" onclick="openSmsModal()" style="display:none;background:rgba(108,99,255,.15);color:#a0a7ff">📱 문자 발송</button>
+  <!-- 분반 카드 뷰 -->
+  <div id="view-classes">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:4px">📊 성적 입력</h2>
+        <p style="font-size:13px;color:var(--muted)">반을 선택하세요</p>
+      </div>
     </div>
+    <div id="class-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px"></div>
   </div>
 
-  <!-- 그리드 -->
-  <div class="grid-wrap" id="grid-wrap" style="display:none">
-    <table class="grid-table" id="grid-table">
-      <thead id="grid-head"></thead>
-      <tbody id="grid-body"></tbody>
-    </table>
-    <div class="batch-bar" id="batch-bar">
-      <span class="info" id="batch-info">0개 선택</span>
-      <input type="text" id="batch-value" placeholder="입력할 값" onkeydown="if(event.key==='Enter')applyBatch()">
-      <button class="btn-batch" onclick="applyBatch()">일괄 적용</button>
-      <button class="btn-clear" onclick="clearSelection()">선택 해제</button>
-      <span class="hint">Ctrl+C 복사 · Ctrl+V 붙여넣기 · Shift+클릭 범위선택</span>
+  <!-- 성적표 카드 뷰 -->
+  <div id="view-sessions" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <button class="btn-sm" onclick="backToClasses()" style="margin-bottom:8px">← 반 목록</button>
+        <h2 style="font-size:18px;font-weight:700;margin-bottom:4px" id="selected-class-title"></h2>
+        <p style="font-size:13px;color:var(--muted)">성적표를 선택하거나 새로 만드세요</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="openNewModal()">+ 새 성적표</button>
+      </div>
     </div>
+    <div id="session-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px"></div>
   </div>
-  <div id="empty-msg" style="text-align:center;padding:60px 20px;color:var(--muted);font-size:14px">
-    위에서 성적표를 선택하거나 새로 만들어주세요
+
+  <!-- 그리드 뷰 -->
+  <div id="view-grid" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div>
+        <button class="btn-sm" onclick="backToSessions()" style="margin-bottom:8px">← 성적표 목록</button>
+        <h2 style="font-size:16px;font-weight:700" id="grid-title"></h2>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-green" onclick="deleteSession()">🗑 삭제</button>
+        <button class="btn-green" onclick="openSmsModal()" style="background:rgba(108,99,255,.15);color:#a0a7ff">📱 문자 발송</button>
+      </div>
+    </div>
+    <div class="grid-wrap" id="grid-wrap">
+      <table class="grid-table" id="grid-table">
+        <thead id="grid-head"></thead>
+        <tbody id="grid-body"></tbody>
+      </table>
+      <div class="batch-bar" id="batch-bar">
+        <span class="info" id="batch-info">0개 선택</span>
+        <input type="text" id="batch-value" placeholder="입력할 값" onkeydown="if(event.key==='Enter')applyBatch()">
+        <button class="btn-batch" onclick="applyBatch()">일괄 적용</button>
+        <button class="btn-clear" onclick="clearSelection()">선택 해제</button>
+        <span class="hint">Ctrl+C 복사 · Ctrl+V 붙여넣기 · Shift+클릭 범위선택</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -296,33 +335,110 @@ const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
 
 let currentSession = null;
+let selectedClassId = null;
+let selectedClassName = '';
 let members = [];
 let gradeData = {}; // { memberId: { scores:{}, memo:'' } }
 let saveTimers = {}; // per-row debounce timers
 
-// ===== 세션 관리 =====
-async function loadSessions(){
-  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?select=*,classes(name)&order=created_at.desc`,{headers:HDR});
-  const sessions = await res.json();
-  const sel = document.getElementById('session-select');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">-- 성적표 선택 --</option>' +
-    sessions.map(s=>{
-      const className = s.classes ? s.classes.name : '';
-      const label = className ? `[${className}] ${s.title}` : s.title;
-      return `<option value="${s.id}">${label} (${new Date(s.created_at).toLocaleDateString('ko-KR')})</option>`;
-    }).join('');
-  if(cur) sel.value = cur;
+// ===== 화면 전환 =====
+function showView(view){
+  ['view-classes','view-sessions','view-grid'].forEach(v=>{
+    document.getElementById(v).style.display = v===view?'block':'none';
+  });
 }
 
-async function openNewModal(){
-  document.getElementById('modal-new').classList.add('show');
-  // 반 목록 로드
+function backToClasses(){
+  currentSession=null;
+  selectedClassId=null;
+  showView('view-classes');
+  loadClassCards();
+}
+
+function backToSessions(){
+  currentSession=null;
+  showView('view-sessions');
+  loadSessionCards(selectedClassId);
+}
+
+// ===== 분반 카드 =====
+async function loadClassCards(){
   const res = await fetch(`${SUPA_URL}/rest/v1/classes?select=*&order=name`,{headers:HDR});
   const classes = await res.json();
+
+  // 각 반 학생 수
+  const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?select=class_id`,{headers:HDR});
+  const allCm = await cmRes.json();
+  const countMap = {};
+  allCm.forEach(cm=>{ countMap[cm.class_id]=(countMap[cm.class_id]||0)+1; });
+
+  // 각 반 성적표 수
+  const gsRes = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?select=id,class_id`,{headers:HDR});
+  const allGs = await gsRes.json();
+  const gsMap = {};
+  allGs.forEach(gs=>{ if(gs.class_id){ gsMap[gs.class_id]=(gsMap[gs.class_id]||0)+1; } });
+
+  document.getElementById('class-cards').innerHTML = classes.map(c=>{
+    const cnt = countMap[c.id]||0;
+    const gsCnt = gsMap[c.id]||0;
+    return `<div class="nav-card" onclick="selectClassCard('${c.id}','${c.name.replace(/'/g,"\\'")}')">
+      <div class="card-label">🏫 반</div>
+      <div class="card-title">${c.name}</div>
+      <div class="card-sub">${cnt}명 · 성적표 ${gsCnt}개</div>
+    </div>`;
+  }).join('') + (classes.length===0?'<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">등록된 반이 없어요. 관리자 페이지에서 반을 만들어주세요.</div>':'');
+}
+
+function selectClassCard(classId, className){
+  selectedClassId = classId;
+  selectedClassName = className;
+  document.getElementById('selected-class-title').textContent = className;
+  showView('view-sessions');
+  loadSessionCards(classId);
+}
+
+// ===== 성적표 카드 =====
+async function loadSessionCards(classId){
+  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?class_id=eq.${classId}&select=*&order=created_at.desc`,{headers:HDR});
+  const sessions = await res.json();
+
+  document.getElementById('session-cards').innerHTML = sessions.map(s=>{
+    const date = new Date(s.created_at).toLocaleDateString('ko-KR');
+    const cols = typeof s.columns==='string'?JSON.parse(s.columns):s.columns;
+    return `<div class="nav-card" onclick="selectSessionCard('${s.id}')">
+      <div class="card-label">📋 성적표</div>
+      <div class="card-title">${s.title}</div>
+      <div class="card-sub">${date} · ${cols.length}항목</div>
+    </div>`;
+  }).join('') + `<div class="nav-card-add" onclick="openNewModal()">+ 새 성적표</div>`;
+}
+
+async function selectSessionCard(sessionId){
+  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${sessionId}&select=*`,{headers:HDR});
+  const data = await res.json();
+  if(!data.length) return;
+  currentSession = data[0];
+  currentSession.columns = typeof currentSession.columns==='string'?JSON.parse(currentSession.columns):currentSession.columns;
+  document.getElementById('grid-title').textContent = `[${selectedClassName}] ${currentSession.title}`;
+  showView('view-grid');
+  await loadGrid();
+}
+
+// ===== 세션 관리 =====
+async function openNewModal(){
+  document.getElementById('modal-new').classList.add('show');
   const sel = document.getElementById('new-session-class');
-  sel.innerHTML = '<option value="">-- 반을 선택하세요 --</option>' +
-    classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  if(selectedClassId){
+    // 이미 반이 선택된 상태면 자동 설정
+    const res = await fetch(`${SUPA_URL}/rest/v1/classes?select=*&order=name`,{headers:HDR});
+    const classes = await res.json();
+    sel.innerHTML = classes.map(c=>`<option value="${c.id}" ${c.id===selectedClassId?'selected':''}>${c.name}</option>`).join('');
+  } else {
+    const res = await fetch(`${SUPA_URL}/rest/v1/classes?select=*&order=name`,{headers:HDR});
+    const classes = await res.json();
+    sel.innerHTML = '<option value="">-- 반을 선택하세요 --</option>' +
+      classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  }
   document.getElementById('new-session-title').focus();
 }
 function closeModal(){
@@ -349,9 +465,12 @@ async function createSession(){
     if(res.ok && data.length){
       closeModal();
       document.getElementById('new-session-title').value='';
-      await loadSessions();
-      document.getElementById('session-select').value = data[0].id;
-      onSessionChange();
+      selectedClassId = classId;
+      // 반 이름 가져오기
+      const cRes = await fetch(`${SUPA_URL}/rest/v1/classes?id=eq.${classId}&select=name`,{headers:HDR});
+      const cData = await cRes.json();
+      if(cData.length) selectedClassName = cData[0].name;
+      await selectSessionCard(data[0].id);
       showToast('성적표 생성 완료 ✓','ok');
     } else { showToast('생성 실패','err') }
   }catch(e){ showToast('서버 오류','err') }
@@ -363,31 +482,8 @@ async function deleteSession(){
   if(!confirm('이 성적표와 모든 입력 데이터가 삭제됩니다. 계속할까요?')) return;
   await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${currentSession.id}`,{method:'DELETE',headers:HDR});
   currentSession=null;
-  document.getElementById('session-select').value='';
-  onSessionChange();
-  await loadSessions();
+  backToSessions();
   showToast('삭제했어요','ok');
-}
-
-async function onSessionChange(){
-  const id = document.getElementById('session-select').value;
-  if(!id){
-    currentSession=null;
-    document.getElementById('grid-wrap').style.display='none';
-    document.getElementById('empty-msg').style.display='block';
-    document.getElementById('btn-delete-session').style.display='none';
-    document.getElementById('btn-sms').style.display='none';
-    return;
-  }
-  // 세션 정보 가져오기
-  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${id}&select=*`,{headers:HDR});
-  const data = await res.json();
-  if(!data.length) return;
-  currentSession = data[0];
-  currentSession.columns = typeof currentSession.columns === 'string' ? JSON.parse(currentSession.columns) : currentSession.columns;
-  document.getElementById('btn-delete-session').style.display='inline-block';
-  document.getElementById('btn-sms').style.display='inline-block';
-  await loadGrid();
 }
 
 // ===== 그리드 =====
@@ -864,7 +960,7 @@ async function sendSingleMsg(){
 }
 
 // 초기 로드
-loadSessions();
+loadClassCards();
 </script>
 </body>
 </html>
