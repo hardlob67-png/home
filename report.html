@@ -149,6 +149,22 @@ body::after{
   font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;
 }
 .chat-input-row button:active{opacity:.85}
+/* ── Past Reports ── */
+.past-reports{margin-top:20px}
+.past-title{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.past-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.past-card{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px 18px;margin-bottom:8px;text-decoration:none;color:var(--text);
+  transition:all .2s;
+}
+.past-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.past-card.current{border-color:var(--accent);background:var(--accent-light)}
+.past-card .pc-title{font-size:14px;font-weight:600}
+.past-card .pc-date{font-size:11px;color:var(--muted);margin-top:2px}
+.past-card .pc-arrow{color:var(--muted);font-size:18px}
+.past-card.current .pc-arrow{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -163,6 +179,7 @@ body::after{
       <div class="title">성적표를 불러오는 중...</div>
     </div>
   </div>
+  <div id="past-reports"></div>
   <div id="chat-container" style="display:none">
     <div class="chat-overlay" id="chat-overlay">
       <div class="chat-overlay-header">
@@ -385,10 +402,36 @@ async function sendChat(){
   }catch(e){console.log('채팅 저장 실패',e)}
 }
 
+// ── 과거 성적표 목록 ──
+async function loadPastReports(){
+  if(!memberId) return;
+  try{
+    const res=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id,grade_sessions(id,title,created_at)&order=created_at.desc`,{headers:HDR});
+    const grades=await res.json();
+    if(!Array.isArray(grades)||grades.length<=1) return; // 1개 이하면 표시 불필요
+
+    const el=document.getElementById('past-reports');
+    el.innerHTML=`<div class="past-reports">
+      <div class="past-title">📋 지난 성적표</div>
+      ${grades.map(g=>{
+        const s=g.grade_sessions;
+        if(!s) return '';
+        const isCurrent=String(s.id)===String(sessionId);
+        const date=new Date(s.created_at).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+        return `<a class="past-card${isCurrent?' current':''}" href="report.html?member=${memberId}&session=${s.id}">
+          <div><div class="pc-title">${s.title}${isCurrent?' (현재)':''}</div><div class="pc-date">${date}</div></div>
+          <div class="pc-arrow">›</div>
+        </a>`;
+      }).join('')}
+    </div>`;
+  }catch(e){console.log('과거 성적표 로드 실패',e)}
+}
+
 // 초기화
 (async()=>{
   await loadReport();
   loadChat();
+  loadPastReports();
 })();
 </script>
 </body>
