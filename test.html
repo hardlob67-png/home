@@ -343,48 +343,79 @@ function showVersionDetail(){
   const totalPts = questions.reduce((s,q)=>s+(q.points||0),0);
 
   let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div style="font-size:13px;color:var(--muted)">${v.name} · ${questions.length}문항 · 총 ${totalPts}점</div>
+    <div style="font-size:13px;color:var(--muted)">${v.name} · ${questions.length}문항 · 총 <span id="v-total-pts">${totalPts}</span>점</div>
     <div class="row">
-      <button class="btn-outline" onclick="addQuestion()">+ 문항 추가</button>
       <button class="btn-red" onclick="deleteVersion('${v.id}')">버전 삭제</button>
     </div>
   </div>`;
 
-  if(questions.length){
-    html += questions.map((q,i)=>`<div class="q-item">
-      <div class="q-num">${q.num||i+1}</div>
-      <span class="q-type ${q.type==='mc'?'mc':'sa'}">${q.type==='mc'?'객관식':'주관식'}</span>
-      <span class="q-pts">${q.points}점</span>
-      ${q.type==='mc'?`<span class="q-ans">정답: ${q.answer}</span>`:'<span class="q-ans" style="color:var(--yellow)">직접 채점</span>'}
-      <span style="margin-left:auto"><button class="btn-red" onclick="removeQuestion(${i})" style="font-size:11px;padding:4px 8px">×</button></span>
-    </div>`).join('');
+  if(!questions.length){
+    // 문항 수 입력 화면
+    html += `<div style="background:var(--surface);border-radius:10px;padding:24px;text-align:center">
+      <div style="font-size:14px;margin-bottom:12px">먼저 문항 수를 정해주세요</div>
+      <div class="row" style="justify-content:center">
+        <input type="number" id="q-count" placeholder="문항 수" min="1" max="100" value="20"
+          style="width:100px;text-align:center" onkeydown="if(event.key==='Enter')generateQuestions()">
+        <button class="btn-primary" onclick="generateQuestions()">문항 생성</button>
+      </div>
+    </div>`;
   } else {
-    html += '<div class="empty" style="padding:20px">문항을 추가하세요</div>';
+    // 문항 편집 그리드
+    html += `<div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;min-width:500px">
+        <thead><tr>
+          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:50px">#</th>
+          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:100px">유형</th>
+          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:80px">배점</th>
+          <th style="text-align:center;font-size:12px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border)">정답</th>
+          <th style="width:40px;border-bottom:1px solid var(--border)"></th>
+        </tr></thead>
+        <tbody>${questions.map((q,i)=>`<tr>
+          <td style="text-align:center;padding:6px;font-size:13px;font-weight:700;color:var(--muted)">${i+1}</td>
+          <td style="text-align:center;padding:6px">
+            <button class="btn-outline ${q.type==='mc'?'active':''}" style="font-size:11px;padding:4px 10px;min-width:70px"
+              onclick="toggleQType(${i})">${q.type==='mc'?'객관식':'주관식'}</button>
+          </td>
+          <td style="padding:6px">
+            <input type="number" value="${q.points}" min="1" style="width:100%;text-align:center;padding:6px"
+              data-qi="${i}" data-field="points" onchange="updateQField(${i},'points',this.value)">
+          </td>
+          <td style="padding:6px">
+            ${q.type==='mc'
+              ?`<input type="text" value="${q.answer}" placeholder="정답 번호" style="width:100%;text-align:center;padding:6px"
+                  data-qi="${i}" data-field="answer" onchange="updateQField(${i},'answer',this.value)">`
+              :'<span style="font-size:12px;color:var(--yellow);display:block;text-align:center">직접 채점</span>'}
+          </td>
+          <td style="padding:6px;text-align:center">
+            <button class="btn-red" onclick="removeQuestion(${i})" style="font-size:11px;padding:3px 6px">×</button>
+          </td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="row" style="margin-top:14px;gap:10px">
+      <button class="btn-outline" onclick="addMoreQuestions()">+ 문항 추가</button>
+      <button class="btn-green" onclick="saveQuestions()">💾 문항 저장</button>
+      <span style="font-size:12px;color:var(--muted);margin-left:8px">유형 클릭으로 객관식↔주관식 전환</span>
+    </div>`;
   }
 
   document.getElementById('version-detail').innerHTML = html;
   document.getElementById('scoring-card').style.display = questions.length ? 'block' : 'none';
 }
 
-async function addQuestion(){
+// 문항 수 입력 후 한 번에 생성
+async function generateQuestions(){
   const v = currentVersions.find(v=>v.id===selectedVersionId);
   if(!v) return;
-  const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
+  const count = parseInt(document.getElementById('q-count').value);
+  if(!count || count<1){ showToast('문항 수를 입력해주세요','err'); return }
 
-  const type = prompt('유형을 입력하세요:\n1 = 객관식\n2 = 주관식','1');
-  if(!type) return;
-  const ismc = type.trim()==='1';
-  const points = prompt('배점을 입력하세요:','2');
-  if(!points) return;
-  const answer = ismc ? prompt('정답 번호를 입력하세요 (예: 3):') : '';
-  if(ismc && !answer) return;
-
-  questions.push({
-    num: questions.length+1,
-    type: ismc?'mc':'sa',
-    points: Number(points),
-    answer: answer||''
-  });
+  const questions = Array.from({length:count},(_,i)=>({
+    num: i+1,
+    type: 'mc',
+    points: 2,
+    answer: ''
+  }));
 
   await fetch(`${SUPA_URL}/rest/v1/test_versions?id=eq.${v.id}`,{
     method:'PATCH',headers:HDR,
@@ -393,21 +424,74 @@ async function addQuestion(){
 
   v.questions = questions;
   showVersionDetail();
-  showToast('문항 추가 완료 ✓','ok');
+  showToast(`${count}문항 생성 완료 — 배점과 정답을 입력하세요`,'ok');
 }
 
-async function removeQuestion(idx){
+// 문항 유형 토글
+function toggleQType(idx){
   const v = currentVersions.find(v=>v.id===selectedVersionId);
   if(!v) return;
   const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
-  questions.splice(idx,1);
-  questions.forEach((q,i)=>q.num=i+1);
+  questions[idx].type = questions[idx].type==='mc' ? 'sa' : 'mc';
+  if(questions[idx].type==='sa') questions[idx].answer='';
+  v.questions = questions;
+  showVersionDetail();
+}
+
+// 필드 업데이트 (메모리만, 저장은 별도)
+function updateQField(idx, field, value){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
+  if(field==='points') questions[idx].points = Number(value);
+  else questions[idx][field] = value;
+  v.questions = questions;
+
+  // 총점 업데이트
+  const totalPts = questions.reduce((s,q)=>s+(q.points||0),0);
+  const el = document.getElementById('v-total-pts');
+  if(el) el.textContent = totalPts;
+}
+
+// 문항 저장
+async function saveQuestions(){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
 
   await fetch(`${SUPA_URL}/rest/v1/test_versions?id=eq.${v.id}`,{
     method:'PATCH',headers:HDR,
     body:JSON.stringify({questions})
   });
 
+  showToast('문항 저장 완료 ✓','ok');
+}
+
+// 문항 추가
+function addMoreQuestions(){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const count = prompt('추가할 문항 수를 입력하세요:','5');
+  if(!count) return;
+  const n = parseInt(count);
+  if(!n||n<1) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
+  const start = questions.length;
+  for(let i=0;i<n;i++){
+    questions.push({num:start+i+1, type:'mc', points:2, answer:''});
+  }
+  v.questions = questions;
+  showVersionDetail();
+  showToast(`${n}문항 추가됨 — 저장 버튼을 눌러주세요`,'ok');
+}
+
+// 문항 삭제
+async function removeQuestion(idx){
+  const v = currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+  const questions = typeof v.questions==='string'?JSON.parse(v.questions):[...v.questions];
+  questions.splice(idx,1);
+  questions.forEach((q,i)=>q.num=i+1);
   v.questions = questions;
   showVersionDetail();
 }
