@@ -294,19 +294,19 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
       <h2>설정</h2>
       <p>관리자 계정 정보를 변경할 수 있어요.</p>
     </div>
-    <div class="section-title">관리자 비밀번호 (핸드폰 번호) 변경</div>
+    <div class="section-title">관리자 비밀번호 변경</div>
     <div style="max-width:400px">
       <div class="field">
-        <label>현재 핸드폰 번호</label>
-        <input type="tel" id="admin-cur-phone" placeholder="현재 번호 입력" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <label>현재 비밀번호</label>
+        <input type="password" id="admin-cur-phone" placeholder="현재 비밀번호 입력">
       </div>
       <div class="field">
-        <label>새 핸드폰 번호</label>
-        <input type="tel" id="admin-new-phone" placeholder="새 번호 입력" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        <label>새 비밀번호</label>
+        <input type="password" id="admin-new-phone" placeholder="새 비밀번호 입력">
       </div>
       <div class="field">
-        <label>새 핸드폰 번호 확인</label>
-        <input type="tel" id="admin-confirm-phone" placeholder="새 번호 다시 입력" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')changeAdminPhone()">
+        <label>새 비밀번호 확인</label>
+        <input type="password" id="admin-confirm-phone" placeholder="새 비밀번호 다시 입력" onkeydown="if(event.key==='Enter')changeAdminPhone()">
       </div>
       <button class="btn-add" onclick="changeAdminPhone()" style="width:100%;margin-top:8px">비밀번호 변경</button>
     </div>
@@ -664,9 +664,8 @@ async function changeAdminPhone(){
   const nw = document.getElementById('admin-new-phone').value.trim();
   const confirm = document.getElementById('admin-confirm-phone').value.trim();
   if(!cur||!nw||!confirm){ showToast('모든 항목을 입력해주세요','err'); return }
-  if(cur!==user.phone){ showToast('현재 번호가 일치하지 않아요','err'); return }
-  if(nw!==confirm){ showToast('새 번호가 서로 다릅니다','err'); return }
-  if(!/^010[0-9]{7,8}$/.test(nw)){ showToast('올바른 핸드폰 번호를 입력해주세요','err'); return }
+  if(cur!==user.phone){ showToast('현재 비밀번호가 일치하지 않아요','err'); return }
+  if(nw!==confirm){ showToast('새 비밀번호가 서로 다릅니다','err'); return }
   try{
     const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${user.id}`,{
       method:'PATCH', headers:HDR, body:JSON.stringify({phone:nw})

@@ -70,16 +70,15 @@ input::placeholder{color:var(--muted)}
   </div>
   <div class="card">
     <div class="card-title">로그인</div>
-    <div class="card-sub">등록된 이름과 핸드폰 번호를 입력해주세요.<br>미등록 시 선생님께 문의하세요.</div>
+    <div class="card-sub">등록된 이름과 비밀번호를 입력해주세요.<br>미등록 시 선생님께 문의하세요.</div>
     <div class="form">
       <div class="field">
         <label>이름</label>
         <input type="text" id="name" placeholder="홍길동" autocomplete="off">
       </div>
       <div class="field">
-        <label>핸드폰 번호</label>
-        <input type="tel" id="phone" placeholder="01012345678" maxlength="11"
-               oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+        <label>비밀번호</label>
+        <input type="password" id="phone" placeholder="핸드폰 번호 또는 비밀번호"
                onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <div class="msg" id="msg"></div>
@@ -101,7 +100,7 @@ function showMsg(text){ const el=document.getElementById('msg'); el.textContent=
 async function doLogin(){
   const name  = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim().replace(/-/g,'');
-  if(!name||!phone){ showMsg('이름과 핸드폰 번호를 모두 입력해주세요.'); return }
+  if(!name||!phone){ showMsg('이름과 비밀번호를 모두 입력해주세요.'); return }
   const btn = document.getElementById('login-btn');
   btn.disabled=true; btn.textContent='확인 중...';
   try {
