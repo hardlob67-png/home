@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>META ENGLISH - 성적 입력</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--card:#1a1a24;--border:#2a2a3a;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#6b6b80;
+  --green:#22c55e;--red:#ff6584;--radius:14px;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);top:-50px;left:-50px}
+
+/* 헤더 */
+.header{position:sticky;top:0;z-index:10;background:rgba(10,10,15,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.header-logo{display:flex;align-items:center;gap:12px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+
+/* 메인 */
+.main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px}
+
+/* 세션 선택/생성 영역 */
+.top-bar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.top-bar h2{font-size:18px;font-weight:700;margin-bottom:4px}
+.top-bar p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.session-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.session-row select,.session-row input{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;
+}
+.session-row select{min-width:220px}
+.session-row select:focus,.session-row input:focus{border-color:var(--accent)}
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.btn-primary:hover{opacity:.9}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-green:hover{background:rgba(34,197,94,.25)}
+
+/* 그리드 테이블 */
+.grid-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto}
+.grid-table{width:100%;border-collapse:collapse;min-width:700px}
+.grid-table th{
+  text-align:center;font-size:13px;color:var(--muted);font-weight:600;
+  padding:14px 12px;border-bottom:1px solid var(--border);background:var(--surface);
+  position:sticky;top:0;z-index:2;letter-spacing:.5px;
+}
+.grid-table th:first-child,.grid-table th:nth-child(2){text-align:left}
+.grid-table td{padding:0;border-bottom:1px solid rgba(42,42,58,.4);vertical-align:middle}
+.grid-table tr:hover td{background:rgba(108,99,255,.03)}
+.cell-name{padding:12px 14px;font-size:14px;font-weight:500;white-space:nowrap}
+.cell-num{padding:12px 14px;font-size:13px;color:var(--muted);text-align:center}
+.cell-input{
+  width:100%;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;
+  padding:12px 14px;text-align:center;transition:background .2s;
+}
+.cell-input:focus{background:rgba(108,99,255,.08)}
+.cell-input::placeholder{color:rgba(107,107,128,.4)}
+.cell-memo{
+  width:100%;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;
+  padding:12px 14px;
+}
+.cell-memo:focus{background:rgba(108,99,255,.08)}
+.cell-memo::placeholder{color:rgba(107,107,128,.4)}
+
+/* 저장 상태 */
+.save-indicator{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;
+  padding:4px 10px;border-radius:6px;transition:all .3s;
+}
+.save-indicator.saving{color:#f0c040;background:rgba(240,192,64,.1)}
+.save-indicator.saved{color:var(--green);background:rgba(34,197,94,.1)}
+.save-indicator.idle{color:var(--muted);background:transparent}
+
+/* 행별 저장 버튼 */
+.btn-row-save{
+  padding:6px 14px;border:1px solid var(--border);border-radius:7px;
+  background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;
+  font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.btn-row-save:hover{border-color:var(--green);color:var(--green)}
+.btn-row-save.saved{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.08)}
+
+/* 토스트 */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.err{border-color:var(--red);color:var(--red)}
+
+/* 모달 */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:center;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:32px;width:90%;max-width:480px}
+.modal h3{font-size:17px;font-weight:700;margin-bottom:16px}
+.modal .field{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.modal .field label{font-size:13px;color:var(--muted);font-weight:500}
+.modal .field input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none}
+.modal .field input:focus{border-color:var(--accent)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-text">META ENGLISH</div>
+    <div class="admin-badge">성적 입력</div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span class="save-indicator idle" id="save-status">●  대기 중</span>
+    <button class="btn-sm" onclick="location.href='admin.html'">← 관리자</button>
+    <button class="btn-sm" onclick="logout()">로그아웃</button>
+  </div>
+</header>
+
+<div class="main">
+  <!-- 세션 선택 -->
+  <div class="top-bar">
+    <h2>📊 성적 입력</h2>
+    <p>성적표를 선택하거나 새로 만들어 입력하세요. 각 행은 개별 저장되어 동시 입력이 가능합니다.</p>
+    <div class="session-row">
+      <select id="session-select" onchange="onSessionChange()">
+        <option value="">-- 성적표 선택 --</option>
+      </select>
+      <button class="btn-primary" onclick="openNewModal()">+ 새 성적표</button>
+      <button class="btn-green" id="btn-delete-session" onclick="deleteSession()" style="display:none">🗑 성적표 삭제</button>
+    </div>
+  </div>
+
+  <!-- 그리드 -->
+  <div class="grid-wrap" id="grid-wrap" style="display:none">
+    <table class="grid-table" id="grid-table">
+      <thead id="grid-head"></thead>
+      <tbody id="grid-body"></tbody>
+    </table>
+  </div>
+  <div id="empty-msg" style="text-align:center;padding:60px 20px;color:var(--muted);font-size:14px">
+    위에서 성적표를 선택하거나 새로 만들어주세요
+  </div>
+</div>
+
+<!-- 새 성적표 모달 -->
+<div class="modal-bg" id="modal-new">
+  <div class="modal">
+    <h3>새 성적표 만들기</h3>
+    <div class="field">
+      <label>성적표 제목</label>
+      <input type="text" id="new-session-title" placeholder="예: 4월 1주차 리뷰">
+    </div>
+    <div class="field">
+      <label>입력 항목 (쉼표로 구분)</label>
+      <input type="text" id="new-session-cols" placeholder="리뷰테스트,과제,단어,암기,리뷰 재시" value="리뷰테스트,과제,단어,암기,리뷰 재시">
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:-6px">항목을 자유롭게 바꿀 수 있어요. 개별 전달 사항은 자동 추가됩니다.</p>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeModal()">취소</button>
+      <button class="btn-primary" id="btn-create-session" onclick="createSession()">만들기</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
+const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+
+const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
+if(!user) location.href='index.html';
+
+let currentSession = null;
+let members = [];
+let gradeData = {}; // { memberId: { scores:{}, memo:'' } }
+let saveTimers = {}; // per-row debounce timers
+
+// ===== 세션 관리 =====
+async function loadSessions(){
+  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?select=*&order=created_at.desc`,{headers:HDR});
+  const sessions = await res.json();
+  const sel = document.getElementById('session-select');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- 성적표 선택 --</option>' +
+    sessions.map(s=>`<option value="${s.id}">${s.title} (${new Date(s.created_at).toLocaleDateString('ko-KR')})</option>`).join('');
+  if(cur) sel.value = cur;
+}
+
+function openNewModal(){
+  document.getElementById('modal-new').classList.add('show');
+  document.getElementById('new-session-title').focus();
+}
+function closeModal(){
+  document.getElementById('modal-new').classList.remove('show');
+}
+
+async function createSession(){
+  const title = document.getElementById('new-session-title').value.trim();
+  const colsRaw = document.getElementById('new-session-cols').value.trim();
+  if(!title){ showToast('제목을 입력해주세요','err'); return }
+  const columns = colsRaw.split(',').map(s=>s.trim()).filter(Boolean);
+  if(!columns.length){ showToast('항목을 하나 이상 입력해주세요','err'); return }
+
+  const btn = document.getElementById('btn-create-session');
+  btn.disabled=true; btn.textContent='생성 중...';
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions`,{
+      method:'POST', headers:{...HDR,'Prefer':'return=representation'},
+      body:JSON.stringify({title, columns:JSON.stringify(columns)})
+    });
+    const data = await res.json();
+    if(res.ok && data.length){
+      closeModal();
+      document.getElementById('new-session-title').value='';
+      await loadSessions();
+      document.getElementById('session-select').value = data[0].id;
+      onSessionChange();
+      showToast('성적표 생성 완료 ✓','ok');
+    } else { showToast('생성 실패','err') }
+  }catch(e){ showToast('서버 오류','err') }
+  btn.disabled=false; btn.textContent='만들기';
+}
+
+async function deleteSession(){
+  if(!currentSession) return;
+  if(!confirm('이 성적표와 모든 입력 데이터가 삭제됩니다. 계속할까요?')) return;
+  await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${currentSession.id}`,{method:'DELETE',headers:HDR});
+  currentSession=null;
+  document.getElementById('session-select').value='';
+  onSessionChange();
+  await loadSessions();
+  showToast('삭제했어요','ok');
+}
+
+async function onSessionChange(){
+  const id = document.getElementById('session-select').value;
+  if(!id){
+    currentSession=null;
+    document.getElementById('grid-wrap').style.display='none';
+    document.getElementById('empty-msg').style.display='block';
+    document.getElementById('btn-delete-session').style.display='none';
+    return;
+  }
+  // 세션 정보 가져오기
+  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${id}&select=*`,{headers:HDR});
+  const data = await res.json();
+  if(!data.length) return;
+  currentSession = data[0];
+  currentSession.columns = typeof currentSession.columns === 'string' ? JSON.parse(currentSession.columns) : currentSession.columns;
+  document.getElementById('btn-delete-session').style.display='inline-block';
+  await loadGrid();
+}
+
+// ===== 그리드 =====
+async function loadGrid(){
+  if(!currentSession) return;
+
+  // 회원 로드
+  const mRes = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name&role=neq.admin&order=name`,{headers:HDR});
+  members = await mRes.json();
+
+  // 기존 성적 로드
+  const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${currentSession.id}&select=*`,{headers:HDR});
+  const existing = await gRes.json();
+  gradeData = {};
+  existing.forEach(g=>{
+    gradeData[g.member_id] = {
+      scores: typeof g.scores === 'string' ? JSON.parse(g.scores) : g.scores,
+      memo: g.memo || ''
+    };
+  });
+
+  const cols = currentSession.columns;
+
+  // 헤더
+  document.getElementById('grid-head').innerHTML = `<tr>
+    <th style="min-width:50px">#</th>
+    <th style="min-width:100px">이름</th>
+    ${cols.map(c=>`<th style="min-width:100px">${c}</th>`).join('')}
+    <th style="min-width:160px">개별 전달 사항</th>
+    <th style="min-width:80px"></th>
+  </tr>`;
+
+  // 바디
+  document.getElementById('grid-body').innerHTML = members.map((m,i)=>{
+    const d = gradeData[m.id] || {scores:{},memo:''};
+    return `<tr id="row-${m.id}">
+      <td class="cell-num">${i+1}</td>
+      <td class="cell-name">${m.name}</td>
+      ${cols.map(c=>`<td>
+        <input class="cell-input" type="text" placeholder="·"
+          value="${d.scores[c]||''}"
+          oninput="onCellEdit('${m.id}','${c}',this.value)"
+          onfocus="this.select()">
+      </td>`).join('')}
+      <td>
+        <input class="cell-memo" type="text" placeholder="메모 입력..."
+          value="${d.memo||''}"
+          oninput="onMemoEdit('${m.id}',this.value)">
+      </td>
+      <td style="padding:8px;text-align:center">
+        <button class="btn-row-save" id="btn-save-${m.id}" onclick="saveRow('${m.id}')">저장</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('grid-wrap').style.display='block';
+  document.getElementById('empty-msg').style.display='none';
+}
+
+function onCellEdit(memberId, col, value){
+  if(!gradeData[memberId]) gradeData[memberId]={scores:{},memo:''};
+  gradeData[memberId].scores[col] = value;
+  markDirty(memberId);
+  debounceSave(memberId);
+}
+
+function onMemoEdit(memberId, value){
+  if(!gradeData[memberId]) gradeData[memberId]={scores:{},memo:''};
+  gradeData[memberId].memo = value;
+  markDirty(memberId);
+  debounceSave(memberId);
+}
+
+function markDirty(memberId){
+  const btn = document.getElementById('btn-save-'+memberId);
+  if(btn){ btn.classList.remove('saved'); btn.textContent='저장'; }
+}
+
+function debounceSave(memberId){
+  if(saveTimers[memberId]) clearTimeout(saveTimers[memberId]);
+  saveTimers[memberId] = setTimeout(()=> saveRow(memberId), 2000);
+}
+
+async function saveRow(memberId){
+  if(saveTimers[memberId]){ clearTimeout(saveTimers[memberId]); delete saveTimers[memberId]; }
+  if(!currentSession) return;
+
+  const d = gradeData[memberId] || {scores:{},memo:''};
+  const member = members.find(m=>m.id===memberId);
+  const memberName = member ? member.name : '';
+
+  const btn = document.getElementById('btn-save-'+memberId);
+  if(btn){ btn.textContent='저장 중...'; }
+  setSaveStatus('saving','저장 중...');
+
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/grades`,{
+      method:'POST',
+      headers:{...HDR,'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({
+        session_id: currentSession.id,
+        member_id: memberId,
+        member_name: memberName,
+        scores: JSON.stringify(d.scores),
+        memo: d.memo,
+        updated_at: new Date().toISOString(),
+        updated_by: user.name || ''
+      })
+    });
+    if(res.ok){
+      if(btn){ btn.textContent='✓ 저장됨'; btn.classList.add('saved'); }
+      setSaveStatus('saved','저장 완료');
+    } else {
+      if(btn){ btn.textContent='실패'; }
+      setSaveStatus('idle','저장 실패');
+      showToast('저장 실패','err');
+    }
+  }catch(e){
+    if(btn){ btn.textContent='실패'; }
+    showToast('서버 오류','err');
+  }
+}
+
+function setSaveStatus(type, text){
+  const el = document.getElementById('save-status');
+  el.className = 'save-indicator '+type;
+  el.textContent = '● '+text;
+  if(type==='saved'){
+    setTimeout(()=>{ el.className='save-indicator idle'; el.textContent='● 대기 중'; },3000);
+  }
+}
+
+// ===== 유틸 =====
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type+' show';
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
+// 초기 로드
+loadSessions();
+</script>
+</body>
+</html>

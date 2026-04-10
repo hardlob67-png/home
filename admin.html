@@ -139,7 +139,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <button class="tab-btn active" onclick="switchTab('members')">👥 회원 명단</button>
   <button class="tab-btn" onclick="switchTab('quizzes')">📂 퀴즈 관리</button>
   <button class="tab-btn" onclick="switchTab('history')">📊 풀이 기록</button>
-  <button class="tab-btn" onclick="switchTab('schools')">⚙ 설정</button>
+  <button class="tab-btn" onclick="location.href='grade.html'" style="background:rgba(34,197,94,.08);color:#6ee7a0;border-color:rgba(34,197,94,.3)">📝 성적 입력</button>
 </div>
 
 <div class="main">
@@ -153,9 +153,8 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
     <div class="section-title">개별 등록</div>
     <div class="add-row">
-      <input type="text" id="new-name" placeholder="이름" autocomplete="off" style="flex:1;min-width:100px">
-      <input type="tel" id="new-phone" placeholder="01012345678" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')addMember()" style="flex:1;min-width:100px">
-      <select id="new-school" style="flex:1;min-width:100px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:14px"></select>
+      <input type="text" id="new-name" placeholder="이름" autocomplete="off" style="flex:1;min-width:130px">
+      <input type="tel" id="new-phone" placeholder="01012345678" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')addMember()" style="flex:1;min-width:130px">
       <button class="btn-add" id="btn-add-member" onclick="addMember()">+ 추가</button>
     </div>
 
@@ -164,10 +163,6 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <!-- 엑셀 업로드 -->
     <div class="section-title">엑셀로 일괄 등록</div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:12px">엑셀 파일 1열: 이름 &nbsp;|&nbsp; 2열: 핸드폰 번호 &nbsp;(첫 번째 행은 헤더로 자동 건너뜀)</p>
-    <div style="margin-bottom:12px">
-      <label style="font-size:13px;color:var(--muted);margin-right:8px">엑셀 학생 소속 학교:</label>
-      <select id="excel-school" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"></select>
-    </div>
 
     <div class="excel-drop" id="excel-drop">
       <input type="file" id="excel-input" accept=".xlsx,.xls" onchange="handleExcel(this.files[0])">
@@ -186,18 +181,6 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div class="divider"></div>
 
     <div class="section-title">등록된 회원</div>
-    <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;flex-wrap:wrap">
-      <select id="filter-school-members" onchange="loadMembers()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"></select>
-    </div>
-    <!-- 일괄 작업 바 -->
-    <div id="bulk-bar" style="display:none;background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.25);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:none;align-items:center;gap:10px;flex-wrap:wrap">
-      <span style="font-size:13px;font-weight:700;color:#a0a7ff" id="bulk-count">0명 선택</span>
-      <span style="color:var(--border)">|</span>
-      <span style="font-size:13px;color:var(--muted)">학교 일괄 변경:</span>
-      <select id="bulk-school" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px"></select>
-      <button onclick="bulkChangeSchool()" style="padding:6px 14px;border:none;border-radius:6px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">적용</button>
-      <button onclick="bulkDelete()" style="padding:6px 14px;border:none;border-radius:6px;background:rgba(255,101,132,.12);color:var(--red);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">선택 삭제</button>
-    </div>
     <div class="member-count" id="member-count">불러오는 중...</div>
     <div id="member-table-wrap"><div class="spinner">불러오는 중...</div></div>
   </div>
@@ -222,19 +205,12 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
       <input type="text" id="quiz-title" placeholder="예: 영어 단어 퀴즈 1~3강">
     </div>
     <div class="field">
-      <label>대상 학교</label>
-      <select id="quiz-school" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:14px;width:100%"></select>
-    </div>
-    <div class="field">
       <label>설명 (선택)</label>
       <textarea id="quiz-desc" placeholder="예: 1강~3강 핵심 단어 40개 퀴즈입니다"></textarea>
     </div>
     <button class="btn-upload" id="btn-upload" onclick="uploadQuiz()" disabled>업로드하기</button>
 
     <div class="section-title">등록된 퀴즈</div>
-    <div style="margin-bottom:12px">
-      <select id="filter-school-quizzes" onchange="loadQuizzes()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"></select>
-    </div>
     <div id="quiz-list"><div class="spinner">불러오는 중...</div></div>
   </div>
 
@@ -247,41 +223,10 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <button class="btn-sm" id="hview-member" style="border-color:var(--accent);color:var(--accent)" onclick="setHView('member')">회원별</button>
       <button class="btn-sm" id="hview-quiz" onclick="setHView('quiz')">퀴즈별</button>
-      <select id="filter-school-history" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"></select>
       <select id="filter-member" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"><option value="">전체 회원</option></select>
       <select id="filter-quiz" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"><option value="">전체 퀴즈</option></select>
     </div>
     <div id="history-list"><div class="empty-state">탭을 클릭하면 기록을 불러옵니다</div></div>
-  </div>
-
-  <!-- 학교 관리 탭 -->
-  <div class="tab-panel" id="tab-schools">
-    <div class="section-head">
-      <h2>설정</h2>
-      <p>학교 관리 및 관리자 비밀번호를 설정할 수 있어요.</p>
-    </div>
-
-    <div class="section-title">🔒 관리자 비밀번호</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">비밀번호를 설정하면 관리자 로그인 시 비밀번호를 추가로 입력해야 해요.</p>
-    <div class="add-row">
-      <input type="password" id="admin-pw-new" placeholder="새 비밀번호" style="flex:1;min-width:140px">
-      <input type="password" id="admin-pw-confirm" placeholder="비밀번호 확인" style="flex:1;min-width:140px">
-      <button class="btn-add" onclick="changePassword()">변경</button>
-    </div>
-    <div style="margin-top:8px">
-      <button class="btn-del-sm" onclick="removePassword()" style="font-size:12px">비밀번호 해제</button>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="section-title">🏫 학교 관리</div>
-    <div class="add-row">
-      <input type="text" id="new-school-name" placeholder="학교 이름 (예: 한빛초)" autocomplete="off" onkeydown="if(event.key==='Enter')addSchool()">
-      <button class="btn-add" onclick="addSchool()">+ 추가</button>
-    </div>
-    <div class="divider"></div>
-    <div class="section-title">등록된 학교</div>
-    <div id="school-list"><div class="spinner">불러오는 중...</div></div>
   </div>
 
 </div>
@@ -297,121 +242,37 @@ const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
 if(user.role!=='admin'){ alert('관리자만 접근 가능합니다'); location.href='dashboard.html' }
 
-let SCHOOLS = [];
-
-async function loadSchools(){
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/schools?select=name&order=name`,{headers:HDR});
-    const data = await res.json();
-    SCHOOLS = data.map(s=>s.name);
-  }catch(e){ SCHOOLS=[]; }
-  refreshSchoolDropdowns();
-}
-
-function schoolOptions(selected,includeAll){
-  let html = includeAll ? '<option value="">전체 학교</option>' : '<option value="">학교 선택</option>';
-  SCHOOLS.forEach(s=>{ html+=`<option value="${s}"${s===selected?' selected':''}>${s}</option>` });
-  return html;
-}
-
-function refreshSchoolDropdowns(){
-  const ids = [
-    {id:'new-school',all:false},{id:'excel-school',all:false},{id:'quiz-school',all:false},
-    {id:'filter-school-members',all:true},{id:'filter-school-quizzes',all:true},{id:'filter-school-history',all:true}
-  ];
-  ids.forEach(({id,all})=>{
-    const el=document.getElementById(id);
-    if(el){ const cur=el.value; el.innerHTML=schoolOptions(cur,all); el.value=cur; }
-  });
-}
-
-async function addSchool(){
-  const name = document.getElementById('new-school-name').value.trim();
-  if(!name){ showToast('학교 이름을 입력해주세요','err'); return }
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/schools`,{method:'POST',headers:HDR,body:JSON.stringify({name})});
-    if(res.status===409){ showToast('이미 등록된 학교예요','err'); return }
-    if(!res.ok){ showToast('등록 실패','err'); return }
-    document.getElementById('new-school-name').value='';
-    showToast(`${name} 등록 완료 ✓`,'ok');
-    await loadSchools();
-    loadSchoolList();
-  }catch(e){ showToast('서버 오류','err') }
-}
-
-async function deleteSchool(id,name){
-  if(!confirm(`"${name}" 학교를 삭제할까요?`)) return;
-  try{
-    await fetch(`${SUPA_URL}/rest/v1/schools?id=eq.${id}`,{method:'DELETE',headers:HDR});
-    showToast('삭제했어요','ok');
-    await loadSchools();
-    loadSchoolList();
-  }catch(e){ showToast('삭제 실패','err') }
-}
-
-async function loadSchoolList(){
-  const list = document.getElementById('school-list');
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/schools?select=*&order=name`,{headers:HDR});
-    const schools = await res.json();
-    if(!schools.length){ list.innerHTML='<div class="empty-state">등록된 학교가 없어요. 위에서 추가해주세요.</div>'; return }
-    list.innerHTML=schools.map((s,i)=>`
-      <div class="quiz-item" style="margin-bottom:8px">
-        <div class="quiz-num">${i+1}</div>
-        <div class="quiz-info">
-          <div class="quiz-title">${s.name}</div>
-          <div class="quiz-date">${new Date(s.created_at).toLocaleDateString('ko-KR')} 등록</div>
-        </div>
-        <button class="btn-del" onclick="deleteSchool('${s.id}','${s.name}')">삭제</button>
-      </div>`).join('');
-  }catch(e){ list.innerHTML='<div class="empty-state">불러오기 실패</div>' }
-}
-
 function switchTab(t){
-  const tabs=['members','quizzes','history','schools'];
+  const tabs=['members','quizzes','history'];
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===t));
   tabs.forEach(tab=>{
     const el=document.getElementById('tab-'+tab);
     if(el) el.classList.toggle('active',tab===t);
   });
   if(t==='history') loadHistory();
-  if(t==='schools') loadSchoolList();
 }
 
 // ===== 회원 관리 =====
 async function loadMembers(){
   try{
-    const schoolVal = document.getElementById('filter-school-members').value;
-    let url = `${SUPA_URL}/rest/v1/members?select=*&order=joined.asc`;
-    if(schoolVal) url += `&school=eq.${encodeURIComponent(schoolVal)}`;
-    const res = await fetch(url,{headers:HDR});
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?select=*&order=joined.asc`,{headers:HDR});
     const members = await res.json();
     const nonAdmin = members.filter(m=>m.role!=='admin');
     document.getElementById('member-count').innerHTML=`총 <span>${nonAdmin.length}</span>명 등록됨`;
-    hideBulkBar();
-    lastCheckedIdx = -1;
     if(!members.length){
       document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">등록된 회원이 없어요</div>';
       return;
     }
     document.getElementById('member-table-wrap').innerHTML=`
       <table class="member-table">
-        <thead><tr>
-          <th><input type="checkbox" id="chk-all" onchange="toggleAll(this.checked)" style="cursor:pointer"></th>
-          <th>#</th><th>이름</th><th>학교</th><th>핸드폰 번호</th><th>구분</th><th></th>
-        </tr></thead>
+        <thead><tr><th>#</th><th>이름</th><th>핸드폰 번호</th><th>구분</th><th>등록일</th><th></th></tr></thead>
         <tbody>${members.map((m,i)=>`
           <tr>
-            <td>${m.role!=='admin'?`<input type="checkbox" class="member-chk" data-id="${m.id}" data-name="${m.name}" onclick="handleChkClick(event)" style="cursor:pointer">`:''}
-            </td>
             <td style="color:var(--muted)">${i+1}</td>
             <td style="font-weight:500">${m.name}</td>
-            <td>${m.role!=='admin'
-              ? `<select onchange="updateMemberSchool('${m.id}',this.value)" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-family:inherit;font-size:12px">${schoolOptionsForMember(m.school)}</select>`
-              : '<span style="color:var(--muted);font-size:12px">-</span>'
-            }</td>
             <td style="font-family:monospace;font-size:13px">${m.phone}</td>
             <td>${m.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
+            <td style="color:var(--muted);font-size:12px">${new Date(m.joined).toLocaleDateString('ko-KR')}</td>
             <td>${m.role!=='admin'?`<button class="btn-del-sm" onclick="deleteMember('${m.id}','${m.name}')">삭제</button>`:''}</td>
           </tr>`).join('')}
         </tbody>
@@ -419,107 +280,15 @@ async function loadMembers(){
   }catch(e){ document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">불러오기 실패</div>' }
 }
 
-function schoolOptionsForMember(current){
-  let html = '<option value="">미지정</option>';
-  SCHOOLS.forEach(s=>{ html+=`<option value="${s}"${s===current?' selected':''}>${s}</option>` });
-  return html;
-}
-
-async function updateMemberSchool(id, school){
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${id}`,{
-      method:'PATCH', headers:HDR, body:JSON.stringify({school})
-    });
-    if(res.ok) showToast('학교 변경 완료 ✓','ok');
-    else showToast('변경 실패','err');
-  }catch(e){ showToast('서버 오류','err') }
-}
-
-function getCheckedIds(){
-  return Array.from(document.querySelectorAll('.member-chk:checked')).map(c=>({id:c.dataset.id,name:c.dataset.name}));
-}
-
-let lastCheckedIdx = -1;
-function handleChkClick(e){
-  const chks = Array.from(document.querySelectorAll('.member-chk'));
-  const idx = chks.indexOf(e.target);
-  if(e.shiftKey && lastCheckedIdx >= 0 && idx >= 0){
-    const start = Math.min(lastCheckedIdx, idx);
-    const end = Math.max(lastCheckedIdx, idx);
-    const val = e.target.checked;
-    for(let i=start;i<=end;i++) chks[i].checked = val;
-  }
-  if(idx >= 0) lastCheckedIdx = idx;
-  updateBulkBar();
-}
-
-function toggleAll(checked){
-  document.querySelectorAll('.member-chk').forEach(c=>c.checked=checked);
-  updateBulkBar();
-}
-
-function updateBulkBar(){
-  const checked = getCheckedIds();
-  const bar = document.getElementById('bulk-bar');
-  if(checked.length > 0){
-    bar.style.display='flex';
-    document.getElementById('bulk-count').textContent = checked.length + '명 선택';
-    document.getElementById('bulk-school').innerHTML = schoolOptions('',false);
-  } else {
-    hideBulkBar();
-  }
-}
-
-function hideBulkBar(){
-  document.getElementById('bulk-bar').style.display='none';
-  const allChk = document.getElementById('chk-all');
-  if(allChk) allChk.checked = false;
-}
-
-async function bulkChangeSchool(){
-  const selected = getCheckedIds();
-  const school = document.getElementById('bulk-school').value;
-  if(!school){ showToast('학교를 선택해주세요','err'); return }
-  if(!selected.length) return;
-  let ok=0;
-  for(const m of selected){
-    try{
-      const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${m.id}`,{
-        method:'PATCH', headers:HDR, body:JSON.stringify({school})
-      });
-      if(res.ok) ok++;
-    }catch(e){}
-  }
-  showToast(`${ok}명 학교 변경 완료 ✓`,'ok');
-  loadMembers();
-}
-
-async function bulkDelete(){
-  const selected = getCheckedIds();
-  if(!selected.length) return;
-  if(!confirm(`${selected.length}명을 삭제할까요?\n${selected.map(m=>m.name).join(', ')}`)) return;
-  let ok=0;
-  for(const m of selected){
-    try{
-      const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${m.id}`,{method:'DELETE',headers:HDR});
-      if(res.ok) ok++;
-    }catch(e){}
-  }
-  showToast(`${ok}명 삭제 완료`,'ok');
-  loadMembers();
-}
-
 async function addMember(){
   const name  = document.getElementById('new-name').value.trim();
   const phone = document.getElementById('new-phone').value.trim().replace(/-/g,'');
-  const school = document.getElementById('new-school').value;
   if(!name||!phone){ showToast('이름과 번호를 모두 입력해주세요','err'); return }
-  if(!school){ showToast('학교를 선택해주세요','err'); return }
   if(!/^010[0-9]{7,8}$/.test(phone)){ showToast('올바른 핸드폰 번호를 입력해주세요','err'); return }
   const btn = document.getElementById('btn-add-member');
   btn.disabled=true;
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/members`,{method:'POST',headers:HDR,body:JSON.stringify({name,phone,role:'user',school})});
+    const res = await fetch(`${SUPA_URL}/rest/v1/members`,{method:'POST',headers:HDR,body:JSON.stringify({name,phone,role:'user'})});
     if(res.status===409){ showToast('이미 등록된 회원이에요','err'); }
     else if(!res.ok){ showToast('등록 실패','err'); }
     else{ document.getElementById('new-name').value=''; document.getElementById('new-phone').value=''; showToast(`${name} 님 등록 완료 ✓`,'ok'); loadMembers(); }
@@ -570,8 +339,6 @@ function handleExcel(file){
 
 async function uploadExcelMembers(){
   if(!excelData.length) return;
-  const school = document.getElementById('excel-school').value;
-  if(!school){ showToast('학교를 선택해주세요','err'); return }
   const btn = document.getElementById('btn-excel-upload');
   btn.disabled=true;
   let added=0, skipped=0;
@@ -581,7 +348,7 @@ async function uploadExcelMembers(){
       const res = await fetch(`${SUPA_URL}/rest/v1/members`,{
         method:'POST',
         headers:{...HDR,'Prefer':'return=minimal'},
-        body:JSON.stringify({name:r.name,phone:r.phone,role:'user',school})
+        body:JSON.stringify({name:r.name,phone:r.phone,role:'user'})
       });
       if(res.status===409||res.status===400) skipped++;
       else if(res.ok) added++;
@@ -617,12 +384,11 @@ function handleFiles(files){
 }
 
 async function batchUpload(files){
-  const school = document.getElementById('quiz-school').value;
   let count=0;
   for(const file of Array.from(files)){
     const html = await file.text();
     const title = file.name.replace(/\.html?$/i,'');
-    await fetch(`${SUPA_URL}/rest/v1/quizzes`,{method:'POST',headers:HDR,body:JSON.stringify({title,description:'',school,html_content:injectRecordCode(html)})});
+    await fetch(`${SUPA_URL}/rest/v1/quizzes`,{method:'POST',headers:HDR,body:JSON.stringify({title,description:'',html_content:injectRecordCode(html)})});
     count++;
   }
   showToast(`${count}개 퀴즈 업로드 완료 ✓`,'ok');
@@ -632,15 +398,13 @@ async function batchUpload(files){
 async function uploadQuiz(){
   const title = document.getElementById('quiz-title').value.trim();
   const desc  = document.getElementById('quiz-desc').value.trim();
-  const school = document.getElementById('quiz-school').value;
   if(!title){ showToast('퀴즈 제목을 입력해주세요','err'); return }
-  if(!school){ showToast('대상 학교를 선택해주세요','err'); return }
   if(!selectedFile){ showToast('HTML 파일을 선택해주세요','err'); return }
   const btn = document.getElementById('btn-upload');
   btn.disabled=true; btn.textContent='업로드 중...';
   try{
     const html = await selectedFile.text();
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes`,{method:'POST',headers:HDR,body:JSON.stringify({title,description:desc,school,html_content:injectRecordCode(html)})});
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes`,{method:'POST',headers:HDR,body:JSON.stringify({title,description:desc,html_content:injectRecordCode(html)})});
     if(!res.ok){ showToast('업로드 실패','err'); }
     else{
       selectedFile=null;
@@ -670,10 +434,7 @@ async function previewQuiz(id){
 
 async function loadQuizzes(){
   try{
-    const schoolVal = document.getElementById('filter-school-quizzes').value;
-    let url = `${SUPA_URL}/rest/v1/quizzes?select=id,title,description,school,added&order=added.desc`;
-    if(schoolVal) url += `&school=eq.${encodeURIComponent(schoolVal)}`;
-    const res = await fetch(url,{headers:HDR});
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{headers:HDR});
     const quizzes = await res.json();
     const list = document.getElementById('quiz-list');
     if(!quizzes.length){ list.innerHTML='<div class="empty-state">아직 업로드된 퀴즈가 없어요</div>'; return }
@@ -682,9 +443,6 @@ async function loadQuizzes(){
         <div class="quiz-num">${i+1}</div>
         <div class="quiz-info">
           <div class="quiz-title">${q.title}</div>
-          <div style="margin:4px 0">
-            <select onchange="updateQuizSchool('${q.id}',this.value)" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-family:inherit;font-size:12px">${schoolOptionsForMember(q.school)}</select>
-          </div>
           ${q.description?`<div class="quiz-desc-text">${q.description}</div>`:''}
           <div class="quiz-date">${new Date(q.added).toLocaleString('ko-KR')} 업로드</div>
         </div>
@@ -694,16 +452,6 @@ async function loadQuizzes(){
         </div>
       </div>`).join('')}</div>`;
   }catch(e){ document.getElementById('quiz-list').innerHTML='<div class="empty-state">불러오기 실패</div>' }
-}
-
-async function updateQuizSchool(id, school){
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}`,{
-      method:'PATCH', headers:HDR, body:JSON.stringify({school})
-    });
-    if(res.ok) showToast('퀴즈 학교 변경 완료 ✓','ok');
-    else showToast('변경 실패','err');
-  }catch(e){ showToast('서버 오류','err') }
 }
 
 // 업로드 시 기록+뱃지 코드 자동 삽입
@@ -757,8 +505,6 @@ async function loadHistory(){
   list.innerHTML='<div class="spinner">불러오는 중...</div>';
   await Promise.all([fillMemberFilter(), fillQuizFilter()]);
   let url = SUPA_URL+'/rest/v1/quiz_records?select=*&order=played_at.desc&limit=200';
-  const schoolHVal = document.getElementById('filter-school-history').value;
-  if(schoolHVal) url += '&school=eq.'+encodeURIComponent(schoolHVal);
   if(memberVal) url += '&member_id=eq.'+memberVal;
   if(quizVal) url += '&quiz_id=eq.'+quizVal;
   try{
@@ -826,47 +572,8 @@ function showToast(msg,type='ok'){
 }
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
 
-async function changePassword(){
-  const pw = document.getElementById('admin-pw-new').value;
-  const pw2 = document.getElementById('admin-pw-confirm').value;
-  if(!pw){ showToast('새 비밀번호를 입력해주세요','err'); return }
-  if(pw!==pw2){ showToast('비밀번호가 일치하지 않아요','err'); return }
-  if(pw.length<4){ showToast('4자 이상 입력해주세요','err'); return }
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${user.id}`,{
-      method:'PATCH', headers:HDR, body:JSON.stringify({password:pw})
-    });
-    if(res.ok){
-      showToast('비밀번호 변경 완료 ✓','ok');
-      document.getElementById('admin-pw-new').value='';
-      document.getElementById('admin-pw-confirm').value='';
-      // 세션 업데이트
-      user.password = pw;
-      sessionStorage.setItem('qhub_user', JSON.stringify(user));
-    } else showToast('변경 실패','err');
-  }catch(e){ showToast('서버 오류','err') }
-}
-
-async function removePassword(){
-  if(!confirm('비밀번호를 해제하면 이름+번호만으로 관리자 로그인이 가능해요. 해제할까요?')) return;
-  try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${user.id}`,{
-      method:'PATCH', headers:HDR, body:JSON.stringify({password:''})
-    });
-    if(res.ok){
-      showToast('비밀번호 해제 완료','ok');
-      user.password = '';
-      sessionStorage.setItem('qhub_user', JSON.stringify(user));
-    } else showToast('실패','err');
-  }catch(e){ showToast('서버 오류','err') }
-}
-
-// Initialize: load schools first, then members and quizzes
-loadSchools().then(()=>{
-  loadMembers();
-  loadQuizzes();
-});
-
+loadMembers();
+loadQuizzes();
 </script>
 </body>
 </html>
