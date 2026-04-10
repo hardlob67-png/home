@@ -46,15 +46,17 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn-green:hover{background:rgba(34,197,94,.25)}
 
 /* 그리드 테이블 */
-.grid-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto}
-.grid-table{width:100%;border-collapse:collapse;min-width:700px}
+.grid-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;position:relative}
+.grid-table{width:100%;border-collapse:collapse;min-width:700px;user-select:none}
 .grid-table th{
   text-align:center;font-size:13px;color:var(--muted);font-weight:600;
   padding:14px 12px;border-bottom:1px solid var(--border);background:var(--surface);
   position:sticky;top:0;z-index:2;letter-spacing:.5px;
 }
+.grid-table th.col-selectable{cursor:pointer;transition:all .2s}
+.grid-table th.col-selectable:hover{color:var(--accent);background:rgba(108,99,255,.08)}
 .grid-table th:first-child,.grid-table th:nth-child(2){text-align:left}
-.grid-table td{padding:0;border-bottom:1px solid rgba(42,42,58,.4);vertical-align:middle}
+.grid-table td{padding:0;border-bottom:1px solid rgba(42,42,58,.4);vertical-align:middle;position:relative}
 .grid-table tr:hover td{background:rgba(108,99,255,.03)}
 .cell-name{padding:12px 14px;font-size:14px;font-weight:500;white-space:nowrap}
 .cell-name a{color:var(--text);text-decoration:none;border-bottom:1px dashed var(--muted);transition:all .2s}
@@ -66,6 +68,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   padding:12px 14px;text-align:center;transition:background .2s;
 }
 .cell-input:focus{background:rgba(108,99,255,.08)}
+.cell-input.selected{background:rgba(108,99,255,.12);box-shadow:inset 0 0 0 1.5px rgba(108,99,255,.5)}
 .cell-input::placeholder{color:rgba(107,107,128,.4)}
 .cell-memo{
   width:100%;background:transparent;border:none;outline:none;
@@ -74,6 +77,33 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .cell-memo:focus{background:rgba(108,99,255,.08)}
 .cell-memo::placeholder{color:rgba(107,107,128,.4)}
+
+/* 일괄 입력 툴바 */
+.batch-bar{
+  display:none;position:sticky;bottom:0;left:0;right:0;z-index:5;
+  background:rgba(26,26,36,.95);backdrop-filter:blur(8px);
+  border-top:1px solid var(--accent);padding:12px 20px;
+  align-items:center;gap:12px;
+}
+.batch-bar.show{display:flex}
+.batch-bar .info{font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap}
+.batch-bar input{
+  background:var(--surface);border:1px solid var(--accent);border-radius:8px;
+  padding:8px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;
+  outline:none;flex:1;max-width:200px;
+}
+.batch-bar .btn-batch{
+  padding:8px 18px;border:none;border-radius:8px;
+  background:var(--accent);color:#fff;font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;
+}
+.batch-bar .btn-batch:hover{opacity:.9}
+.batch-bar .btn-clear{
+  padding:8px 14px;border:1px solid var(--border);border-radius:8px;
+  background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;cursor:pointer;white-space:nowrap;
+}
+.batch-bar .hint{font-size:11px;color:var(--muted);margin-left:auto}
 
 /* 저장 상태 */
 .save-indicator{
@@ -146,6 +176,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <thead id="grid-head"></thead>
       <tbody id="grid-body"></tbody>
     </table>
+    <div class="batch-bar" id="batch-bar">
+      <span class="info" id="batch-info">0개 선택</span>
+      <input type="text" id="batch-value" placeholder="입력할 값" onkeydown="if(event.key==='Enter')applyBatch()">
+      <button class="btn-batch" onclick="applyBatch()">일괄 적용</button>
+      <button class="btn-clear" onclick="clearSelection()">선택 해제</button>
+      <span class="hint">Ctrl+C 복사 · Ctrl+V 붙여넣기 · Shift+클릭 범위선택</span>
+    </div>
   </div>
   <div id="empty-msg" style="text-align:center;padding:60px 20px;color:var(--muted);font-size:14px">
     위에서 성적표를 선택하거나 새로 만들어주세요
@@ -308,26 +345,28 @@ async function loadGrid(){
 
   const cols = currentSession.columns;
 
-  // 헤더
+  // 헤더 (컬럼 클릭으로 전체 선택)
   document.getElementById('grid-head').innerHTML = `<tr>
     <th style="min-width:50px">#</th>
     <th style="min-width:100px">이름</th>
-    ${cols.map(c=>`<th style="min-width:100px">${c}</th>`).join('')}
+    ${cols.map((c,ci)=>`<th class="col-selectable" style="min-width:100px" onclick="selectColumn(${ci})">${c}</th>`).join('')}
     <th style="min-width:160px">개별 전달 사항</th>
     <th style="min-width:80px"></th>
   </tr>`;
 
   // 바디
-  document.getElementById('grid-body').innerHTML = members.map((m,i)=>{
+  document.getElementById('grid-body').innerHTML = members.map((m,ri)=>{
     const d = gradeData[m.id] || {scores:{},memo:''};
     return `<tr id="row-${m.id}">
-      <td class="cell-num">${i+1}</td>
+      <td class="cell-num">${ri+1}</td>
       <td class="cell-name"><a href="report.html?member=${m.id}&session=${currentSession.id}" target="_blank" title="성적표 보기">${m.name}</a></td>
-      ${cols.map(c=>`<td>
+      ${cols.map((c,ci)=>`<td>
         <input class="cell-input" type="text" placeholder="·"
+          data-row="${ri}" data-col="${ci}" data-member="${m.id}" data-colname="${c}"
           value="${d.scores[c]||''}"
           oninput="onCellEdit('${m.id}','${c}',this.value)"
-          onfocus="this.select()">
+          onclick="onCellClick(event,${ri},${ci})"
+          onfocus="onCellFocus(${ri},${ci})">
       </td>`).join('')}
       <td>
         <input class="cell-memo" type="text" placeholder="메모 입력..."
@@ -342,7 +381,161 @@ async function loadGrid(){
 
   document.getElementById('grid-wrap').style.display='block';
   document.getElementById('empty-msg').style.display='none';
+  clearSelection();
 }
+
+// ===== 셀 선택 (엑셀 스타일) =====
+let selectedCells = []; // [{row,col}]
+let lastClickedCell = null;
+let clipboardValue = '';
+
+function getCellInput(row,col){
+  return document.querySelector(`.cell-input[data-row="${row}"][data-col="${col}"]`);
+}
+
+function getAllCellInputs(){
+  return document.querySelectorAll('.cell-input[data-row]');
+}
+
+function updateSelectionUI(){
+  getAllCellInputs().forEach(el=>el.classList.remove('selected'));
+  selectedCells.forEach(({row,col})=>{
+    const el = getCellInput(row,col);
+    if(el) el.classList.add('selected');
+  });
+  const bar = document.getElementById('batch-bar');
+  const info = document.getElementById('batch-info');
+  if(selectedCells.length > 1){
+    bar.classList.add('show');
+    info.textContent = `${selectedCells.length}개 선택`;
+    document.getElementById('batch-value').focus();
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+function onCellClick(event, row, col){
+  if(event.shiftKey && lastClickedCell){
+    // Shift+클릭: 범위 선택
+    const r1 = Math.min(lastClickedCell.row, row);
+    const r2 = Math.max(lastClickedCell.row, row);
+    const c1 = Math.min(lastClickedCell.col, col);
+    const c2 = Math.max(lastClickedCell.col, col);
+    if(!event.ctrlKey && !event.metaKey) selectedCells = [];
+    for(let r=r1;r<=r2;r++){
+      for(let c=c1;c<=c2;c++){
+        if(!selectedCells.find(s=>s.row===r&&s.col===c)){
+          selectedCells.push({row:r,col:c});
+        }
+      }
+    }
+    event.preventDefault();
+  } else if(event.ctrlKey || event.metaKey){
+    // Ctrl+클릭: 토글
+    const idx = selectedCells.findIndex(s=>s.row===row&&s.col===col);
+    if(idx>=0) selectedCells.splice(idx,1);
+    else selectedCells.push({row,col});
+  } else {
+    selectedCells = [{row,col}];
+  }
+  lastClickedCell = {row,col};
+  updateSelectionUI();
+}
+
+function onCellFocus(row,col){
+  if(selectedCells.length <= 1){
+    selectedCells = [{row,col}];
+    lastClickedCell = {row,col};
+    updateSelectionUI();
+  }
+}
+
+function selectColumn(colIdx){
+  selectedCells = [];
+  for(let r=0;r<members.length;r++){
+    selectedCells.push({row:r,col:colIdx});
+  }
+  lastClickedCell = {row:0,col:colIdx};
+  updateSelectionUI();
+}
+
+function clearSelection(){
+  selectedCells = [];
+  updateSelectionUI();
+}
+
+function applyBatch(){
+  const val = document.getElementById('batch-value').value;
+  selectedCells.forEach(({row,col})=>{
+    const el = getCellInput(row,col);
+    if(el){
+      el.value = val;
+      const memberId = el.getAttribute('data-member');
+      const colName = el.getAttribute('data-colname');
+      onCellEdit(memberId, colName, val);
+    }
+  });
+  showToast(`${selectedCells.length}개 셀에 "${val}" 적용 ✓`,'ok');
+  document.getElementById('batch-value').value='';
+}
+
+// 키보드 단축키
+document.addEventListener('keydown', function(e){
+  // Ctrl+C: 선택된 셀 값 복사
+  if((e.ctrlKey||e.metaKey) && e.key==='c' && selectedCells.length>0){
+    const el = getCellInput(selectedCells[0].row, selectedCells[0].col);
+    if(el && document.activeElement!==el){
+      clipboardValue = el.value;
+      showToast(`"${clipboardValue}" 복사됨`,'ok');
+      e.preventDefault();
+    } else if(el && selectedCells.length>1){
+      clipboardValue = el.value;
+    }
+  }
+  // Ctrl+V: 선택된 모든 셀에 붙여넣기
+  if((e.ctrlKey||e.metaKey) && e.key==='v' && selectedCells.length>1){
+    if(clipboardValue!==undefined && clipboardValue!==''){
+      selectedCells.forEach(({row,col})=>{
+        const el = getCellInput(row,col);
+        if(el){
+          el.value = clipboardValue;
+          const memberId = el.getAttribute('data-member');
+          const colName = el.getAttribute('data-colname');
+          onCellEdit(memberId, colName, clipboardValue);
+        }
+      });
+      showToast(`${selectedCells.length}개 셀에 붙여넣기 완료`,'ok');
+      e.preventDefault();
+    }
+  }
+  // Tab: 다음 셀로 이동
+  if(e.key==='Tab' && lastClickedCell){
+    e.preventDefault();
+    const cols = currentSession.columns;
+    let {row,col} = lastClickedCell;
+    if(e.shiftKey){ col--; if(col<0){col=cols.length-1;row--} }
+    else{ col++; if(col>=cols.length){col=0;row++} }
+    if(row>=0 && row<members.length){
+      const el = getCellInput(row,col);
+      if(el){ el.focus(); selectedCells=[{row,col}]; lastClickedCell={row,col}; updateSelectionUI(); }
+    }
+  }
+  // Enter: 아래 셀로 이동
+  if(e.key==='Enter' && lastClickedCell && !e.target.classList.contains('btn-batch')){
+    const tag = e.target.tagName;
+    if(tag==='INPUT' && e.target.classList.contains('cell-input')){
+      e.preventDefault();
+      let {row,col} = lastClickedCell;
+      row++;
+      if(row<members.length){
+        const el = getCellInput(row,col);
+        if(el){ el.focus(); selectedCells=[{row,col}]; lastClickedCell={row,col}; updateSelectionUI(); }
+      }
+    }
+  }
+  // Escape: 선택 해제
+  if(e.key==='Escape'){ clearSelection(); }
+});
 
 function onCellEdit(memberId, col, value){
   if(!gradeData[memberId]) gradeData[memberId]={scores:{},memo:''};
