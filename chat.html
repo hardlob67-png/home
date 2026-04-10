@@ -24,15 +24,29 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .btn-sm{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer}
 .btn-sm:hover{color:var(--text);border-color:var(--accent)}
 
-/* Tab nav - same style as admin.html */
-.admin-tab-nav{display:flex;flex-wrap:nowrap;gap:4px;padding:12px 24px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.admin-tab-nav::-webkit-scrollbar{display:none}
-.admin-tab-nav .t{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:none;transition:all .2s}
-.admin-tab-nav .t:hover{color:var(--text)}
-.admin-tab-nav .t.on{background:var(--card);color:var(--text);font-weight:700}
+/* Sidebar */
+.app-layout{display:flex;min-height:calc(100vh - 64px);position:relative;z-index:1}
+.sidebar{
+  width:200px;flex-shrink:0;position:sticky;top:64px;height:calc(100vh - 64px);
+  background:var(--surface);border-right:1px solid var(--border);
+  padding:16px 0;overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
+.sidebar-item{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;
+  color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;
+  text-decoration:none;border:none;background:none;font-family:inherit;
+  transition:all .15s;white-space:nowrap;width:100%;text-align:left;
+}
+.sidebar-item:hover{background:var(--card);color:var(--text)}
+.sidebar-item.active{background:rgba(108,99,255,.15);color:#a0a7ff;font-weight:700}
+.sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
+.sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
+.sidebar-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
+@media(max-width:768px){.app-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:sticky;top:64px;flex-direction:row;padding:10px;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid var(--border)}.sidebar::-webkit-scrollbar{display:none}.sidebar-nav{flex-direction:row;gap:4px;padding:0;flex-wrap:nowrap}.sidebar-item{padding:8px 14px;flex-shrink:0}.sidebar-divider,.sidebar-label{display:none}}
 
 /* Layout */
-.chat-layout{display:flex;height:calc(100vh - 130px)}
+.chat-layout{display:flex;flex:1;height:calc(100vh - 64px)}
 
 /* Conversation list */
 .conv-list{width:320px;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
@@ -109,17 +123,24 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   </div>
 </header>
 
-<div class="admin-tab-nav">
-  <a class="t" href="admin.html">👥 회원 명단</a>
-  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','quizzes')">📂 퀴즈 관리</a>
-  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','history')">📊 풀이 기록</a>
-  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','classes')">🏫 분반 관리</a>
-  <a class="t" href="grade.html">📝 성적 입력</a>
-  <a class="t" href="test.html">✏️ 실전테스트</a>
-  <a class="t" href="clinic.html">🏥 클리닉</a>
-  <a class="t on" href="chat.html">💬 채팅</a>
-  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','settings')">⚙️ 설정</a>
-</div>
+<div class="app-layout">
+<nav class="sidebar">
+  <div class="sidebar-label">관리</div>
+  <div class="sidebar-nav">
+    <a class="sidebar-item" href="admin.html"><span class="icon">👥</span>회원 명단</a>
+    <a class="sidebar-item" href="admin.html" onclick="sessionStorage.setItem('admin_tab','quizzes')"><span class="icon">📂</span>퀴즈 관리</a>
+    <a class="sidebar-item" href="admin.html" onclick="sessionStorage.setItem('admin_tab','history')"><span class="icon">📊</span>풀이 기록</a>
+    <a class="sidebar-item" href="admin.html" onclick="sessionStorage.setItem('admin_tab','classes')"><span class="icon">🏫</span>분반 관리</a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">수업</div>
+    <a class="sidebar-item" href="grade.html"><span class="icon">📝</span>성적 입력</a>
+    <a class="sidebar-item" href="test.html"><span class="icon">✏️</span>실전테스트</a>
+    <a class="sidebar-item" href="clinic.html"><span class="icon">🏥</span>클리닉</a>
+    <div class="sidebar-divider"></div>
+    <a class="sidebar-item active" href="chat.html"><span class="icon">💬</span>채팅</a>
+    <a class="sidebar-item" href="admin.html" onclick="sessionStorage.setItem('admin_tab','settings')"><span class="icon">⚙️</span>설정</a>
+  </div>
+</nav>
 
 <div class="chat-layout" id="chat-layout">
   <div class="conv-list" id="conv-list">
@@ -129,6 +150,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     <div class="chat-empty-area">왼쪽에서 대화를 선택하세요</div>
   </div>
 </div>
+</div><!-- /app-layout -->
 
 <script>
 const SUPA_URL='https://cheuclwcrxuofiomhtuz.supabase.co';
