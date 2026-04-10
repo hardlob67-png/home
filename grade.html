@@ -250,12 +250,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- 이름 클릭 팝업 -->
 <div class="name-popup" id="name-popup">
-  <button onclick="popupSendSms()">💬 문자 보내기</button>
-  <button onclick="popupClinic()">🏥 클리닉 예약</button>
+  <button onclick="event.stopPropagation();popupSendSms()">💬 문자 보내기</button>
+  <button onclick="event.stopPropagation();popupClinic()">🏥 클리닉 예약</button>
 </div>
 
 <!-- 클리닉 빠른 예약 팝업 -->
-<div class="name-popup" id="clinic-popup" style="min-width:220px;padding:14px">
+<div class="name-popup" id="clinic-popup" style="min-width:220px;padding:14px" onclick="event.stopPropagation()">
   <div style="font-size:13px;font-weight:700;margin-bottom:10px" id="clinic-popup-name"></div>
   <div style="display:flex;flex-direction:column;gap:8px">
     <input type="date" id="clinic-popup-date" style="padding:8px;font-size:13px;border-radius:8px">
