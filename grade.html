@@ -78,6 +78,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .cell-memo:focus{background:rgba(108,99,255,.08)}
 .cell-memo::placeholder{color:rgba(107,107,128,.4)}
 
+/* 이름 팝업 메뉴 */
+.name-popup{
+  position:fixed;z-index:50;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);padding:6px;display:none;min-width:140px;
+}
+.name-popup.show{display:block}
+.name-popup a,.name-popup button{
+  display:block;width:100%;padding:10px 14px;border:none;background:none;
+  color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;
+  text-align:left;cursor:pointer;border-radius:6px;text-decoration:none;transition:background .1s;
+}
+.name-popup a:hover,.name-popup button:hover{background:rgba(108,99,255,.1)}
+
 /* 카드 */
 .nav-card{
   padding:18px;border-radius:12px;cursor:pointer;
@@ -227,6 +240,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
     </div>
   </div>
+</div>
+
+<!-- 이름 클릭 팝업 -->
+<div class="name-popup" id="name-popup">
+  <a id="popup-report" target="_blank">📊 성적표 보기</a>
+  <button id="popup-sms" onclick="popupSendSms()">💬 문자 보내기</button>
 </div>
 
 <!-- 문자 발송 모달 -->
@@ -487,18 +506,26 @@ async function deleteSession(){
 }
 
 // ===== 그리드 =====
+let testColMap = {}; // {columnName: testSetId}
+
 async function loadGrid(){
   if(!currentSession) return;
 
-  // 반 학생 로드 (class_id가 있으면 해당 반 학생만, 없으면 전체)
+  // 반 학생 로드
   if(currentSession.class_id){
-    const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name)&order=members(name)`,{headers:HDR});
+    const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name,phone)&order=members(name)`,{headers:HDR});
     const cmData = await cmRes.json();
     members = cmData.map(cm=>cm.members).filter(Boolean);
   } else {
-    const mRes = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name&role=neq.admin&order=name`,{headers:HDR});
+    const mRes = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name,phone&role=neq.admin&order=name`,{headers:HDR});
     members = await mRes.json();
   }
+
+  // 연결된 시험 로드
+  const testRes = await fetch(`${SUPA_URL}/rest/v1/test_sets?grade_session_id=eq.${currentSession.id}&select=id,grade_column`,{headers:HDR});
+  const testSets = await testRes.json();
+  testColMap = {};
+  testSets.forEach(t=>{ if(t.grade_column) testColMap[t.grade_column]=t.id; });
 
   // 기존 성적 로드
   const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${currentSession.id}&select=*`,{headers:HDR});
@@ -513,28 +540,36 @@ async function loadGrid(){
 
   const cols = currentSession.columns;
 
-  // 헤더 (컬럼 클릭으로 전체 선택)
   document.getElementById('grid-head').innerHTML = `<tr>
     <th style="min-width:50px">#</th>
     <th style="min-width:100px">이름</th>
-    ${cols.map((c,ci)=>`<th class="col-selectable" style="min-width:100px" onclick="selectColumn(${ci})">${c}</th>`).join('')}
+    ${cols.map((c,ci)=>`<th class="col-selectable" style="min-width:100px" onclick="selectColumn(${ci})">${c}${testColMap[c]?' 📝':''}</th>`).join('')}
     <th style="min-width:160px">개별 전달 사항</th>
     <th style="min-width:80px"></th>
   </tr>`;
 
-  // 바디
   document.getElementById('grid-body').innerHTML = members.map((m,ri)=>{
     const d = gradeData[m.id] || {scores:{},memo:''};
     return `<tr id="row-${m.id}">
       <td class="cell-num">${ri+1}</td>
-      <td class="cell-name"><a href="report.html?member=${m.id}&session=${currentSession.id}" target="_blank" title="성적표 보기">${m.name}</a></td>
-      ${cols.map((c,ci)=>`<td>
-        <input class="cell-input" type="text" placeholder="·"
-          data-row="${ri}" data-col="${ci}" data-member="${m.id}" data-colname="${c}"
-          value="${d.scores[c]||''}"
-          oninput="onCellEdit('${m.id}','${c}',this.value)"
-          onmousedown="onCellMouseDown(event,${ri},${ci})">>
-      </td>`).join('')}
+      <td class="cell-name"><a href="#" onclick="showNamePopup(event,'${m.id}','${m.name}','${m.phone||''}')">${m.name}</a></td>
+      ${cols.map((c,ci)=>{
+        const testId = testColMap[c];
+        const val = d.scores[c]||'';
+        if(testId && val){
+          return `<td style="text-align:center;padding:8px">
+            <a href="test-detail.html?test=${testId}&member=${m.id}" target="_blank"
+              style="color:#a0a7ff;text-decoration:underline;text-decoration-style:dotted;font-weight:600;font-size:14px">${val}</a>
+          </td>`;
+        }
+        return `<td>
+          <input class="cell-input" type="text" placeholder="·"
+            data-row="${ri}" data-col="${ci}" data-member="${m.id}" data-colname="${c}"
+            value="${val}"
+            oninput="onCellEdit('${m.id}','${c}',this.value)"
+            onmousedown="onCellMouseDown(event,${ri},${ci})">
+        </td>`;
+      }).join('')}
       <td>
         <input class="cell-memo" type="text" placeholder="메모 입력..."
           value="${d.memo||''}"
@@ -547,9 +582,39 @@ async function loadGrid(){
   }).join('');
 
   document.getElementById('grid-wrap').style.display='block';
-  document.getElementById('empty-msg').style.display='none';
   clearSelection();
 }
+
+// ===== 이름 팝업 =====
+let popupMemberId='', popupMemberName='', popupMemberPhone='';
+
+function showNamePopup(e, memberId, name, phone){
+  e.preventDefault();
+  popupMemberId=memberId; popupMemberName=name; popupMemberPhone=phone;
+  const popup = document.getElementById('name-popup');
+  popup.style.left = Math.min(e.clientX, window.innerWidth-160)+'px';
+  popup.style.top = e.clientY+'px';
+  document.getElementById('popup-report').href = `report.html?member=${memberId}&session=${currentSession.id}`;
+  popup.classList.add('show');
+}
+
+function popupSendSms(){
+  document.getElementById('name-popup').classList.remove('show');
+  openSmsModal();
+  setTimeout(()=>{
+    switchSmsTab('single');
+    const sel = document.getElementById('sms-single-to');
+    sel.value = popupMemberId;
+    onSingleSelect();
+  },200);
+}
+
+document.addEventListener('click', function(e){
+  const popup = document.getElementById('name-popup');
+  if(popup && !popup.contains(e.target) && !e.target.closest('.cell-name')){
+    popup.classList.remove('show');
+  }
+});
 
 // ===== 셀 선택 (엑셀 스타일) =====
 let selectedCells = []; // [{row,col}]
