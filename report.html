@@ -324,11 +324,15 @@ function renderMsg(m){
 }
 
 async function loadChat(){
-  if(!memberId||!sessionId) return;
+  if(!memberId) return;
   document.getElementById('chat-container').style.display='block';
 
+  // session_id가 있으면 포함, 없으면 member_id만으로 조회
+  let query=`${SUPA_URL}/rest/v1/chats?member_id=eq.${memberId}&select=*&order=created_at.asc`;
+  if(sessionId) query+=`&session_id=eq.${sessionId}`;
+
   try{
-    const res=await fetch(`${SUPA_URL}/rest/v1/chats?member_id=eq.${memberId}&session_id=eq.${sessionId}&select=*&order=created_at.asc`,{headers:{...HDR,'Content-Type':'application/json'}});
+    const res=await fetch(query,{headers:{...HDR,'Content-Type':'application/json'}});
     const msgs=await res.json();
     const el=document.getElementById('chat-messages');
     if(Array.isArray(msgs)&&msgs.length){
@@ -338,10 +342,10 @@ async function loadChat(){
   }catch(e){console.log('채팅 로드 실패',e)}
 
   // Realtime 구독
-  sb.channel('chat-'+memberId+'-'+sessionId)
+  sb.channel('chat-'+memberId)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats',filter:`member_id=eq.${memberId}`},payload=>{
       const m=payload.new;
-      if(String(m.session_id)!==String(sessionId)) return;
+      if(sessionId && m.session_id && String(m.session_id)!==String(sessionId)) return;
       if(m.sender==='parent') return; // 본인 메시지는 이미 표시됨
       const el=document.getElementById('chat-messages');
       if(el.querySelector('.chat-empty')) el.innerHTML='';
@@ -376,7 +380,7 @@ async function sendChat(){
     await fetch(`${SUPA_URL}/rest/v1/chats`,{
       method:'POST',
       headers:{...HDR,'Content-Type':'application/json','Prefer':'return=minimal'},
-      body:JSON.stringify({member_id:memberId,session_id:Number(sessionId),sender:'parent',message:msg})
+      body:JSON.stringify({member_id:memberId,session_id:sessionId?Number(sessionId):null,sender:'parent',message:msg})
     });
   }catch(e){console.log('채팅 저장 실패',e)}
 }

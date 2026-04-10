@@ -180,7 +180,7 @@ async function init(){
   // member_id + session_id 기준으로 그룹화
   const groups={};
   allChats.forEach(c=>{
-    const key=c.member_id+'_'+c.session_id;
+    const key=c.member_id+'_'+(c.session_id||'none');
     if(!groups[key]) groups[key]={member_id:c.member_id,session_id:c.session_id,chats:[],unread:0,last:c};
     groups[key].chats.push(c);
     if(c.sender==='parent'&&!c.is_read) groups[key].unread++;
@@ -193,8 +193,8 @@ async function init(){
   sb.channel('admin-chats')
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats'},payload=>{
       const m=payload.new;
-      const key=m.member_id+'_'+m.session_id;
-      let conv=conversations.find(c=>c.member_id+'_'+c.session_id===key);
+      const key=m.member_id+'_'+(m.session_id||'none');
+      let conv=conversations.find(c=>c.member_id+'_'+(c.session_id||'none')===key);
       if(!conv){
         conv={member_id:m.member_id,session_id:m.session_id,chats:[],unread:0,last:m};
         conversations.unshift(conv);
@@ -204,7 +204,7 @@ async function init(){
       if(m.sender==='parent') conv.unread++;
       conversations.sort((a,b)=>new Date(b.last.created_at)-new Date(a.last.created_at));
       renderConvList();
-      if(currentConv&&currentConv.member_id===m.member_id&&String(currentConv.session_id)===String(m.session_id)){
+      if(currentConv&&currentConv.member_id===m.member_id&&String(currentConv.session_id||'none')===String(m.session_id||'none')){
         renderChatArea(currentConv);
       }
     }).subscribe();
@@ -219,7 +219,7 @@ function renderConvList(){
     const preview=c.last.message.slice(0,30);
     const t=new Date(c.last.created_at);
     const time=`${t.getMonth()+1}/${t.getDate()} ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}`;
-    const isActive=currentConv&&currentConv.member_id===c.member_id&&String(currentConv.session_id)===String(c.session_id);
+    const isActive=currentConv&&currentConv.member_id===c.member_id&&String(currentConv.session_id||'none')===String(c.session_id||'none');
     return `<div class="conv-item${isActive?' active':''}" onclick="openConv('${c.member_id}',${c.session_id})">
       <div>
         <div class="conv-name">${name}</div>
@@ -234,14 +234,17 @@ function renderConvList(){
 }
 
 async function openConv(memberId,sessionId){
-  const conv=conversations.find(c=>c.member_id===memberId&&String(c.session_id)===String(sessionId));
+  const conv=conversations.find(c=>c.member_id===memberId&&String(c.session_id||'none')===String(sessionId||'none'));
   if(!conv) return;
   currentConv=conv;
 
   // 읽음 처리
   if(conv.unread>0){
     conv.unread=0;
-    await fetch(`${SUPA_URL}/rest/v1/chats?member_id=eq.${memberId}&session_id=eq.${sessionId}&sender=eq.parent&is_read=eq.false`,{
+    let readUrl=`${SUPA_URL}/rest/v1/chats?member_id=eq.${memberId}&sender=eq.parent&is_read=eq.false`;
+    if(sessionId) readUrl+=`&session_id=eq.${sessionId}`;
+    else readUrl+=`&session_id=is.null`;
+    await fetch(readUrl,{
       method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({is_read:true})
     });
   }
@@ -308,7 +311,8 @@ async function sendReply(){
   const phone=memberMap[currentConv.member_id]?.phone;
   const name=memberMap[currentConv.member_id]?.name||'학생';
   if(phone){
-    const reportLink=`${location.origin}/report.html?member=${currentConv.member_id}&session=${currentConv.session_id}`;
+    let reportLink=`${location.origin}/report.html?member=${currentConv.member_id}`;
+    if(currentConv.session_id) reportLink+=`&session=${currentConv.session_id}`;
     const smsText=`[META ENGLISH] ${name} 보호자님, 선생님이 답장을 보냈습니다.\n${reportLink}`;
     try{
       await sb.functions.invoke('send-sms',{body:{to:phone,text:smsText}});
