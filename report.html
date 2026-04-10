@@ -206,7 +206,7 @@ const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
 
 const params = new URLSearchParams(location.search);
 const memberId = params.get('member');
-const sessionId = params.get('session');
+let sessionId = params.get('session');
 
 const ICONS = {'리뷰테스트':'📝','과제':'📋','단어':'📖','암기':'🧠','리뷰 재시':'🔄','default':'📌'};
 
@@ -241,8 +241,27 @@ function getCheerMessage(scores){
 
 async function loadReport(){
   const content = document.getElementById('content');
-  if(!memberId || !sessionId){
+  if(!memberId){
     content.innerHTML = `<div class="state-msg"><div class="icon">⚠️</div><div class="title">잘못된 링크입니다</div><div class="desc">올바른 성적표 링크로 다시 접속해주세요.</div></div>`;
+    return;
+  }
+
+  // session 없으면 최신 성적 자동 조회
+  if(!sessionId){
+    try{
+      const latestRes = await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id&order=created_at.desc&limit=1`,{headers:HDR});
+      const latest = await latestRes.json();
+      if(Array.isArray(latest)&&latest.length&&latest[0].session_id){
+        sessionId = String(latest[0].session_id);
+      } else {
+        content.innerHTML = `<div class="state-msg"><div class="icon">📭</div><div class="title">아직 입력된 성적이 없어요</div><div class="desc">성적이 입력되면 이 페이지에서 확인할 수 있습니다.</div></div>`;
+        return;
+      }
+    }catch(e){
+      content.innerHTML = `<div class="state-msg"><div class="icon">😥</div><div class="title">성적표를 불러올 수 없어요</div></div>`;
+      return;
+    }
+  }
     return;
   }
   try{
@@ -406,16 +425,21 @@ async function sendChat(){
 async function loadPastReports(){
   if(!memberId) return;
   try{
-    const res=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id,grade_sessions(id,title,created_at)&order=created_at.desc`,{headers:HDR});
-    const grades=await res.json();
-    if(!Array.isArray(grades)||grades.length<=1) return; // 1개 이하면 표시 불필요
+    const gRes=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${memberId}&select=session_id&order=created_at.desc`,{headers:HDR});
+    const grades=await gRes.json();
+    if(!Array.isArray(grades)||grades.length<=1) return;
+
+    const sessionIds=[...new Set(grades.map(g=>g.session_id).filter(Boolean))];
+    if(!sessionIds.length) return;
+
+    const sRes=await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=in.(${sessionIds.join(',')})&select=id,title,created_at&order=created_at.desc`,{headers:HDR});
+    const sessions=await sRes.json();
+    if(!Array.isArray(sessions)||sessions.length<=1) return;
 
     const el=document.getElementById('past-reports');
     el.innerHTML=`<div class="past-reports">
       <div class="past-title">📋 지난 성적표</div>
-      ${grades.map(g=>{
-        const s=g.grade_sessions;
-        if(!s) return '';
+      ${sessions.map(s=>{
         const isCurrent=String(s.id)===String(sessionId);
         const date=new Date(s.created_at).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
         return `<a class="past-card${isCurrent?' current':''}" href="report.html?member=${memberId}&session=${s.id}">
