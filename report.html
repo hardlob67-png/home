@@ -136,17 +136,17 @@ body::after{
 .chat-msg.parent .time{text-align:right}
 .chat-empty{text-align:center;color:var(--muted);font-size:13px;padding:40px 0}
 .chat-input-row{
-  display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:#fff;
-  padding-bottom:max(12px, env(safe-area-inset-bottom));
+  display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--border);background:#fff;
+  padding-bottom:max(10px, env(safe-area-inset-bottom));
 }
 .chat-input-row input{
-  flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;
-  font-size:14px;font-family:inherit;outline:none;
+  flex:1;min-width:0;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:16px;font-family:inherit;outline:none;
 }
 .chat-input-row input:focus{border-color:var(--accent)}
 .chat-input-row button{
-  padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:10px;
-  font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;
+  padding:10px 14px;background:var(--accent);color:#fff;border:none;border-radius:10px;
+  font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;
 }
 .chat-input-row button:active{opacity:.85}
 </style>
@@ -327,19 +327,22 @@ async function loadChat(){
   if(!memberId||!sessionId) return;
   document.getElementById('chat-container').style.display='block';
 
-  const res=await fetch(`${SUPA_URL}/rest/v1/chats?member_id=eq.${memberId}&session_id=eq.${sessionId}&select=*&order=created_at.asc`,{headers:HDR});
-  const msgs=await res.json();
-  const el=document.getElementById('chat-messages');
-  if(msgs.length){
-    el.innerHTML=msgs.map(renderMsg).join('');
-    scrollChat();
-  }
+  try{
+    const res=await fetch(`${SUPA_URL}/rest/v1/chats?member_id=eq.${memberId}&session_id=eq.${sessionId}&select=*&order=created_at.asc`,{headers:{...HDR,'Content-Type':'application/json'}});
+    const msgs=await res.json();
+    const el=document.getElementById('chat-messages');
+    if(Array.isArray(msgs)&&msgs.length){
+      el.innerHTML=msgs.map(renderMsg).join('');
+      scrollChat();
+    }
+  }catch(e){console.log('채팅 로드 실패',e)}
 
   // Realtime 구독
   sb.channel('chat-'+memberId+'-'+sessionId)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats',filter:`member_id=eq.${memberId}`},payload=>{
       const m=payload.new;
       if(String(m.session_id)!==String(sessionId)) return;
+      if(m.sender==='parent') return; // 본인 메시지는 이미 표시됨
       const el=document.getElementById('chat-messages');
       if(el.querySelector('.chat-empty')) el.innerHTML='';
       el.innerHTML+=renderMsg(m);
@@ -360,11 +363,22 @@ async function sendChat(){
   if(!msg) return;
   input.value='';
 
-  await fetch(`${SUPA_URL}/rest/v1/chats`,{
-    method:'POST',
-    headers:{...HDR,'Content-Type':'application/json','Prefer':'return=minimal'},
-    body:JSON.stringify({member_id:memberId,session_id:Number(sessionId),sender:'parent',message:msg})
-  });
+  // 즉시 화면에 표시
+  const el=document.getElementById('chat-messages');
+  if(el.querySelector('.chat-empty')) el.innerHTML='';
+  const now=new Date();
+  const time=`${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  el.innerHTML+=`<div class="chat-msg parent">${msg.replace(/</g,'&lt;').replace(/\n/g,'<br>')}<div class="time">${time}</div></div>`;
+  scrollChat();
+
+  // DB 저장
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/chats`,{
+      method:'POST',
+      headers:{...HDR,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({member_id:memberId,session_id:Number(sessionId),sender:'parent',message:msg})
+    });
+  }catch(e){console.log('채팅 저장 실패',e)}
 }
 
 // 초기화

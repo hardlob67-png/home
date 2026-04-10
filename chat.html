@@ -309,7 +309,7 @@ async function sendReply(){
   const name=memberMap[currentConv.member_id]?.name||'학생';
   if(phone){
     const reportLink=`${location.origin}/report.html?member=${currentConv.member_id}&session=${currentConv.session_id}`;
-    const smsText=`[META ENGLISH] ${name} 보호자님, 선생님이 답장을 보냈습니다.\n\n"${msg.slice(0,40)}${msg.length>40?'...':''}"\n\n확인하기: ${reportLink}`;
+    const smsText=`[META ENGLISH] ${name} 보호자님, 선생님이 답장을 보냈습니다.\n${reportLink}`;
     try{
       await sb.functions.invoke('send-sms',{body:{to:phone,text:smsText}});
     }catch(e){console.log('SMS 발송 실패',e)}
