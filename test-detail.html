@@ -290,24 +290,79 @@ async function load(){
 
     // 추이 그래프
     if(allResponses.length > 1){
-      html += `<div class="card">
-        <div class="trend-section">
-          <div class="trend-title">📈 시험 추이</div>
-          <div class="trend-chart">`;
-      const maxPts = Math.max(...allResponses.map(r=>r.total_points||100));
-      allResponses.forEach((r,i)=>{
-        const h = maxPts>0 ? Math.max(4, (r.total_score/maxPts)*130) : 4;
-        const isCurrent = r.test_set_id===testSetId;
+      // 각 시험의 버전 문항 로드 (카테고리별 분석용)
+      const versionIds = [...new Set(allResponses.map(r=>r.test_version_id).filter(Boolean))];
+      const vRes2 = await fetch(`${SUPA_URL}/rest/v1/test_versions?id=in.(${versionIds.join(',')})&select=id,questions`,{headers:HDR});
+      const allVersions = await vRes2.json();
+      const versionMap = {};
+      allVersions.forEach(v=>{ versionMap[v.id] = typeof v.questions==='string'?JSON.parse(v.questions):v.questions; });
+
+      // 시험별 카테고리 점수 계산
+      const allCats = new Set();
+      const trendData = allResponses.map(r=>{
+        const qs = versionMap[r.test_version_id] || [];
+        const rScores = typeof r.scores==='string'?JSON.parse(r.scores):r.scores;
+        const catScores = {};
+        qs.forEach((q,i)=>{
+          const cat = q.category || '';
+          if(!cat) return;
+          allCats.add(cat);
+          if(!catScores[cat]) catScores[cat]={score:0,max:0};
+          catScores[cat].max += q.points;
+          catScores[cat].score += (rScores[String(i+1)]||0);
+        });
         const p = r.total_points>0?Math.round(r.total_score/r.total_points*100):0;
         const title = r.test_sets ? r.test_sets.title : '';
-        const short = title.length>6 ? title.slice(0,6)+'..' : title;
-        html += `<div class="trend-bar-wrap" title="${title}: ${r.total_score}/${r.total_points}">
-          <div class="trend-score">${p}%</div>
-          <div class="trend-bar ${isCurrent?'current':''}" style="height:${h}px"></div>
+        return {p, title, isCurrent:r.test_set_id===testSetId, catScores, totalScore:r.total_score, totalPoints:r.total_points};
+      });
+
+      // 전체 추이
+      html += `<div class="card"><div class="trend-section">
+        <div class="trend-title">📈 전체 점수 추이</div>
+        <div class="trend-chart">`;
+      trendData.forEach(d=>{
+        const h = Math.max(4, d.p*1.3);
+        const short = d.title.length>6?d.title.slice(0,6)+'..':d.title;
+        html += `<div class="trend-bar-wrap" title="${d.title}: ${d.totalScore}/${d.totalPoints}">
+          <div class="trend-score">${d.p}%</div>
+          <div class="trend-bar ${d.isCurrent?'current':''}" style="height:${h}px"></div>
           <div class="trend-label">${short}</div>
         </div>`;
       });
-      html += `</div></div></div>`;
+      html += `</div>`;
+
+      // 카테고리별 추이
+      const catList = [...allCats];
+      const catColors = {'어휘':'#4f46e5','문법':'#7c3aed','독해':'#2563eb','듣기':'#0891b2','쓰기':'#059669'};
+      if(catList.length > 0){
+        html += `<div style="margin-top:24px"><div class="trend-title">📂 카테고리별 추이</div>`;
+        catList.forEach(cat=>{
+          const color = catColors[cat] || '#6366f1';
+          html += `<div style="margin-bottom:16px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:${color}">${cat}</div>
+            <div style="display:flex;align-items:flex-end;gap:6px;height:60px">`;
+          trendData.forEach(d=>{
+            const cs = d.catScores[cat];
+            const p = cs && cs.max>0 ? Math.round(cs.score/cs.max*100) : null;
+            if(p !== null){
+              const h = Math.max(4, p*0.5);
+              html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px" title="${d.title}: ${cs.score}/${cs.max}">
+                <div style="font-size:10px;font-weight:700;color:${p>=70?'var(--green)':'var(--red)'}">${p}%</div>
+                <div style="width:100%;height:${h}px;border-radius:4px 4px 0 0;background:${d.isCurrent?color:'#c7d2fe'}"></div>
+              </div>`;
+            } else {
+              html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
+                <div style="font-size:10px;color:var(--muted)">-</div>
+                <div style="width:100%;height:4px;border-radius:4px;background:#e2e8f0"></div>
+              </div>`;
+            }
+          });
+          html += `</div></div>`;
+        });
+        html += `</div>`;
+      }
+
+      html += `</div></div>`;
     }
 
     // 응원
