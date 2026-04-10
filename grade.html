@@ -157,6 +157,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="modal">
     <h3>새 성적표 만들기</h3>
     <div class="field">
+      <label>반 선택</label>
+      <select id="new-session-class" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;width:100%">
+        <option value="">-- 반을 선택하세요 --</option>
+      </select>
+    </div>
+    <div class="field">
       <label>성적표 제목</label>
       <input type="text" id="new-session-title" placeholder="예: 4월 1주차 리뷰">
     </div>
@@ -189,17 +195,27 @@ let saveTimers = {}; // per-row debounce timers
 
 // ===== 세션 관리 =====
 async function loadSessions(){
-  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?select=*&order=created_at.desc`,{headers:HDR});
+  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?select=*,classes(name)&order=created_at.desc`,{headers:HDR});
   const sessions = await res.json();
   const sel = document.getElementById('session-select');
   const cur = sel.value;
   sel.innerHTML = '<option value="">-- 성적표 선택 --</option>' +
-    sessions.map(s=>`<option value="${s.id}">${s.title} (${new Date(s.created_at).toLocaleDateString('ko-KR')})</option>`).join('');
+    sessions.map(s=>{
+      const className = s.classes ? s.classes.name : '';
+      const label = className ? `[${className}] ${s.title}` : s.title;
+      return `<option value="${s.id}">${label} (${new Date(s.created_at).toLocaleDateString('ko-KR')})</option>`;
+    }).join('');
   if(cur) sel.value = cur;
 }
 
-function openNewModal(){
+async function openNewModal(){
   document.getElementById('modal-new').classList.add('show');
+  // 반 목록 로드
+  const res = await fetch(`${SUPA_URL}/rest/v1/classes?select=*&order=name`,{headers:HDR});
+  const classes = await res.json();
+  const sel = document.getElementById('new-session-class');
+  sel.innerHTML = '<option value="">-- 반을 선택하세요 --</option>' +
+    classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
   document.getElementById('new-session-title').focus();
 }
 function closeModal(){
@@ -207,8 +223,10 @@ function closeModal(){
 }
 
 async function createSession(){
+  const classId = document.getElementById('new-session-class').value;
   const title = document.getElementById('new-session-title').value.trim();
   const colsRaw = document.getElementById('new-session-cols').value.trim();
+  if(!classId){ showToast('반을 선택해주세요','err'); return }
   if(!title){ showToast('제목을 입력해주세요','err'); return }
   const columns = colsRaw.split(',').map(s=>s.trim()).filter(Boolean);
   if(!columns.length){ showToast('항목을 하나 이상 입력해주세요','err'); return }
@@ -218,7 +236,7 @@ async function createSession(){
   try{
     const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions`,{
       method:'POST', headers:{...HDR,'Prefer':'return=representation'},
-      body:JSON.stringify({title, columns:JSON.stringify(columns)})
+      body:JSON.stringify({title, columns:JSON.stringify(columns), class_id:classId})
     });
     const data = await res.json();
     if(res.ok && data.length){
@@ -267,9 +285,15 @@ async function onSessionChange(){
 async function loadGrid(){
   if(!currentSession) return;
 
-  // 회원 로드
-  const mRes = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name&role=neq.admin&order=name`,{headers:HDR});
-  members = await mRes.json();
+  // 반 학생 로드 (class_id가 있으면 해당 반 학생만, 없으면 전체)
+  if(currentSession.class_id){
+    const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name)&order=members(name)`,{headers:HDR});
+    const cmData = await cmRes.json();
+    members = cmData.map(cm=>cm.members).filter(Boolean);
+  } else {
+    const mRes = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name&role=neq.admin&order=name`,{headers:HDR});
+    members = await mRes.json();
+  }
 
   // 기존 성적 로드
   const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${currentSession.id}&select=*`,{headers:HDR});
