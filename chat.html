@@ -312,7 +312,7 @@ async function sendReply(){
   const name=memberMap[currentConv.member_id]?.name||'학생';
   if(phone){
     const host=location.hostname;
-    const reportLink=`https://${host}/report.html?member=${currentConv.member_id}`;
+    const reportLink=`https://${host}/report.html?member=${currentConv.member_id}&chat=1`;
     const smsText=`[META ENGLISH] ${name} 보호자님, 선생님이 답장을 보냈습니다.\n${reportLink}`;
     try{
       await sb.functions.invoke('send-sms',{body:{to:phone,text:smsText}});
