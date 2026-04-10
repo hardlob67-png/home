@@ -374,11 +374,6 @@ async function loadChat(){
     }
   }catch(e){console.log('채팅 로드 실패',e)}
 
-  // SMS 링크에서 왔으면 자동으로 채팅창 열기
-  if(params.get('chat')==='1'){
-    setTimeout(()=>openChat(),500);
-  }
-
   // Realtime 구독
   sb.channel('chat-'+memberId)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats',filter:`member_id=eq.${memberId}`},payload=>{
@@ -456,8 +451,10 @@ async function loadPastReports(){
 // 초기화
 (async()=>{
   await loadReport();
-  loadChat();
+  await loadChat();
   loadPastReports();
+  // SMS 답장 링크로 왔으면 채팅창 자동 열기
+  if(params.get('chat')==='1') openChat();
 })();
 </script>
 </body>
