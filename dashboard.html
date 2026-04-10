@@ -103,6 +103,44 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .badge-toast .bt-icon{font-size:32px}
 .badge-toast .bt-text{font-size:13px;font-weight:700;color:var(--gold)}
 .badge-toast .bt-sub{font-size:11px;color:var(--muted)}
+
+/* ── Landing Menu ── */
+.landing-menu{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;padding:60px 0}
+.menu-card{
+  width:260px;padding:50px 30px;background:var(--card);border:1px solid var(--border);
+  border-radius:20px;text-align:center;cursor:pointer;transition:all .25s;
+}
+.menu-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 12px 40px rgba(108,99,255,.15)}
+.menu-card:active{transform:scale(.97)}
+.menu-card .mc-icon{font-size:52px;margin-bottom:16px}
+.menu-card .mc-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.menu-card .mc-desc{font-size:13px;color:var(--muted)}
+
+.view{display:none}
+.view.active{display:block}
+
+.back-nav{margin-bottom:20px}
+.back-btn{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:8px 16px;color:var(--muted);font-size:13px;font-family:inherit;cursor:pointer;
+}
+.back-btn:hover{color:var(--text);border-color:var(--accent)}
+
+/* Grade list */
+.grade-session-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:12px;cursor:pointer;transition:all .2s;
+}
+.grade-session-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.grade-session-card .gs-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.grade-session-card .gs-date{font-size:12px;color:var(--muted)}
+.grade-session-card .gs-scores{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.grade-session-card .gs-chip{
+  font-size:12px;padding:4px 10px;border-radius:8px;
+  background:var(--surface);border:1px solid var(--border);
+}
+.grade-session-card .gs-chip.pass{border-color:rgba(34,197,94,.3);color:#4ade80}
+.grade-session-card .gs-chip.fail{border-color:rgba(255,101,132,.3);color:#ff6584}
 </style>
 </head>
 <body>
@@ -118,25 +156,53 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </header>
 
 <main class="main">
-  <div class="hero">
-    <div class="hero-greeting">오늘도 열심히 💪</div>
-    <h1 class="hero-title">어떤 <span>퀴즈</span>를 풀어볼까요?</h1>
-    <p class="hero-sub">클릭해서 바로 시작하세요.</p>
-  </div>
-  <div class="stats">
-    <div class="stat-card"><div class="stat-num" id="stat-total">-</div><div class="stat-label">전체 퀴즈</div></div>
-    <div class="stat-card"><div class="stat-num" id="stat-badges">-</div><div class="stat-label">획득 뱃지</div></div>
-    <div class="stat-card"><div class="stat-num" id="stat-new">-</div><div class="stat-label">이번 주 추가</div></div>
+  <!-- Landing Menu -->
+  <div class="view active" id="view-landing">
+    <div class="hero">
+      <div class="hero-greeting">오늘도 열심히 💪</div>
+      <h1 class="hero-title">안녕, <span id="hero-name">학생</span>!</h1>
+      <p class="hero-sub">무엇을 할까요?</p>
+    </div>
+    <div class="landing-menu">
+      <div class="menu-card" onclick="showView('grades')">
+        <div class="mc-icon">📊</div>
+        <div class="mc-title">성적표 보기</div>
+        <div class="mc-desc">나의 성적과 피드백을 확인해요</div>
+      </div>
+      <div class="menu-card" onclick="showView('quiz')">
+        <div class="mc-icon">🧠</div>
+        <div class="mc-title">학습 퀴즈</div>
+        <div class="mc-desc">퀴즈를 풀고 뱃지를 모아요</div>
+      </div>
+    </div>
   </div>
 
-  <!-- BADGE COLLECTION -->
-  <div class="badge-collection">
-    <div class="section-title">🏆 내 뱃지</div>
-    <div class="badge-grid" id="badge-grid"><div class="spinner">불러오는 중...</div></div>
+  <!-- Grades View -->
+  <div class="view" id="view-grades">
+    <div class="back-nav"><button class="back-btn" onclick="showView('landing')">← 돌아가기</button></div>
+    <div class="section-title">📊 나의 성적표</div>
+    <div id="grade-list"><div class="spinner">불러오는 중...</div></div>
   </div>
 
-  <div class="section-title">퀴즈 목록</div>
-  <div class="quiz-grid" id="quiz-grid"><div class="spinner">불러오는 중...</div></div>
+  <!-- Quiz View -->
+  <div class="view" id="view-quiz">
+    <div class="back-nav"><button class="back-btn" onclick="showView('landing')">← 돌아가기</button></div>
+    <div class="hero">
+      <h1 class="hero-title">어떤 <span>퀴즈</span>를 풀어볼까요?</h1>
+      <p class="hero-sub">클릭해서 바로 시작하세요.</p>
+    </div>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-num" id="stat-total">-</div><div class="stat-label">전체 퀴즈</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-badges">-</div><div class="stat-label">획득 뱃지</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-new">-</div><div class="stat-label">이번 주 추가</div></div>
+    </div>
+    <div class="badge-collection">
+      <div class="section-title">🏆 내 뱃지</div>
+      <div class="badge-grid" id="badge-grid"><div class="spinner">불러오는 중...</div></div>
+    </div>
+    <div class="section-title">퀴즈 목록</div>
+    <div class="quiz-grid" id="quiz-grid"><div class="spinner">불러오는 중...</div></div>
+  </div>
 </main>
 
 <!-- 퀴즈 전체화면 패널 -->
@@ -168,6 +234,42 @@ if(!user) location.href='index.html';
 if(user && user.role==='clinic_admin'){ location.href='clinic-admin.html'; }
 document.getElementById('username').textContent = user.name;
 if(user.role==='admin') document.getElementById('admin-btn').style.display='';
+document.getElementById('hero-name').textContent = user.name;
+
+// ── View switching ──
+function showView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  if(v==='quiz'){ loadBadges(); loadQuizzes(); }
+  if(v==='grades'){ loadGrades(); }
+}
+
+// ── Load Grades ──
+async function loadGrades(){
+  const el=document.getElementById('grade-list');
+  el.innerHTML='<div class="spinner">불러오는 중...</div>';
+  try{
+    const res=await fetch(`${SUPA_URL}/rest/v1/grades?member_id=eq.${user.id}&select=*,grade_sessions(id,title,created_at)&order=created_at.desc`,{headers:HDR});
+    const grades=await res.json();
+    if(!grades.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">아직 등록된 성적표가 없어요</div>';return}
+    el.innerHTML=grades.map(g=>{
+      const s=g.grade_sessions;
+      if(!s) return '';
+      const date=new Date(s.created_at).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
+      const scores=typeof g.scores==='string'?JSON.parse(g.scores):g.scores;
+      const chips=Object.entries(scores||{}).map(([k,v])=>{
+        if(!v||v==='-') return '';
+        const cls=(v==='통과'||v==='완료'||Number(v)>=80)?'pass':'fail';
+        return `<span class="gs-chip ${cls}">${k}: ${v}</span>`;
+      }).join('');
+      return `<div class="grade-session-card" onclick="location.href='report.html?member=${user.id}&session=${s.id}'">
+        <div class="gs-title">${s.title}</div>
+        <div class="gs-date">${date}</div>
+        <div class="gs-scores">${chips}</div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px">불러오기 실패</div>';}
+}
 
 // ── Badge definitions (same as quiz HTML) ──
 const BADGE_DEFS = [
@@ -370,9 +472,6 @@ window.addEventListener('popstate', ()=>{
 });
 
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
-
-loadQuizzes();
-loadBadges();
 </script>
 </body>
 </html>
