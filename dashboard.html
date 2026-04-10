@@ -165,6 +165,7 @@ const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type'
 
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
+if(user && user.role==='clinic_admin'){ location.href='clinic-admin.html'; }
 document.getElementById('username').textContent = user.name;
 if(user.role==='admin') document.getElementById('admin-btn').style.display='';
 
