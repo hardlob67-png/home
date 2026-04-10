@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>META ENGLISH - 채팅 관리</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#13111a;--surface:#1e1b2e;--card:#262339;--border:#332f4a;
+  --accent:#6c63ff;--accent-light:rgba(108,99,255,.12);
+  --text:#e8e6f0;--muted:#8a86a0;
+  --green:#22c55e;--red:#ef4444;
+  --radius:16px;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+.header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--border)}
+.header-logo{display:flex;align-items:center;gap:12px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;background:linear-gradient(135deg,#6c63ff,#b066ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px}
+.btn-sm{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:8px 14px;border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer}
+.btn-sm:hover{color:var(--text);border-color:var(--accent)}
+
+/* Tab nav - same style as admin.html */
+.admin-tab-nav{display:flex;flex-wrap:nowrap;gap:4px;padding:12px 24px;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.admin-tab-nav::-webkit-scrollbar{display:none}
+.admin-tab-nav .t{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;text-decoration:none;transition:all .2s}
+.admin-tab-nav .t:hover{color:var(--text)}
+.admin-tab-nav .t.on{background:var(--card);color:var(--text);font-weight:700}
+
+/* Layout */
+.chat-layout{display:flex;height:calc(100vh - 130px)}
+
+/* Conversation list */
+.conv-list{width:320px;border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0}
+.conv-item{
+  padding:16px 20px;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background .15s;display:flex;justify-content:space-between;align-items:center;
+}
+.conv-item:hover{background:var(--surface)}
+.conv-item.active{background:var(--accent-light);border-left:3px solid var(--accent)}
+.conv-name{font-size:14px;font-weight:600}
+.conv-preview{font-size:12px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.conv-time{font-size:11px;color:var(--muted);white-space:nowrap}
+.conv-unread{
+  background:var(--red);color:#fff;font-size:11px;font-weight:700;
+  min-width:20px;height:20px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;padding:0 6px;
+}
+.conv-empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px}
+
+/* Chat area */
+.chat-area{flex:1;display:flex;flex-direction:column}
+.chat-header{
+  padding:16px 24px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.chat-header-name{font-size:16px;font-weight:700}
+.chat-header-session{font-size:12px;color:var(--muted)}
+.chat-messages{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:8px}
+.chat-msg{max-width:70%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;word-break:break-word}
+.chat-msg.parent{align-self:flex-start;background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px}
+.chat-msg.admin{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.chat-msg .time{font-size:10px;opacity:.5;margin-top:4px}
+.chat-msg.admin .time{text-align:right}
+.chat-empty-area{text-align:center;color:var(--muted);padding:80px 20px;font-size:14px}
+
+.chat-input-row{
+  display:flex;gap:10px;padding:16px 24px;border-top:1px solid var(--border);
+}
+.chat-input-row input{
+  flex:1;padding:12px 16px;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;outline:none;
+}
+.chat-input-row input:focus{border-color:var(--accent)}
+.chat-input-row button{
+  padding:12px 24px;background:var(--accent);color:#fff;border:none;border-radius:10px;
+  font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;
+}
+.chat-input-row button:active{opacity:.8}
+.chat-input-row button:disabled{opacity:.4;cursor:default}
+
+.sms-note{font-size:11px;color:var(--muted);padding:0 24px 12px;display:flex;align-items:center;gap:4px}
+
+/* mobile */
+@media(max-width:768px){
+  .conv-list{width:100%}
+  .chat-area{display:none}
+  .chat-layout.chatting .conv-list{display:none}
+  .chat-layout.chatting .chat-area{display:flex}
+  .back-btn{display:inline-block!important}
+}
+.back-btn{display:none;background:none;border:none;color:var(--accent);font-size:14px;cursor:pointer;font-family:inherit;margin-right:8px}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-text">META ENGLISH</div>
+    <div class="badge">채팅</div>
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn-sm" onclick="location.href='admin.html'">← 관리자</button>
+    <button class="btn-sm" onclick="logout()">로그아웃</button>
+  </div>
+</header>
+
+<div class="admin-tab-nav">
+  <a class="t" href="admin.html">👥 회원 명단</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','quizzes')">📂 퀴즈 관리</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','history')">📊 풀이 기록</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','classes')">🏫 분반 관리</a>
+  <a class="t" href="grade.html">📝 성적 입력</a>
+  <a class="t" href="test.html">✏️ 실전테스트</a>
+  <a class="t" href="clinic.html">🏥 클리닉</a>
+  <a class="t on" href="chat.html">💬 채팅</a>
+  <a class="t" href="admin.html" onclick="sessionStorage.setItem('admin_tab','settings')">⚙️ 설정</a>
+</div>
+
+<div class="chat-layout" id="chat-layout">
+  <div class="conv-list" id="conv-list">
+    <div class="conv-empty">대화가 없습니다</div>
+  </div>
+  <div class="chat-area" id="chat-area">
+    <div class="chat-empty-area">왼쪽에서 대화를 선택하세요</div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL='https://cheuclwcrxuofiomhtuz.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
+const HDR={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+
+const user=JSON.parse(sessionStorage.getItem('qhub_user')||'null');
+if(!user||user.role!=='admin') location.href='index.html';
+
+function logout(){sessionStorage.removeItem('qhub_user');location.href='index.html'}
+
+let conversations=[];
+let currentConv=null;
+let memberMap={};
+
+async function init(){
+  // 회원 목록 로드
+  const mRes=await fetch(`${SUPA_URL}/rest/v1/members?role=eq.user&select=id,name,phone`,{headers:HDR});
+  const members=await mRes.json();
+  members.forEach(m=>{memberMap[m.id]={name:m.name,phone:m.phone}});
+
+  // 모든 채팅 로드해서 대화별로 그룹
+  const cRes=await fetch(`${SUPA_URL}/rest/v1/chats?select=*&order=created_at.desc`,{headers:HDR});
+  const allChats=await cRes.json();
+
+  // member_id + session_id 기준으로 그룹화
+  const groups={};
+  allChats.forEach(c=>{
+    const key=c.member_id+'_'+c.session_id;
+    if(!groups[key]) groups[key]={member_id:c.member_id,session_id:c.session_id,chats:[],unread:0,last:c};
+    groups[key].chats.push(c);
+    if(c.sender==='parent'&&!c.is_read) groups[key].unread++;
+  });
+
+  conversations=Object.values(groups).sort((a,b)=>new Date(b.last.created_at)-new Date(a.last.created_at));
+  renderConvList();
+
+  // Realtime
+  sb.channel('admin-chats')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats'},payload=>{
+      const m=payload.new;
+      const key=m.member_id+'_'+m.session_id;
+      let conv=conversations.find(c=>c.member_id+'_'+c.session_id===key);
+      if(!conv){
+        conv={member_id:m.member_id,session_id:m.session_id,chats:[],unread:0,last:m};
+        conversations.unshift(conv);
+      }
+      conv.chats.unshift(m);
+      conv.last=m;
+      if(m.sender==='parent') conv.unread++;
+      conversations.sort((a,b)=>new Date(b.last.created_at)-new Date(a.last.created_at));
+      renderConvList();
+      if(currentConv&&currentConv.member_id===m.member_id&&String(currentConv.session_id)===String(m.session_id)){
+        renderChatArea(currentConv);
+      }
+    }).subscribe();
+}
+
+function renderConvList(){
+  const el=document.getElementById('conv-list');
+  if(!conversations.length){el.innerHTML='<div class="conv-empty">대화가 없습니다</div>';return}
+
+  el.innerHTML=conversations.map(c=>{
+    const name=memberMap[c.member_id]?.name||'알 수 없음';
+    const preview=c.last.message.slice(0,30);
+    const t=new Date(c.last.created_at);
+    const time=`${t.getMonth()+1}/${t.getDate()} ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}`;
+    const isActive=currentConv&&currentConv.member_id===c.member_id&&String(currentConv.session_id)===String(c.session_id);
+    return `<div class="conv-item${isActive?' active':''}" onclick="openConv('${c.member_id}',${c.session_id})">
+      <div>
+        <div class="conv-name">${name}</div>
+        <div class="conv-preview">${c.last.sender==='admin'?'나: ':''}${preview}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="conv-time">${time}</div>
+        ${c.unread?`<div class="conv-unread">${c.unread}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function openConv(memberId,sessionId){
+  const conv=conversations.find(c=>c.member_id===memberId&&String(c.session_id)===String(sessionId));
+  if(!conv) return;
+  currentConv=conv;
+
+  // 읽음 처리
+  if(conv.unread>0){
+    conv.unread=0;
+    await fetch(`${SUPA_URL}/rest/v1/chats?member_id=eq.${memberId}&session_id=eq.${sessionId}&sender=eq.parent&is_read=eq.false`,{
+      method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({is_read:true})
+    });
+  }
+
+  renderConvList();
+  renderChatArea(conv);
+  document.getElementById('chat-layout').classList.add('chatting');
+}
+
+function renderChatArea(conv){
+  const name=memberMap[conv.member_id]?.name||'알 수 없음';
+  const msgs=[...conv.chats].reverse();
+
+  document.getElementById('chat-area').innerHTML=`
+    <div class="chat-header">
+      <div style="display:flex;align-items:center">
+        <button class="back-btn" onclick="goBack()">← 목록</button>
+        <div>
+          <div class="chat-header-name">${name}</div>
+          <div class="chat-header-session">세션 #${conv.session_id}</div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-messages" id="active-msgs">
+      ${msgs.map(m=>{
+        const t=new Date(m.created_at);
+        const time=`${t.getMonth()+1}/${t.getDate()} ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}`;
+        const who=m.sender==='parent'?'parent':'admin';
+        return `<div class="chat-msg ${who}">${m.message.replace(/</g,'&lt;').replace(/\n/g,'<br>')}<div class="time">${time}</div></div>`;
+      }).join('')}
+    </div>
+    <div class="sms-note">📱 답장 시 보호자에게 알림 문자가 발송됩니다</div>
+    <div class="chat-input-row">
+      <input id="admin-reply" type="text" placeholder="답장을 입력하세요" onkeydown="if(event.key==='Enter')sendReply()">
+      <button onclick="sendReply()" id="send-btn">전송</button>
+    </div>
+  `;
+
+  const msgEl=document.getElementById('active-msgs');
+  msgEl.scrollTop=msgEl.scrollHeight;
+}
+
+function goBack(){
+  currentConv=null;
+  document.getElementById('chat-layout').classList.remove('chatting');
+  document.getElementById('chat-area').innerHTML='<div class="chat-empty-area">왼쪽에서 대화를 선택하세요</div>';
+}
+
+async function sendReply(){
+  if(!currentConv) return;
+  const input=document.getElementById('admin-reply');
+  const msg=input.value.trim();
+  if(!msg) return;
+  input.value='';
+  document.getElementById('send-btn').disabled=true;
+
+  // DB에 저장
+  await fetch(`${SUPA_URL}/rest/v1/chats`,{
+    method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+    body:JSON.stringify({member_id:currentConv.member_id,session_id:currentConv.session_id,sender:'admin',message:msg})
+  });
+
+  // 보호자에게 알림 SMS
+  const phone=memberMap[currentConv.member_id]?.phone;
+  const name=memberMap[currentConv.member_id]?.name||'학생';
+  if(phone){
+    const reportLink=`${location.origin}/report.html?member=${currentConv.member_id}&session=${currentConv.session_id}`;
+    const smsText=`[META ENGLISH] ${name} 보호자님, 선생님이 답장을 보냈습니다.\n\n"${msg.slice(0,40)}${msg.length>40?'...':''}"\n\n확인하기: ${reportLink}`;
+    try{
+      await sb.functions.invoke('send-sms',{body:{to:phone,text:smsText}});
+    }catch(e){console.log('SMS 발송 실패',e)}
+  }
+
+  document.getElementById('send-btn').disabled=false;
+}
+
+init();
+</script>
+</body>
+</html>
