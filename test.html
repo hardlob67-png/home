@@ -544,8 +544,9 @@ function parseExamText(text){
   const qPositions=[];
   for(let i=0;i<mainLines.length;i++){
     const line=mainLines[i].trim();
-    // 카테고리 헤더
-    if(line.match(/^<\s*.+\s*>$/) || (line.includes('<') && line.includes('>') && line.length < 40)){
+    // 카테고리 헤더 (보기/조건 등 문제 내 태그 제외)
+    const skipTags=/^<\s*(보기|조건|예시|참고|해석|풀이|정답)\s*>$/;
+    if(!skipTags.test(line) && (line.match(/^<\s+.+\s+>$/) || (line.match(/^<\s*.{3,}\s*>$/) && line.length<50))){
       const catMatch = line.match(/<\s*(.+?)\s*>/);
       if(catMatch){
         let cat = catMatch[1].trim().replace(/^[─\s]+|[─\s]+$/g, '');
@@ -574,7 +575,7 @@ function parseExamText(text){
     for(let j=startLine;j<endLine;j++){
       const l=mainLines[j].trim();
       if(/^[─═\-=]{5,}$/.test(l)) continue;
-      if(l.match(/^<\s*.+\s*>$/)) continue;
+      if(l.match(/^<\s+.+\s+>$/) && !l.match(/^<\s*(보기|조건|예시|참고)\s*>$/)) continue;
       bodyLines.push(mainLines[j]);
     }
     const body=bodyLines.join('\n').trim();
