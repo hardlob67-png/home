@@ -1293,6 +1293,24 @@ async function downloadZipNotes(studentNotes){
 }
 
 loadTests();
+
+// grade.html에서 컬럼 헤더 클릭으로 넘어온 경우 자동 열기
+(async function(){
+  const testId=sessionStorage.getItem('open_test_id');
+  const classId=sessionStorage.getItem('open_test_class');
+  if(testId){
+    sessionStorage.removeItem('open_test_id');
+    sessionStorage.removeItem('open_test_class');
+    await openTest(testId);
+    if(classId){
+      const sel=document.getElementById('score-class');
+      if(sel){
+        sel.value=classId;
+        loadScoringGrid();
+      }
+    }
+  }
+})();
 </script>
 </body>
 </html>

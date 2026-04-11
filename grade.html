@@ -1088,29 +1088,19 @@ function selectColumn(colIdx){
   updateSelectionUI();
 }
 
-// 컬럼 헤더 클릭 메뉴
+// 컬럼 헤더 클릭
 function showColMenu(e, colIdx, colName){
   e.stopPropagation();
-  const existing = document.getElementById('col-menu-popup');
-  if(existing) existing.remove();
-
-  const linked = testColMap[colName];
-  const div = document.createElement('div');
-  div.id='col-menu-popup';
-  div.style.cssText='position:fixed;z-index:150;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);padding:6px;min-width:160px';
-  div.style.left=Math.min(e.clientX,window.innerWidth-180)+'px';
-  div.style.top=e.clientY+'px';
-  div.innerHTML=`
-    <button onclick="document.getElementById('col-menu-popup').remove();selectColumn(${colIdx})" style="display:block;width:100%;text-align:left;padding:10px 14px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">📊 열 전체 선택</button>
-    <button onclick="document.getElementById('col-menu-popup').remove();openTestLink('${colName.replace(/'/g,"\\'")}')" style="display:block;width:100%;text-align:left;padding:10px 14px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">${linked?'📝 시험 연결 변경':'📝 시험 연결'}</button>
-    ${linked?`<button onclick="document.getElementById('col-menu-popup').remove();unlinkTest('${colName.replace(/'/g,"\\'")}')" style="display:block;width:100%;text-align:left;padding:10px 14px;color:#ef4444;background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">🔗 연결 해제</button>`:''}
-  `;
-  document.body.appendChild(div);
-  setTimeout(()=>{
-    document.addEventListener('click',function handler(){
-      div.remove();document.removeEventListener('click',handler);
-    });
-  },10);
+  const testId = testColMap[colName];
+  if(testId){
+    // 시험 연결됨 → test.html로 이동해서 바로 채점
+    sessionStorage.setItem('open_test_id', testId);
+    sessionStorage.setItem('open_test_class', currentSession.class_id);
+    location.href='test.html';
+  } else {
+    // 미연결 → 시험 연결 다이얼로그
+    openTestLink(colName);
+  }
 }
 
 async function openTestLink(colName){
