@@ -310,8 +310,23 @@ async function loadReport(){
       if(Array.isArray(latest)&&latest.length&&latest[0].session_id){
         sessionId = String(latest[0].session_id);
       } else {
-        content.innerHTML = `<div class="state-msg"><div class="icon">📭</div><div class="title">아직 입력된 성적이 없어요</div><div class="desc">성적이 입력되면 이 페이지에서 확인할 수 있습니다.</div></div>`;
-        return;
+        // 성적은 없지만 소속 반의 최신 세션 찾기 (공지용)
+        try{
+          const cmRes=await fetch(`${SUPA_URL}/rest/v1/class_members?member_id=eq.${memberId}&select=class_id&limit=1`,{headers:HDR});
+          const cmData=await cmRes.json();
+          if(Array.isArray(cmData)&&cmData.length){
+            const classId=cmData[0].class_id;
+            const gsRes=await fetch(`${SUPA_URL}/rest/v1/grade_sessions?class_id=eq.${classId}&select=id&order=created_at.desc&limit=1`,{headers:HDR});
+            const gsData=await gsRes.json();
+            if(Array.isArray(gsData)&&gsData.length){
+              sessionId=String(gsData[0].id);
+            }
+          }
+        }catch(e){}
+        if(!sessionId){
+          content.innerHTML = `<div class="state-msg"><div class="icon">📭</div><div class="title">아직 입력된 성적이 없어요</div><div class="desc">성적이 입력되면 이 페이지에서 확인할 수 있습니다.</div></div>`;
+          return;
+        }
       }
     }catch(e){
       content.innerHTML = `<div class="state-msg"><div class="icon">😥</div><div class="title">성적표를 불러올 수 없어요</div></div>`;
