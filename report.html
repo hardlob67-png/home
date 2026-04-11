@@ -165,6 +165,21 @@ body::after{
 .past-card .pc-date{font-size:11px;color:var(--muted);margin-top:2px}
 .past-card .pc-arrow{color:var(--muted);font-size:18px}
 .past-card.current .pc-arrow{color:var(--accent)}
+
+/* ── Class Files ── */
+.files-section{margin-top:20px}
+.files-title{font-size:14px;font-weight:700;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.files-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.file-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:12px 16px;margin-bottom:8px;text-decoration:none;color:var(--text);
+  transition:all .2s;
+}
+.file-item:hover{border-color:var(--accent)}
+.file-item .fi-icon{font-size:22px;flex-shrink:0}
+.file-item .fi-name{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item .fi-meta{font-size:11px;color:var(--muted);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -180,6 +195,7 @@ body::after{
     </div>
   </div>
   <div id="past-reports"></div>
+  <div id="class-files"></div>
   <div id="chat-container" style="display:none">
     <div class="chat-overlay" id="chat-overlay">
       <div class="chat-overlay-header">
@@ -198,6 +214,7 @@ body::after{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
 <script>
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
@@ -267,6 +284,7 @@ async function loadReport(){
     const sessions = await sRes.json();
     if(!sessions.length) throw new Error('no session');
     const session = sessions[0];
+    const classId = session.class_id;
     const columns = typeof session.columns==='string'?JSON.parse(session.columns):session.columns;
 
     const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${sessionId}&member_id=eq.${memberId}&select=*`,{headers:HDR});
@@ -317,6 +335,10 @@ async function loadReport(){
     });
 
     html += `</div>`;
+
+    // 성적 추이 차트 영역
+    html += `<div style="padding:20px 24px"><canvas id="score-chart" height="200"></canvas></div>`;
+
     html += `<div class="cheer-section"><div class="cheer-emoji">🌟</div><div class="cheer-text">${getCheerMessage(scores)}</div></div>`;
 
     if(grade.memo && grade.memo.trim()){
@@ -325,9 +347,131 @@ async function loadReport(){
 
     html += `<div class="report-footer"><p>META ENGLISH<br>궁금한 점은 선생님께 문의해주세요 😊</p></div></div>`;
     content.innerHTML = html;
+
+    // 성적 추이 차트 렌더링
+    if(classId) renderScoreChart(classId, memberId);
   }catch(e){
     content.innerHTML = `<div class="state-msg"><div class="icon">😥</div><div class="title">성적표를 불러올 수 없어요</div><div class="desc">링크가 올바른지 확인하시고,<br>문제가 계속되면 선생님께 문의해주세요.</div></div>`;
   }
+}
+
+// ── 성적 추이 차트 ──
+function parseScore(val){
+  if(!val||val==='-') return null;
+  if(val==='통과'||val==='완료') return 100;
+  if(val==='미통과'||val==='미완료'||val==='불합격') return 0;
+  // "8/10" 형식
+  const frac=val.match(/^(\d+)\s*\/\s*(\d+)$/);
+  if(frac) return Math.round((Number(frac[1])/Number(frac[2]))*100);
+  const num=Number(val);
+  return isNaN(num)?null:num;
+}
+
+function avgScore(scores){
+  const vals=Object.values(scores).map(parseScore).filter(v=>v!==null);
+  return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+}
+
+async function renderScoreChart(classId, myMemberId){
+  try{
+    // 이 반의 모든 세션 (시간순)
+    const sRes=await fetch(`${SUPA_URL}/rest/v1/grade_sessions?class_id=eq.${classId}&select=id,title,created_at&order=created_at.asc`,{headers:HDR});
+    const sessions=await sRes.json();
+    if(!Array.isArray(sessions)||sessions.length<1) return;
+
+    const sessionIds=sessions.map(s=>s.id);
+
+    // 이 반의 모든 성적 로드
+    const gRes=await fetch(`${SUPA_URL}/rest/v1/grades?session_id=in.(${sessionIds.join(',')})&select=session_id,member_id,scores`,{headers:HDR});
+    const allGrades=await gRes.json();
+    if(!Array.isArray(allGrades)||!allGrades.length) return;
+
+    // 세션별 데이터 계산
+    const labels=[];
+    const myScores=[];
+    const avgScores=[];
+    const maxScores=[];
+
+    sessions.forEach(s=>{
+      const sessionGrades=allGrades.filter(g=>g.session_id===s.id);
+      if(!sessionGrades.length) return;
+
+      const date=new Date(s.created_at);
+      labels.push(`${date.getMonth()+1}/${date.getDate()}`);
+
+      // 내 점수
+      const myGrade=sessionGrades.find(g=>g.member_id===myMemberId);
+      const myParsed=myGrade?avgScore(typeof myGrade.scores==='string'?JSON.parse(myGrade.scores):myGrade.scores):null;
+      myScores.push(myParsed);
+
+      // 반 전체 점수
+      const allParsed=sessionGrades.map(g=>{
+        const sc=typeof g.scores==='string'?JSON.parse(g.scores):g.scores;
+        return avgScore(sc);
+      }).filter(v=>v!==null);
+
+      avgScores.push(allParsed.length?Math.round(allParsed.reduce((a,b)=>a+b,0)/allParsed.length):null);
+      maxScores.push(allParsed.length?Math.max(...allParsed):null);
+    });
+
+    // 데이터가 1개 이하면 차트 불필요
+    if(labels.length<2) return;
+
+    const ctx=document.getElementById('score-chart');
+    if(!ctx) return;
+
+    new Chart(ctx,{
+      type:'line',
+      data:{
+        labels,
+        datasets:[
+          {
+            label:'내 점수',
+            data:myScores,
+            borderColor:'#4f46e5',
+            backgroundColor:'rgba(79,70,229,.1)',
+            fill:true,
+            tension:.3,
+            borderWidth:3,
+            pointRadius:5,
+            pointBackgroundColor:'#4f46e5',
+          },
+          {
+            label:'반 최고',
+            data:maxScores,
+            borderColor:'#22c55e',
+            borderDash:[6,3],
+            tension:.3,
+            borderWidth:2,
+            pointRadius:3,
+            pointBackgroundColor:'#22c55e',
+          },
+          {
+            label:'반 평균',
+            data:avgScores,
+            borderColor:'#f59e0b',
+            borderDash:[4,4],
+            tension:.3,
+            borderWidth:2,
+            pointRadius:3,
+            pointBackgroundColor:'#f59e0b',
+          }
+        ]
+      },
+      options:{
+        responsive:true,
+        plugins:{
+          legend:{position:'bottom',labels:{font:{size:12,family:'Noto Sans KR'},usePointStyle:true,padding:16}},
+          tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+'점'}}
+        },
+        scales:{
+          y:{min:0,max:100,ticks:{callback:v=>v+'점',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},
+          x:{ticks:{font:{size:11}},grid:{display:false}}
+        },
+        interaction:{intersect:false,mode:'index'}
+      }
+    });
+  }catch(e){console.log('차트 렌더링 실패',e)}
 }
 
 /* ── Chat ── */
@@ -448,12 +592,43 @@ async function loadPastReports(){
   }catch(e){console.log('과거 성적표 로드 실패',e)}
 }
 
+// ── 반 자료실 (학생용) ──
+async function loadClassFiles(){
+  if(!sessionId) return;
+  try{
+    const sRes=await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${sessionId}&select=class_id`,{headers:HDR});
+    const sData=await sRes.json();
+    if(!Array.isArray(sData)||!sData.length||!sData[0].class_id) return;
+    const classId=sData[0].class_id;
+
+    const fRes=await fetch(`${SUPA_URL}/rest/v1/class_files?class_id=eq.${classId}&select=*&order=created_at.desc`,{headers:HDR});
+    const files=await fRes.json();
+    if(!Array.isArray(files)||!files.length) return;
+
+    const el=document.getElementById('class-files');
+    el.innerHTML=`<div class="files-section">
+      <div class="files-title">📁 학습 자료</div>
+      ${files.map(f=>{
+        const ext=(f.file_name.split('.').pop()||'').toLowerCase();
+        const icon=ext==='pdf'?'📄':(ext==='jpg'||ext==='png'||ext==='jpeg')?'🖼':(ext==='mp3'||ext==='mp4')?'🎬':'📎';
+        const url=SUPA_URL+'/storage/v1/object/public/class-files/'+f.file_path;
+        const size=f.file_size?(f.file_size/1024).toFixed(0)+'KB':'';
+        return '<a class="file-item" href="'+url+'" target="_blank">'+
+          '<span class="fi-icon">'+icon+'</span>'+
+          '<span class="fi-name">'+f.file_name+'</span>'+
+          '<span class="fi-meta">'+size+'</span>'+
+        '</a>';
+      }).join('')}
+    </div>`;
+  }catch(e){console.log('파일 로드 실패',e)}
+}
+
 // 초기화
 (async()=>{
   await loadReport();
   await loadChat();
   loadPastReports();
-  // SMS 답장 링크로 왔으면 채팅창 자동 열기
+  loadClassFiles();
   if(params.get('chat')==='1') openChat();
 })();
 </script>
