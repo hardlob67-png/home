@@ -1712,6 +1712,17 @@ renderQuickBtns();
 
 // 초기 로드
 loadClassCards();
+
+// 회원 명단에서 분반 클릭 시 자동 이동
+(function(){
+  const gcId=sessionStorage.getItem('grade_class');
+  const gcName=sessionStorage.getItem('grade_class_name');
+  if(gcId){
+    sessionStorage.removeItem('grade_class');
+    sessionStorage.removeItem('grade_class_name');
+    setTimeout(()=>selectClassCard(gcId, gcName||''), 500);
+  }
+})();
 </script>
 </body>
 </html>

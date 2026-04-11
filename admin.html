@@ -404,6 +404,12 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <button onclick="switchTab('settings');toggleMore()"><span class="nav-icon">⚙️</span>설정</button>
 </div>
 
+<!-- 이름 클릭 팝업 -->
+<div id="member-popup" style="display:none;position:fixed;z-index:150;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);padding:6px;min-width:140px">
+  <a id="mp-report" href="#" target="_blank" style="display:block;padding:10px 14px;color:var(--text);text-decoration:none;font-size:13px;font-weight:500;border-radius:8px;transition:background .15s">📊 성적표 보기</a>
+  <button id="mp-sms" onclick="mpSendSms()" style="display:block;width:100%;text-align:left;padding:10px 14px;color:var(--text);background:none;border:none;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">💬 문자 보내기</button>
+</div>
+
 <!-- 회원 수정 모달 -->
 <div id="edit-member-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
   <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:400px">
@@ -466,26 +472,46 @@ function switchTab(t){
 // ===== 회원 관리 =====
 async function loadMembers(){
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/members?select=*&order=joined.asc`,{headers:HDR});
-    const members = await res.json();
+    const [mRes, cmRes, cRes] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/members?select=*&order=name.asc`,{headers:HDR}),
+      fetch(`${SUPA_URL}/rest/v1/class_members?select=member_id,class_id`,{headers:HDR}),
+      fetch(`${SUPA_URL}/rest/v1/classes?select=id,name`,{headers:HDR})
+    ]);
+    const members = await mRes.json();
+    const cmData = await cmRes.json();
+    const classes = await cRes.json();
+
+    // member_id → class name 매핑
+    const classMap={};
+    if(Array.isArray(classes)) classes.forEach(c=>{classMap[c.id]=c.name});
+    const memberClassMap={};
+    if(Array.isArray(cmData)) cmData.forEach(cm=>{
+      if(!memberClassMap[cm.member_id]) memberClassMap[cm.member_id]=[];
+      if(classMap[cm.class_id]) memberClassMap[cm.member_id].push({id:cm.class_id,name:classMap[cm.class_id]});
+    });
+
     const nonAdmin = members.filter(m=>m.role!=='admin');
     document.getElementById('member-count').innerHTML=`총 <span>${nonAdmin.length}</span>명 등록됨`;
     if(!members.length){
       document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">등록된 회원이 없어요</div>';
       return;
     }
+    const baseUrl = window.location.origin || 'https://xn--oh5bnfltpyu64c.com';
     document.getElementById('member-table-wrap').innerHTML=`
       <table class="member-table">
-        <thead><tr><th>#</th><th>이름</th><th>보호자번호</th><th>학생번호</th><th>구분</th><th></th></tr></thead>
-        <tbody>${members.map((m,i)=>`
-          <tr>
+        <thead><tr><th>#</th><th>이름</th><th>보호자번호</th><th>학생번호</th><th>분반</th><th>구분</th><th></th></tr></thead>
+        <tbody>${members.map((m,i)=>{
+          const cls = memberClassMap[m.id]||[];
+          const clsHtml = cls.length ? cls.map(c=>`<a href="grade.html" onclick="sessionStorage.setItem('grade_class','${c.id}');sessionStorage.setItem('grade_class_name','${c.name}')" style="color:#a0a7ff;text-decoration:none;font-size:12px;background:rgba(108,99,255,.1);padding:2px 8px;border-radius:6px;margin-right:4px">${c.name}</a>`).join('') : '<span style="color:var(--muted);font-size:12px">-</span>';
+          return `<tr>
             <td style="color:var(--muted)">${i+1}</td>
-            <td style="font-weight:500">${m.name}</td>
+            <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
             <td style="font-family:monospace;font-size:13px">${m.phone}</td>
             <td style="font-family:monospace;font-size:13px;color:var(--muted)">${m.student_phone||'-'}</td>
+            <td>${clsHtml}</td>
             <td>${m.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
             <td style="white-space:nowrap">${m.role!=='admin'?`<button class="btn-del-sm" style="background:rgba(108,99,255,.1);color:#a0a7ff;margin-right:4px" onclick="openEditMember('${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')">수정</button><button class="btn-del-sm" onclick="deleteMember('${m.id}','${m.name}')">삭제</button>`:''}</td>
-          </tr>`).join('')}
+          </tr>`}).join('')}
         </tbody>
       </table>`;
   }catch(e){ document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">불러오기 실패</div>' }
@@ -552,6 +578,36 @@ async function saveEditMember(){
     else{showToast('수정 실패','err')}
   }catch(e){showToast('서버 오류','err')}
 }
+
+// ===== 이름 클릭 팝업 =====
+let mpMemberId='',mpPhone='';
+function showMemberPopup(e,id,name,phone){
+  e.preventDefault();
+  mpMemberId=id; mpPhone=phone;
+  const baseUrl=window.location.origin||'https://xn--oh5bnfltpyu64c.com';
+  document.getElementById('mp-report').href=`${baseUrl}/report.html?member=${id}`;
+  const popup=document.getElementById('member-popup');
+  popup.style.left=Math.min(e.clientX,window.innerWidth-160)+'px';
+  popup.style.top=e.clientY+'px';
+  popup.style.display='block';
+}
+function mpSendSms(){
+  document.getElementById('member-popup').style.display='none';
+  const msg=prompt('보낼 메시지를 입력하세요:');
+  if(!msg||!msg.trim()) return;
+  fetch(`${SUPA_URL}/functions/v1/send-sms`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
+    body:JSON.stringify({to:mpPhone,text:msg.trim()})
+  }).then(r=>{
+    if(r.ok) showToast('문자 발송 완료 ✓','ok');
+    else showToast('발송 실패','err');
+  }).catch(()=>showToast('발송 실패','err'));
+}
+document.addEventListener('click',function(e){
+  const popup=document.getElementById('member-popup');
+  if(popup&&!popup.contains(e.target)&&!e.target.closest('a[onclick*="showMemberPopup"]')) popup.style.display='none';
+});
 
 // 엑셀 처리
 let excelData = [];
