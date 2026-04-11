@@ -422,9 +422,12 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 </div>
 
 <!-- 이름 클릭 팝업 -->
-<div id="member-popup" style="display:none;position:fixed;z-index:150;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);padding:6px;min-width:140px">
+<div id="member-popup" style="display:none;position:fixed;z-index:150;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);padding:6px;min-width:180px">
   <a id="mp-report" href="#" target="_blank" style="display:block;padding:10px 14px;color:var(--text);text-decoration:none;font-size:13px;font-weight:500;border-radius:8px;transition:background .15s">📊 성적표 보기</a>
-  <button id="mp-sms" onclick="mpSendSms()" style="display:block;width:100%;text-align:left;padding:10px 14px;color:var(--text);background:none;border:none;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">💬 문자 보내기</button>
+  <div style="padding:4px 14px 2px;font-size:11px;color:var(--muted)">💬 문자 보내기</div>
+  <button onclick="mpSendSms('parent')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">👨‍👩‍👧 보호자에게</button>
+  <button id="mp-sms-student" onclick="mpSendSms('student')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">🎒 학생에게</button>
+  <button onclick="mpSendSms('both')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">👥 둘 다</button>
 </div>
 
 <!-- 회원 수정 모달 -->
@@ -523,7 +526,7 @@ async function loadMembers(){
           const clsHtml = cls.length ? cls.map(c=>`<a href="grade.html" onclick="sessionStorage.setItem('grade_class','${c.id}');sessionStorage.setItem('grade_class_name','${c.name}')" style="color:#a0a7ff;text-decoration:none;font-size:12px;background:rgba(108,99,255,.1);padding:2px 8px;border-radius:6px;margin-right:4px">${c.name}</a>`).join('') : '<span style="color:var(--muted);font-size:12px">-</span>';
           return `<tr>
             <td style="color:var(--muted)">${i+1}</td>
-            <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
+            <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
             <td style="font-family:monospace;font-size:13px">${m.phone}</td>
             <td style="font-family:monospace;font-size:13px;color:var(--muted)">${m.student_phone||'-'}</td>
             <td>${clsHtml}</td>
@@ -598,30 +601,43 @@ async function saveEditMember(){
 }
 
 // ===== 이름 클릭 팝업 =====
-let mpMemberId='',mpPhone='';
-function showMemberPopup(e,id,name,phone){
+let mpMemberId='',mpPhone='',mpStudentPhone='';
+function showMemberPopup(e,id,name,phone,sphone){
   e.preventDefault();
-  mpMemberId=id; mpPhone=phone;
+  mpMemberId=id; mpPhone=phone; mpStudentPhone=sphone||'';
   const baseUrl=window.location.origin||'https://xn--oh5bnfltpyu64c.com';
   document.getElementById('mp-report').href=`${baseUrl}/report.html?member=${id}`;
+  // 학생번호 없으면 학생 버튼 숨김
+  document.getElementById('mp-sms-student').style.display=sphone?'block':'none';
   const popup=document.getElementById('member-popup');
-  popup.style.left=Math.min(e.clientX,window.innerWidth-160)+'px';
+  popup.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';
   popup.style.top=e.clientY+'px';
   popup.style.display='block';
 }
-function mpSendSms(){
+function mpSendSms(target){
   document.getElementById('member-popup').style.display='none';
   const msg=prompt('보낼 메시지를 입력하세요:');
   if(!msg||!msg.trim()) return;
-  fetch(`${SUPA_URL}/functions/v1/send-sms`,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
-    body:JSON.stringify({to:mpPhone,text:msg.trim()})
-  }).then(r=>{
-    const ok=r.ok;
-    showToast(ok?'문자 발송 완료 ✓':'발송 실패',ok?'ok':'err');
-    fetch(`${SUPA_URL}/rest/v1/sms_logs`,{method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
-      body:JSON.stringify({phone:mpPhone,message:msg.trim(),status:ok?'sent':'failed',sent_by:user.name||'관리자'})}).catch(()=>{});
+  const phones=[];
+  if((target==='parent'||target==='both')&&mpPhone) phones.push(mpPhone);
+  if((target==='student'||target==='both')&&mpStudentPhone) phones.push(mpStudentPhone);
+  if(!phones.length&&mpPhone) phones.push(mpPhone);
+
+  let sent=0;
+  Promise.all(phones.map(p=>
+    fetch(`${SUPA_URL}/functions/v1/send-sms`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
+      body:JSON.stringify({to:p,text:msg.trim()})
+    }).then(r=>{
+      const ok=r.ok;
+      fetch(`${SUPA_URL}/rest/v1/sms_logs`,{method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+        body:JSON.stringify({phone:p,message:msg.trim(),status:ok?'sent':'failed',sent_by:user.name||'관리자'})}).catch(()=>{});
+      if(ok) sent++;
+      return ok;
+    })
+  )).then(()=>{
+    showToast(sent?`발송 완료 (${sent}건) ✓`:'발송 실패',sent?'ok':'err');
   }).catch(()=>showToast('발송 실패','err'));
 }
 document.addEventListener('click',function(e){
