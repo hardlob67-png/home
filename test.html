@@ -250,6 +250,7 @@ textarea{resize:vertical;min-height:60px}
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
@@ -1236,19 +1237,64 @@ async function downloadZipNotes(studentNotes){
   const testTitle=currentTest.title||'시험';
   const zip=new JSZip();
   const css=getNotesCSS();
+  const {jsPDF}=window.jspdf;
 
-  studentNotes.forEach((note,i)=>{
-    const html=`<!DOCTYPE html><html><head>
-      <meta charset="UTF-8">
-      <title>오답노트 - ${note.name}</title>
-      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-      <style>${css}</style>
-    </head><body>
+  // 임시 렌더링 컨테이너
+  const container=document.createElement('div');
+  container.style.cssText='position:fixed;left:-9999px;top:0;width:210mm;background:#fff;z-index:-1';
+  document.body.appendChild(container);
+
+  const statusEl=document.createElement('div');
+  statusEl.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:400;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 40px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)';
+  statusEl.innerHTML=`<div style="font-size:15px;font-weight:700;margin-bottom:8px">📝 PDF 생성 중...</div>
+    <div id="zip-progress" style="font-size:13px;color:var(--muted)">0 / ${studentNotes.length}</div>
+    <div style="margin-top:12px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden">
+      <div id="zip-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#4f46e5,#7c3aed);border-radius:3px;transition:width .3s"></div>
+    </div>`;
+  document.body.appendChild(statusEl);
+
+  for(let i=0;i<studentNotes.length;i++){
+    const note=studentNotes[i];
+    document.getElementById('zip-progress').textContent=`${i+1} / ${studentNotes.length} — ${note.name}`;
+    document.getElementById('zip-bar').style.width=`${(i+1)/studentNotes.length*100}%`;
+
+    // HTML 렌더링
+    container.innerHTML=`<div style="padding:20px;font-family:'Noto Sans KR',sans-serif;color:#1e293b;font-size:13px;line-height:1.6">
+      <style>${css.replace(/@page\{[^}]+\}/,'').replace(/@media print\{[^}]+\}/,'')}</style>
       ${buildNoteHTML(note, testTitle)}
-    </body></html>`;
-    const safeName=note.name.replace(/[^가-힣a-zA-Z0-9]/g,'_');
-    zip.file(`오답노트_${safeName}.html`, html);
-  });
+    </div>`;
+
+    // 폰트 로딩 대기 (첫 번째만)
+    if(i===0) await new Promise(r=>setTimeout(r,500));
+    await new Promise(r=>setTimeout(r,100));
+
+    try{
+      const canvas=await html2canvas(container,{scale:2,useCORS:true,backgroundColor:'#ffffff',width:794});
+      const imgData=canvas.toDataURL('image/jpeg',0.85);
+      const pdf=new jsPDF('p','mm','a4');
+      const pdfW=pdf.internal.pageSize.getWidth();
+      const pdfH=pdf.internal.pageSize.getHeight();
+      const imgW=pdfW;
+      const imgH=canvas.height*imgW/canvas.width;
+
+      // 여러 페이지 처리
+      let y=0;
+      let page=0;
+      while(y<imgH){
+        if(page>0) pdf.addPage();
+        pdf.addImage(imgData,'JPEG',0,-y,imgW,imgH);
+        y+=pdfH;
+        page++;
+      }
+
+      const pdfBlob=pdf.output('arraybuffer');
+      const safeName=note.name.replace(/[^가-힣a-zA-Z0-9]/g,'_');
+      zip.file(`오답노트_${safeName}.pdf`, pdfBlob);
+    }catch(e){console.error('PDF 생성 실패:',note.name,e)}
+  }
+
+  container.remove();
+  statusEl.remove();
 
   const blob=await zip.generateAsync({type:'blob'});
   const a=document.createElement('a');
@@ -1256,7 +1302,7 @@ async function downloadZipNotes(studentNotes){
   a.download=`오답노트_${testTitle}_${new Date().toISOString().slice(0,10)}.zip`;
   a.click();
   URL.revokeObjectURL(a.href);
-  showToast(`${studentNotes.length}명 오답노트 ZIP 다운로드 완료 ✓`,'ok');
+  showToast(`${studentNotes.length}명 오답노트 PDF 다운로드 완료 ✓`,'ok');
 }
 
 loadTests();
