@@ -597,7 +597,7 @@ async function uploadExcelMembers(){
       } else {
         skipped++;
         // 기존 회원: student_phone 업데이트 + 분반 추가
-        const findRes = await fetch(`${SUPA_URL}/rest/v1/members?phone=eq.${r.phone}&select=id`,{headers:HDR});
+        const findRes = await fetch(`${SUPA_URL}/rest/v1/members?name=eq.${encodeURIComponent(r.name)}&phone=eq.${r.phone}&select=id`,{headers:HDR});
         const found = await findRes.json();
         if(found.length){
           const mid = found[0].id;
