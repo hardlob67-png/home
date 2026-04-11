@@ -253,7 +253,6 @@ body::after{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
 <script>
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
@@ -402,8 +401,19 @@ async function loadReport(){
     html += `<div class="report-footer"><p>META ENGLISH<br>궁금한 점은 선생님께 문의해주세요 😊</p></div></div>`;
     content.innerHTML = html;
 
-    // 성적 추이 차트 렌더링
-    if(classId) renderScoreChart(classId, memberId);
+    // 차트는 스크롤 시 지연 로딩
+    if(classId){
+      const chartEl=document.getElementById('score-chart');
+      if(chartEl){
+        const obs=new IntersectionObserver((entries)=>{
+          if(entries[0].isIntersecting){
+            obs.disconnect();
+            renderScoreChart(classId, memberId);
+          }
+        },{threshold:0.1});
+        obs.observe(chartEl);
+      }
+    }
 
     // 공지사항 표시
     if(session.notice && session.notice.trim()){
@@ -437,6 +447,16 @@ function avgScore(scores){
 
 async function renderScoreChart(classId, myMemberId){
   try{
+    // Chart.js 동적 로드
+    if(!window.Chart){
+      await new Promise((resolve,reject)=>{
+        const s=document.createElement('script');
+        s.src='https://cdn.jsdelivr.net/npm/chart.js@4';
+        s.onload=resolve;s.onerror=reject;
+        document.head.appendChild(s);
+      });
+    }
+
     // 이 반의 모든 세션 (시간순)
     const sRes=await fetch(`${SUPA_URL}/rest/v1/grade_sessions?class_id=eq.${classId}&select=id,title,created_at&order=created_at.asc`,{headers:HDR});
     const sessions=await sRes.json();
@@ -704,9 +724,12 @@ async function loadClassFiles(){
 // 초기화
 (async()=>{
   await loadReport();
-  await loadChat();
-  loadPastReports();
-  loadClassFiles();
+  // 채팅, 과거 성적표, 학습 자료 병렬 로딩
+  const [chatDone] = await Promise.allSettled([
+    loadChat(),
+    loadPastReports(),
+    loadClassFiles()
+  ]);
   if(params.get('chat')==='1') openChat();
 })();
 </script>
