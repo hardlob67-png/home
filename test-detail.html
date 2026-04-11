@@ -290,7 +290,7 @@ async function load(){
     }
 
     // 추이 그래프
-    if(allResponses.length > 1){
+    if(allResponses.length >= 1){
       // 각 시험의 버전 문항 로드 (카테고리별 분석용)
       const versionIds = [...new Set(allResponses.map(r=>r.test_version_id).filter(Boolean))];
       const vRes2 = await fetch(`${SUPA_URL}/rest/v1/test_versions?id=in.(${versionIds.join(',')})&select=id,questions`,{headers:HDR});
