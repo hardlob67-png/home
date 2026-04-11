@@ -513,8 +513,8 @@ async function renderScoreChart(classId, myMemberId, chartOpts){
       }
     });
 
-    // 데이터가 1개 이하면 차트 불필요
-    if(labels.length<2) return;
+    // 데이터가 없으면 차트 불필요
+    if(labels.length<1) return;
 
     const ctx=document.getElementById('score-chart');
     if(!ctx) return;
