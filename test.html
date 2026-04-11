@@ -156,21 +156,11 @@ textarea{resize:vertical;min-height:60px}
   <div class="screen" id="screen-create">
     <div class="card">
       <h2>새 시험 만들기</h2>
-      <p>시험 정보를 입력하고 성적표 연결을 설정하세요.</p>
+      <p>시험 제목을 입력하세요. 성적표 연결은 성적 입력 화면에서 할 수 있어요.</p>
       <div style="display:flex;flex-direction:column;gap:14px;max-width:500px">
         <div>
           <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">시험 제목</label>
           <input type="text" id="c-title" placeholder="예: 4월 2주차 리뷰테스트" style="width:100%">
-        </div>
-        <div>
-          <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">성적표 연결 (선택)</label>
-          <select id="c-session" style="width:100%" onchange="loadSessionColumns()">
-            <option value="">-- 연결 안 함 --</option>
-          </select>
-        </div>
-        <div id="c-col-wrap" style="display:none">
-          <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">입력할 항목</label>
-          <select id="c-column" style="width:100%"></select>
         </div>
         <div class="row" style="margin-top:8px">
           <button class="btn-primary" onclick="createTest()">만들기</button>
@@ -186,7 +176,7 @@ textarea{resize:vertical;min-height:60px}
       <div class="row" style="justify-content:space-between;margin-bottom:16px">
         <div>
           <h2 id="d-title"></h2>
-          <p id="d-link" style="margin-bottom:0"></p>
+          <p id="d-link" style="margin-bottom:0;font-size:13px;color:var(--muted)"></p>
         </div>
         <div class="row">
           <button class="btn-outline" onclick="showScreen('screen-list')">← 목록</button>
@@ -273,17 +263,16 @@ function showScreen(id){
 
 // ===== 시험 목록 =====
 async function loadTests(){
-  const res = await fetch(`${SUPA_URL}/rest/v1/test_sets?select=*,grade_sessions(title)&order=created_at.desc`,{headers:HDR});
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_sets?select=*&order=created_at.desc`,{headers:HDR});
   const tests = await res.json();
   const el = document.getElementById('test-list');
   if(!tests.length){ el.innerHTML='<div class="empty">아직 등록된 시험이 없어요</div>'; return }
   el.innerHTML = tests.map(t=>{
-    const link = t.grade_sessions ? `→ ${t.grade_sessions.title} / ${t.grade_column||''}` : '연결 없음';
     return `<div class="card" style="cursor:pointer;padding:20px 24px;margin-bottom:10px" onclick="openTest('${t.id}')">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
           <div style="font-size:16px;font-weight:700">${t.title}</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">${link} · ${new Date(t.created_at).toLocaleDateString('ko-KR')}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">${new Date(t.created_at).toLocaleDateString('ko-KR')}</div>
         </div>
         <div style="font-size:20px;color:var(--muted)">→</div>
       </div>
@@ -295,36 +284,14 @@ async function loadTests(){
 async function showCreate(){
   showScreen('screen-create');
   document.getElementById('c-title').value='';
-  const res = await fetch(`${SUPA_URL}/rest/v1/grade_sessions?select=id,title,columns,classes(name)&order=created_at.desc`,{headers:HDR});
-  const sessions = await res.json();
-  const sel = document.getElementById('c-session');
-  sel.innerHTML = '<option value="">-- 연결 안 함 --</option>' +
-    sessions.map(s=>{
-      const cn = s.classes ? `[${s.classes.name}] ` : '';
-      return `<option value="${s.id}" data-cols='${JSON.stringify(typeof s.columns==='string'?JSON.parse(s.columns):s.columns)}'>${cn}${s.title}</option>`;
-    }).join('');
-  document.getElementById('c-col-wrap').style.display='none';
-}
-
-function loadSessionColumns(){
-  const sel = document.getElementById('c-session');
-  const opt = sel.selectedOptions[0];
-  const wrap = document.getElementById('c-col-wrap');
-  if(!opt || !opt.value){ wrap.style.display='none'; return }
-  const cols = JSON.parse(opt.getAttribute('data-cols')||'[]');
-  const colSel = document.getElementById('c-column');
-  colSel.innerHTML = cols.map(c=>`<option value="${c}">${c}</option>`).join('');
-  wrap.style.display='block';
 }
 
 async function createTest(){
   const title = document.getElementById('c-title').value.trim();
   if(!title){ showToast('제목을 입력해주세요','err'); return }
-  const sessionId = document.getElementById('c-session').value || null;
-  const column = document.getElementById('c-column').value || '';
   const res = await fetch(`${SUPA_URL}/rest/v1/test_sets`,{
     method:'POST',headers:{...HDR,'Prefer':'return=representation'},
-    body:JSON.stringify({title, grade_session_id:sessionId, grade_column:column})
+    body:JSON.stringify({title})
   });
   const data = await res.json();
   if(res.ok && data.length){
@@ -346,15 +313,12 @@ async function deleteTest(){
 
 // ===== 시험 상세 =====
 async function openTest(id){
-  const res = await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${id}&select=*,grade_sessions(title)`,{headers:HDR});
+  const res = await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${id}&select=*`,{headers:HDR});
   const data = await res.json();
   if(!data.length) return;
   currentTest = data[0];
   document.getElementById('d-title').textContent = currentTest.title;
-  const linkText = currentTest.grade_sessions
-    ? `성적표 연결: ${currentTest.grade_sessions.title} → ${currentTest.grade_column}`
-    : '성적표 연결 없음';
-  document.getElementById('d-link').textContent = linkText;
+  document.getElementById('d-link').textContent = new Date(currentTest.created_at).toLocaleDateString('ko-KR');
 
   await loadVersions();
   await loadClassesForScoring();
