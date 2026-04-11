@@ -418,9 +418,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <!-- 발송 대상 선택 -->
     <div style="display:flex;gap:6px;margin-bottom:14px;align-items:center">
       <span style="font-size:12px;color:var(--muted);margin-right:4px">발송 대상:</span>
-      <button class="btn-outline active" id="sms-target-parent" onclick="setSmsTarget('parent')" style="font-size:11px;padding:4px 10px">👨‍👩‍👧 보호자</button>
+      <button class="btn-outline" id="sms-target-parent" onclick="setSmsTarget('parent')" style="font-size:11px;padding:4px 10px">👨‍👩‍👧 보호자</button>
       <button class="btn-outline" id="sms-target-student" onclick="setSmsTarget('student')" style="font-size:11px;padding:4px 10px">🎒 학생</button>
-      <button class="btn-outline" id="sms-target-both" onclick="setSmsTarget('both')" style="font-size:11px;padding:4px 10px">👥 둘 다</button>
+      <button class="btn-outline active" id="sms-target-both" onclick="setSmsTarget('both')" style="font-size:11px;padding:4px 10px">👥 둘 다</button>
     </div>
 
     <!-- 성적표 발송 -->
@@ -1389,7 +1389,7 @@ async function saveScoringModal(){
 
 // ===== 문자 발송 =====
 let smsMemberList = [];
-let smsTarget = 'parent'; // 'parent', 'student', 'both'
+let smsTarget = 'both'; // 'parent', 'student', 'both'
 
 function setSmsTarget(t){
   smsTarget=t;
