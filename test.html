@@ -216,6 +216,12 @@ textarea{resize:vertical;min-height:60px}
       </div>
       <div id="score-empty" class="empty" style="display:none">반을 선택하세요</div>
     </div>
+
+    <!-- 통계 영역 -->
+    <div class="card" id="stats-card" style="display:none">
+      <div style="font-size:15px;font-weight:700;margin-bottom:16px">📊 문항별 통계</div>
+      <div id="stats-content"></div>
+    </div>
   </div>
 
 </div>
@@ -905,6 +911,7 @@ async function loadScoringGrid(){
       <td><button class="btn-outline" style="font-size:11px;padding:4px 8px" onclick="saveStudentScore('${m.id}')">저장</button></td>
     </tr>`;
   }).join('');
+  renderStats();
 }
 
 function onVersionSelect(selectEl){
@@ -961,6 +968,9 @@ function recalcStudent(memberId){
 
   const totalEl = document.getElementById('total-'+memberId);
   if(totalEl) totalEl.textContent = total+'/'+maxPts;
+  // 통계 업데이트 (디바운스)
+  clearTimeout(window._statsTimer);
+  window._statsTimer=setTimeout(renderStats,500);
 }
 
 async function saveStudentScore(memberId){
@@ -1060,6 +1070,125 @@ document.addEventListener('keydown', function(e){
     if(next){ next.focus(); next.select(); }
   }
 });
+
+// ===== 문항별 통계 =====
+function renderStats(){
+  const card=document.getElementById('stats-card');
+  const content=document.getElementById('stats-content');
+
+  // 채점 데이터가 있는 학생만
+  const scored=scoringMembers.filter(m=>{
+    const r=scoringResponses[m.id];
+    return r&&r.scores&&Object.keys(r.scores).length>0;
+  });
+
+  if(!scored.length||!currentVersions.length){
+    card.style.display='none';
+    return;
+  }
+  card.style.display='block';
+
+  // 첫 번째 버전 기준 문항
+  const v=currentVersions[0];
+  const questions=typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
+  if(!questions.length) return;
+
+  // 문항별 정답률 계산
+  const qStats=questions.map((q,i)=>{
+    const qnum=String(i+1);
+    let correct=0, total=0;
+    scored.forEach(m=>{
+      const r=scoringResponses[m.id];
+      if(!r||!r.scores) return;
+      const sc=r.scores[qnum];
+      if(sc===undefined) return;
+      total++;
+      if(sc>=q.points) correct++;
+    });
+    const rate=total>0?Math.round(correct/total*100):0;
+    return {num:q.num||i+1, category:q.category||'', type:q.type, points:q.points, rate, correct, total};
+  });
+
+  // 카테고리별 평균
+  const catMap={};
+  qStats.forEach(s=>{
+    const cat=s.category||'기타';
+    if(!catMap[cat]) catMap[cat]={sum:0,count:0};
+    catMap[cat].sum+=s.rate;
+    catMap[cat].count++;
+  });
+
+  // TOP 3 오답
+  const worst=[...qStats].sort((a,b)=>a.rate-b.rate).slice(0,3);
+
+  // 전체 평균
+  const avgRate=qStats.length?Math.round(qStats.reduce((s,q)=>s+q.rate,0)/qStats.length):0;
+
+  let html=`
+    <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px;background:var(--surface);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:${avgRate>=70?'var(--green)':'var(--red)'}">${avgRate}%</div>
+        <div style="font-size:11px;color:var(--muted)">전체 평균 정답률</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:var(--surface);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:var(--accent)">${scored.length}</div>
+        <div style="font-size:11px;color:var(--muted)">채점 완료</div>
+      </div>
+      <div style="flex:1;min-width:120px;background:var(--surface);border-radius:10px;padding:16px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:var(--red)">${worst.length?worst[0].num+'번':'-'}</div>
+        <div style="font-size:11px;color:var(--muted)">가장 많이 틀린 문항</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px">문항별 정답률</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px">
+      ${qStats.map(s=>{
+        const color=s.rate>=80?'#22c55e':s.rate>=50?'#f59e0b':'#ef4444';
+        return `<div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;font-weight:700;min-width:32px;color:var(--muted)">${s.num}번</span>
+          <span style="font-size:10px;min-width:60px;color:var(--muted)">${s.category||''}</span>
+          <div style="flex:1;height:18px;background:var(--surface);border-radius:4px;overflow:hidden;position:relative">
+            <div style="height:100%;width:${s.rate}%;background:${color};border-radius:4px;transition:width .5s"></div>
+          </div>
+          <span style="font-size:11px;font-weight:700;min-width:36px;text-align:right;color:${color}">${s.rate}%</span>
+          <span style="font-size:10px;min-width:36px;color:var(--muted)">${s.correct}/${s.total}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  // 가장 많이 틀린 TOP 3
+  if(worst.length){
+    html+=`<div style="font-size:13px;font-weight:700;margin-bottom:10px">🔥 가장 많이 틀린 문항 TOP 3</div>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        ${worst.map((s,i)=>`<div style="flex:1;min-width:100px;background:${i===0?'rgba(239,68,68,.08)':'var(--surface)'};border:1px solid ${i===0?'rgba(239,68,68,.2)':'var(--border)'};border-radius:10px;padding:14px;text-align:center">
+          <div style="font-size:20px;font-weight:800;color:var(--red)">${s.num}번</div>
+          <div style="font-size:11px;color:var(--muted);margin:4px 0">${s.category||''}</div>
+          <div style="font-size:14px;font-weight:700;color:var(--red)">${s.rate}%</div>
+        </div>`).join('')}
+      </div>`;
+  }
+
+  // 카테고리별 평균
+  const cats=Object.entries(catMap);
+  if(cats.length>1 || (cats.length===1 && cats[0][0]!=='기타')){
+    html+=`<div style="font-size:13px;font-weight:700;margin-bottom:10px">📂 카테고리별 평균 정답률</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${cats.map(([cat,d])=>{
+          const avg=Math.round(d.sum/d.count);
+          const color=avg>=80?'#22c55e':avg>=50?'#f59e0b':'#ef4444';
+          return `<div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:12px;font-weight:600;min-width:80px">${cat}</span>
+            <div style="flex:1;height:18px;background:var(--surface);border-radius:4px;overflow:hidden">
+              <div style="height:100%;width:${avg}%;background:${color};border-radius:4px;transition:width .5s"></div>
+            </div>
+            <span style="font-size:12px;font-weight:700;min-width:36px;text-align:right;color:${color}">${avg}%</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  content.innerHTML=html;
+}
 
 // ===== 오답노트 생성 =====
 async function generateAllWrongNotes(){
