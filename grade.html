@@ -427,7 +427,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <button class="btn-outline" onclick="copyAllReport()" style="font-size:12px">📋 전체 복사</button>
         <span id="sms-report-status" style="font-size:12px;color:var(--muted);align-self:center"></span>
       </div>
-      <div style="flex:1;overflow-y:auto;max-height:300px" id="sms-report-list"></div>
+      <div style="flex:1;overflow-y:auto;max-height:40vh" id="sms-report-list"></div>
     </div>
 
     <!-- 단체 문자 -->
@@ -447,7 +447,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <span id="sms-bulk-status" style="font-size:12px;color:var(--muted)"></span>
       </div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:8px">발송 대상 (<span id="sms-bulk-count">0</span>명)</div>
-      <div style="flex:1;overflow-y:auto;max-height:280px" id="sms-bulk-list"></div>
+      <div style="flex:1;overflow-y:auto;max-height:40vh" id="sms-bulk-list"></div>
     </div>
 
     <!-- 개별 문자 -->

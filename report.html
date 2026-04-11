@@ -220,7 +220,7 @@ body::after{
     <div class="nb-hint">화면을 터치하면 닫힙니다</div>
   </div>
 </div>
-<button class="notice-reopen" id="notice-reopen" onclick="reopenNotice()">📢 공지</button>
+<button class="notice-reopen" id="notice-reopen" style="display:none"></button>
 
 <div class="container">
   <div class="logo">
@@ -238,7 +238,7 @@ body::after{
   <div id="chat-container" style="display:none">
     <div class="chat-overlay" id="chat-overlay">
       <div class="chat-overlay-header">
-        <h3>💬 선생님과 Talk</h3>
+        <h3>💬 선생님과 채팅</h3>
         <button class="chat-close" onclick="closeChat()">✕</button>
       </div>
       <div class="chat-messages" id="chat-messages">
@@ -345,8 +345,8 @@ async function loadReport(){
     let html = `<div class="report-card">
       <div class="report-header">
         <div class="report-session">${session.title}</div>
-        <div class="report-name">${name} <button class="chat-btn" onclick="openChat()"><span class="dot"></span>선생님과 Talk!<span id="chat-unread-inline" style="display:none" class="chat-unread-badge">0</span></button></div>
-        <div class="report-date">${date}</div>
+        <div class="report-name">${name} <button class="chat-btn" onclick="openChat()"><span class="dot"></span>선생님과 채팅<span id="chat-unread-inline" style="display:none" class="chat-unread-badge">0</span></button></div>
+        <div class="report-date">${date}${session.notice&&session.notice.trim()?'<button id="notice-btn-inline" onclick="reopenNotice()" style="margin-left:12px;padding:4px 12px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">📢 공지</button>':''}</div>
       </div>
       <div class="grade-list">`;
 
@@ -524,7 +524,6 @@ function dismissNotice(){
   if(overlay.classList.contains('locked')) return;
   overlay.classList.remove('show');
   setTimeout(()=>{overlay.style.display='none'},300);
-  document.getElementById('notice-reopen').style.display='block';
 }
 function reopenNotice(){
   const overlay=document.getElementById('notice-overlay');
@@ -532,7 +531,6 @@ function reopenNotice(){
   overlay.classList.add('locked');
   setTimeout(()=>overlay.classList.add('show'),10);
   setTimeout(()=>overlay.classList.remove('locked'),200);
-  document.getElementById('notice-reopen').style.display='none';
 }
 
 /* ── Chat ── */
