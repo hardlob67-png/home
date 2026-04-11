@@ -231,7 +231,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
     <!-- 엑셀 업로드 -->
     <div class="section-title">엑셀로 일괄 등록</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">1열: 이름 | 2열: 보호자번호 | 3열: 학생번호(선택) &nbsp;(첫 행 헤더 자동 건너뜀)</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">1열: 이름 | 2열: 보호자번호 | 3열: 학생번호(선택) | 4열: 분반(선택) &nbsp;(첫 행 헤더 자동 건너뜀)</p>
     <div style="margin-bottom:12px">
       <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">등록 시 분반 지정 (선택)</label>
       <select id="excel-class" style="padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:13px;font-family:inherit;width:100%">
@@ -522,12 +522,13 @@ function handleExcel(file){
     excelData = dataRows.map(r=>({
       name: String(r[0]||'').trim(),
       phone: String(r[1]||'').trim().replace(/-/g,'').replace(/\s/g,''),
-      studentPhone: String(r[2]||'').trim().replace(/-/g,'').replace(/\s/g,'')
+      studentPhone: String(r[2]||'').trim().replace(/-/g,'').replace(/\s/g,''),
+      className: String(r[3]||'').trim()
     })).filter(r=>r.name && r.phone && r.phone.length >= 10);
 
     const preview = document.getElementById('excel-preview');
     document.getElementById('excel-preview-title').textContent=`${file.name} — ${excelData.length}명 확인됨`;
-    document.getElementById('excel-preview-list').innerHTML = excelData.slice(0,10).map(r=>`${r.name} · ${r.phone}${r.studentPhone?' · 학생:'+r.studentPhone:''}`).join('<br>') + (excelData.length>10?`<br>... 외 ${excelData.length-10}명`:'');
+    document.getElementById('excel-preview-list').innerHTML = excelData.slice(0,10).map(r=>`${r.name} · ${r.phone}${r.studentPhone?' · 학생:'+r.studentPhone:''}${r.className?' · ['+r.className+']':''}`).join('<br>') + (excelData.length>10?`<br>... 외 ${excelData.length-10}명`:'');
     preview.style.display='block';
     document.getElementById('btn-excel-upload').disabled = excelData.length===0;
   };
@@ -537,11 +538,43 @@ function handleExcel(file){
 async function uploadExcelMembers(){
   if(!excelData.length) return;
   const btn = document.getElementById('btn-excel-upload');
-  const classId = document.getElementById('excel-class').value;
+  const dropdownClassId = document.getElementById('excel-class').value;
   btn.disabled=true;
-  let added=0, skipped=0;
+
+  // 기존 반 목록 캐시
+  const classCache={};
+  try{
+    const cRes = await fetch(`${SUPA_URL}/rest/v1/classes?select=id,name`,{headers:HDR});
+    const classes = await cRes.json();
+    if(Array.isArray(classes)) classes.forEach(c=>{classCache[c.name]=c.id});
+  }catch(e){}
+
+  let added=0, skipped=0, classesCreated=0;
   for(const r of excelData){
     btn.textContent=`등록 중... (${added+skipped+1}/${excelData.length})`;
+
+    // 이 학생의 분반 결정: 엑셀 4열 > 드롭다운
+    let assignClassId = dropdownClassId;
+    if(r.className){
+      if(classCache[r.className]){
+        assignClassId = classCache[r.className];
+      } else {
+        // 반 자동 생성
+        try{
+          const crRes = await fetch(`${SUPA_URL}/rest/v1/classes`,{
+            method:'POST',headers:{...HDR,'Prefer':'return=representation'},
+            body:JSON.stringify({name:r.className})
+          });
+          if(crRes.ok){
+            const created = (await crRes.json())[0];
+            classCache[r.className] = created.id;
+            assignClassId = created.id;
+            classesCreated++;
+          }
+        }catch(e){}
+      }
+    }
+
     try{
       const body = {name:r.name,phone:r.phone,role:'user'};
       if(r.studentPhone) body.student_phone = r.studentPhone;
@@ -552,42 +585,42 @@ async function uploadExcelMembers(){
       });
       if(res.ok){
         added++;
-        // 분반 지정
-        if(classId){
+        if(assignClassId){
           const member = (await res.json())[0];
           if(member&&member.id){
             await fetch(`${SUPA_URL}/rest/v1/class_members`,{
               method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
-              body:JSON.stringify({class_id:classId,member_id:member.id})
-            });
+              body:JSON.stringify({class_id:assignClassId,member_id:member.id})
+            }).catch(()=>{});
           }
         }
       } else {
-        // 이미 존재하면 student_phone 업데이트 시도 + 분반 추가
         skipped++;
-        if(classId || r.studentPhone){
-          const findRes = await fetch(`${SUPA_URL}/rest/v1/members?phone=eq.${r.phone}&select=id`,{headers:HDR});
-          const found = await findRes.json();
-          if(found.length){
-            const mid = found[0].id;
-            if(r.studentPhone){
-              await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${mid}`,{
-                method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},
-                body:JSON.stringify({student_phone:r.studentPhone})
-              });
-            }
-            if(classId){
-              await fetch(`${SUPA_URL}/rest/v1/class_members`,{
-                method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
-                body:JSON.stringify({class_id:classId,member_id:mid})
-              }).catch(()=>{});
-            }
+        // 기존 회원: student_phone 업데이트 + 분반 추가
+        const findRes = await fetch(`${SUPA_URL}/rest/v1/members?phone=eq.${r.phone}&select=id`,{headers:HDR});
+        const found = await findRes.json();
+        if(found.length){
+          const mid = found[0].id;
+          if(r.studentPhone){
+            await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${mid}`,{
+              method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},
+              body:JSON.stringify({student_phone:r.studentPhone})
+            });
+          }
+          if(assignClassId){
+            await fetch(`${SUPA_URL}/rest/v1/class_members`,{
+              method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+              body:JSON.stringify({class_id:assignClassId,member_id:mid})
+            }).catch(()=>{});
           }
         }
       }
     }catch(e){ skipped++ }
   }
-  showToast(`${added}명 등록 완료${skipped?' ('+skipped+'명 기존 회원)':''} ✓`,'ok');
+  let msg = `${added}명 등록 완료`;
+  if(skipped) msg += ` (${skipped}명 기존 회원)`;
+  if(classesCreated) msg += ` · ${classesCreated}개 반 생성`;
+  showToast(msg+' ✓','ok');
   excelData=[];
   document.getElementById('excel-preview').style.display='none';
   document.getElementById('excel-input').value='';
