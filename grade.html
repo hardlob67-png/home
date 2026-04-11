@@ -334,6 +334,21 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div class="name-popup" id="name-popup">
   <button onclick="event.stopPropagation();popupSendSms()">💬 문자 보내기</button>
   <button onclick="event.stopPropagation();popupClinic()">🏥 클리닉 예약</button>
+  <button onclick="event.stopPropagation();popupStudentInfo()">👤 학생 정보</button>
+</div>
+
+<!-- 학생 정보 팝업 -->
+<div class="name-popup" id="info-popup" style="min-width:280px;padding:16px" onclick="event.stopPropagation()">
+  <div style="font-size:14px;font-weight:700;margin-bottom:12px" id="info-popup-name"></div>
+  <div style="margin-bottom:10px">
+    <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">보호자번호</label>
+    <input type="tel" id="info-parent-phone" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="width:100%;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:monospace;font-size:13px;outline:none">
+  </div>
+  <div style="margin-bottom:12px">
+    <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">학생번호</label>
+    <input type="tel" id="info-student-phone" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="width:100%;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:monospace;font-size:13px;outline:none">
+  </div>
+  <button class="btn-primary" onclick="saveStudentInfo()" style="width:100%;font-size:13px;padding:8px">저장</button>
 </div>
 
 <!-- 클리닉 빠른 예약 팝업 -->
@@ -697,11 +712,11 @@ async function loadGrid(){
 
   // 반 학생 로드
   if(currentSession.class_id){
-    const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name,phone)&order=members(name)`,{headers:HDR});
+    const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name,phone,student_phone)&order=members(name)`,{headers:HDR});
     const cmData = await cmRes.json();
     members = cmData.map(cm=>cm.members).filter(Boolean);
   } else {
-    const mRes = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name,phone&role=neq.admin&order=name`,{headers:HDR});
+    const mRes = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name,phone,student_phone&role=neq.admin&order=name`,{headers:HDR});
     members = await mRes.json();
   }
 
@@ -736,7 +751,7 @@ async function loadGrid(){
     const d = gradeData[m.id] || {scores:{},memo:''};
     return `<tr id="row-${m.id}">
       <td class="cell-num">${ri+1}</td>
-      <td class="cell-name"><a href="#" onclick="showNamePopup(event,'${m.id}','${m.name}','${m.phone||''}')">${m.name}</a></td>
+      <td class="cell-name"><a href="#" onclick="showNamePopup(event,'${m.id}','${m.name}','${m.phone||''}','${m.student_phone||''}')">${m.name}</a></td>
       ${cols.map((c,ci)=>{
         const testId = testColMap[c];
         const val = d.scores[c]||'';
@@ -771,17 +786,46 @@ async function loadGrid(){
 }
 
 // ===== 이름 팝업 =====
-let popupMemberId='', popupMemberName='', popupMemberPhone='';
+let popupMemberId='', popupMemberName='', popupMemberPhone='', popupStudentPhone='';
 let clinicSelectedTime='17:00';
 
-function showNamePopup(e, memberId, name, phone){
+function showNamePopup(e, memberId, name, phone, studentPhone){
   e.preventDefault();
-  popupMemberId=memberId; popupMemberName=name; popupMemberPhone=phone;
+  popupMemberId=memberId; popupMemberName=name; popupMemberPhone=phone; popupStudentPhone=studentPhone||'';
   document.getElementById('clinic-popup').classList.remove('show');
+  document.getElementById('info-popup').classList.remove('show');
   const popup = document.getElementById('name-popup');
   popup.style.left = Math.min(e.clientX, window.innerWidth-160)+'px';
   popup.style.top = e.clientY+'px';
   popup.classList.add('show');
+}
+
+function popupStudentInfo(){
+  document.getElementById('name-popup').classList.remove('show');
+  document.getElementById('info-popup-name').textContent = popupMemberName;
+  document.getElementById('info-parent-phone').value = popupMemberPhone;
+  document.getElementById('info-student-phone').value = popupStudentPhone;
+  const popup = document.getElementById('info-popup');
+  const np = document.getElementById('name-popup');
+  popup.style.left = np.style.left;
+  popup.style.top = np.style.top;
+  popup.classList.add('show');
+}
+
+async function saveStudentInfo(){
+  const phone = document.getElementById('info-parent-phone').value.trim();
+  const sphone = document.getElementById('info-student-phone').value.trim();
+  if(!phone){showToast('보호자번호는 필수입니다','err');return}
+  try{
+    const body = {phone};
+    body.student_phone = sphone||null;
+    await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${popupMemberId}`,{
+      method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify(body)
+    });
+    popupMemberPhone=phone; popupStudentPhone=sphone;
+    document.getElementById('info-popup').classList.remove('show');
+    showToast('학생 정보 수정 완료 ✓','ok');
+  }catch(e){showToast('수정 실패','err')}
 }
 
 function popupSendSms(){
@@ -860,7 +904,7 @@ async function saveClinicPopup(){
 
 // 아무 곳 클릭하면 팝업 닫기
 document.addEventListener('click', function(e){
-  ['name-popup','clinic-popup'].forEach(id=>{
+  ['name-popup','clinic-popup','info-popup'].forEach(id=>{
     const popup = document.getElementById(id);
     if(popup && !popup.contains(e.target) && !e.target.closest('.cell-name')){
       popup.classList.remove('show');
@@ -1337,11 +1381,11 @@ let smsMemberList = [];
 
 async function loadSmsMembers(){
   if(currentSession && currentSession.class_id){
-    const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name,phone)&order=members(name)`,{headers:HDR});
+    const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${currentSession.class_id}&select=member_id,members(id,name,phone,student_phone)&order=members(name)`,{headers:HDR});
     const data = await res.json();
     smsMemberList = data.map(cm=>cm.members).filter(Boolean);
   } else {
-    const res = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name,phone&role=neq.admin&order=name`,{headers:HDR});
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?select=id,name,phone,student_phone&role=neq.admin&order=name`,{headers:HDR});
     smsMemberList = await res.json();
   }
 }
