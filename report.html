@@ -328,14 +328,10 @@ async function loadReport(){
 
     const gRes = await fetch(`${SUPA_URL}/rest/v1/grades?session_id=eq.${sessionId}&member_id=eq.${memberId}&select=*`,{headers:HDR});
     const grades = await gRes.json();
-    if(!grades.length){
-      content.innerHTML = `<div class="state-msg"><div class="icon">📭</div><div class="title">아직 입력된 성적이 없어요</div><div class="desc">성적이 입력되면 이 페이지에서 확인할 수 있습니다.</div></div>`;
-      return;
-    }
 
-    const grade = grades[0];
-    const scores = typeof grade.scores==='string'?JSON.parse(grade.scores):grade.scores;
-    const name = grade.member_name||'학생';
+    const grade = grades.length ? grades[0] : null;
+    const scores = grade ? (typeof grade.scores==='string'?JSON.parse(grade.scores):grade.scores) : {};
+    const name = grade ? (grade.member_name||'학생') : '학생';
     const date = new Date(session.created_at).toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'});
 
     // 연결된 시험 로드
@@ -380,7 +376,7 @@ async function loadReport(){
 
     html += `<div class="cheer-section"><div class="cheer-emoji">🌟</div><div class="cheer-text">${getCheerMessage(scores)}</div></div>`;
 
-    if(grade.memo && grade.memo.trim()){
+    if(grade && grade.memo && grade.memo.trim()){
       html += `<div class="memo-section"><div class="memo-title">📌 선생님 전달 사항</div><div class="memo-text">${grade.memo.replace(/\n/g,'<br>')}</div></div>`;
     }
 

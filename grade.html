@@ -44,6 +44,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
 .btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
 .btn-green:hover{background:rgba(34,197,94,.25)}
+.btn-outline{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.08)}
 
 /* 그리드 테이블 */
 .grid-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;position:relative}
@@ -175,6 +178,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .modal .field label{font-size:13px;color:var(--muted);font-weight:500}
 .modal .field input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none}
 .modal .field input:focus{border-color:var(--accent)}
+.modal textarea,.modal select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;width:100%}
+.modal textarea:focus,.modal select:focus{border-color:var(--accent)}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
 .admin-tab-nav{display:none}
 /* Sidebar */
@@ -310,10 +315,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <textarea id="session-notice" placeholder="성적표에 표시될 공지사항을 입력하세요 (학부모에게 보여짐)" style="width:100%;min-height:80px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px;resize:vertical;outline:none"></textarea>
     </div>
 
-    <!-- 반 자료실 -->
+    <!-- 학습 자료실 -->
     <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <h3 style="font-size:15px;font-weight:700;margin:0">📁 반 자료실</h3>
+        <h3 style="font-size:15px;font-weight:700;margin:0">📁 학습 자료실</h3>
         <label style="padding:8px 16px;background:rgba(108,99,255,.15);color:#a0a7ff;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
           📎 파일 업로드
           <input type="file" multiple style="display:none" onchange="uploadFiles(this.files)">
@@ -1386,14 +1391,13 @@ function renderReportList(){
   const baseUrl = window.location.origin || 'https://xn--oh5bnfltpyu64c.com';
   const list = document.getElementById('sms-report-list');
   list.innerHTML = smsMemberList.map(m=>{
-    const link = `${baseUrl}/report.html?member=${m.id}&session=${currentSession.id}`;
-    return `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
       <div style="flex:1;min-width:0">
-        <span style="font-size:13px;font-weight:500">${m.name}</span>
-        <span style="font-size:11px;color:var(--muted);margin-left:6px">${m.phone}</span>
+        <div style="font-size:14px;font-weight:600">${m.name}</div>
+        <div style="font-size:12px;color:var(--muted);font-family:monospace">${m.phone}</div>
       </div>
-      <button class="btn-outline" style="font-size:11px;padding:3px 8px" onclick="sendOneReport('${m.id}','${m.name}','${m.phone}')">발송</button>
-      <button class="btn-outline" style="font-size:11px;padding:3px 8px" onclick="copyOneReport('${m.name}','${m.id}')">복사</button>
+      <button class="btn-outline" style="font-size:12px;padding:6px 12px" onclick="sendOneReport('${m.id}','${m.name}','${m.phone}')">발송</button>
+      <button class="btn-outline" style="font-size:12px;padding:6px 12px" onclick="copyOneReport('${m.name}','${m.id}')">복사</button>
     </div>`;
   }).join('');
 }
@@ -1598,7 +1602,7 @@ async function saveNotice(){
   }catch(e){showToast('저장 실패','err')}
 }
 
-// ── 반 자료실 ──
+// ── 학습 자료실 ──
 async function loadClassFiles(){
   const el=document.getElementById('class-files-list');
   if(!selectedClassId){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">반을 선택하세요</div>';return}
