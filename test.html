@@ -9,7 +9,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
-  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#8a8aa4;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#f4f4fb;--muted:#a0a0be;
   --green:#22c55e;--red:#ff6584;--yellow:#f0c040;--radius:14px;
 }
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(108,99,255,.25);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(108,99,255,.4)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -20,28 +20,28 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .header{position:sticky;top:0;z-index:10;background:rgba(20,20,34,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{display:flex;align-items:center;gap:12px}
 .logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
-.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
 
 .main{position:relative;z-index:1;flex:1;min-width:0;padding:24px 32px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px}
 .card h2{font-size:18px;font-weight:700;margin-bottom:4px}
-.card p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.card p{font-size:15px;color:var(--muted);margin-bottom:20px}
 
 input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 textarea{resize:vertical;min-height:60px}
 
-.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
 .btn-primary:hover{opacity:.9}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
 .btn-green:hover{background:rgba(34,197,94,.25)}
-.btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;transition:all .2s}
 .btn-red:hover{background:rgba(255,101,132,.18)}
-.btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 .btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.1)}
 
@@ -55,26 +55,26 @@ textarea{resize:vertical;min-height:60px}
 
 /* 문항 목록 */
 .q-item{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface);border-radius:10px;margin-bottom:8px}
-.q-num{width:32px;height:32px;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
-.q-type{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.q-num{width:32px;height:32px;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.q-type{font-size:13px;padding:2px 8px;border-radius:4px;font-weight:600}
 .q-type.mc{background:rgba(34,197,94,.1);color:var(--green)}
 .q-type.sa{background:rgba(240,192,64,.1);color:var(--yellow)}
-.q-pts{font-size:12px;color:var(--muted)}
-.q-ans{font-size:13px;color:var(--text);font-weight:500}
+.q-pts{font-size:14px;color:var(--muted)}
+.q-ans{font-size:15px;color:var(--text);font-weight:500}
 
 /* 채점 그리드 */
 .score-grid{width:100%;border-collapse:separate;border-spacing:0}
-.score-grid th{text-align:center;font-size:11px;color:var(--muted);font-weight:600;padding:8px 4px;border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap}
+.score-grid th{text-align:center;font-size:13px;color:var(--muted);font-weight:600;padding:8px 4px;border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap}
 .score-grid th.sticky-col{position:sticky;z-index:3;background:var(--surface)}
 .score-grid td{padding:2px;border-bottom:1px solid rgba(60,60,88,.4);text-align:center;vertical-align:middle}
 .score-grid td.sticky-col{position:sticky;z-index:1;background:var(--card)}
-.score-grid .name-cell{text-align:left;padding:8px 10px;font-weight:500;font-size:13px;white-space:nowrap}
-.score-grid input{width:44px;background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 2px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;text-align:center;outline:none;transition:all .2s}
+.score-grid .name-cell{text-align:left;padding:8px 10px;font-weight:500;font-size:15px;white-space:nowrap}
+.score-grid input{width:44px;background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 2px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;text-align:center;outline:none;transition:all .2s}
 .score-grid input:focus{background:rgba(108,99,255,.08);border-color:var(--accent)}
 .score-grid .correct{background:rgba(34,197,94,.12);color:var(--green);font-weight:700}
 .score-grid .wrong{background:rgba(255,101,132,.12);color:var(--red)}
 .score-grid .total-cell{font-weight:700;font-size:14px;padding:8px 6px;white-space:nowrap}
-.score-grid select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:11px;outline:none;width:70px}
+.score-grid select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;width:70px}
 
 /* 화면 전환 */
 .screen{display:none}
@@ -83,23 +83,23 @@ textarea{resize:vertical;min-height:60px}
 .app-layout{display:flex;min-height:calc(100vh - 64px);position:relative;z-index:1}
 .sidebar{width:200px;flex-shrink:0;position:sticky;top:64px;height:calc(100vh - 64px);background:var(--surface);border-right:1px solid var(--border);padding:16px 0;overflow-y:auto;display:flex;flex-direction:column}
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
 .sidebar-item:hover{background:var(--card);color:var(--text)}
 .sidebar-item.active{background:rgba(108,99,255,.15);color:#a0a7ff;font-weight:700}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
-.sidebar-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
+.sidebar-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
 @media(max-width:640px){
   .app-layout{flex-direction:column;padding-bottom:64px}
   .sidebar{display:none}
   .main{padding:16px 16px 40px}
   .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
-  .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:10px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
+  .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
   .mobile-nav .active{color:#a0a7ff}
   .mobile-nav .nav-icon{font-size:20px;line-height:1}
   .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
   .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-  .mobile-more-menu a,.mobile-more-menu button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:14px 8px}
+  .mobile-more-menu a,.mobile-more-menu button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:14px 8px}
   .mobile-more-menu a:hover,.mobile-more-menu button:hover{color:var(--text);border-color:var(--accent)}
   .mobile-more-menu .nav-icon{font-size:20px}
   .mobile-overlay{display:none;position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.4)}
@@ -159,7 +159,7 @@ textarea{resize:vertical;min-height:60px}
       <p>시험 제목을 입력하세요. 성적표 연결은 성적 입력 화면에서 할 수 있어요.</p>
       <div style="display:flex;flex-direction:column;gap:14px;max-width:500px">
         <div>
-          <label style="font-size:13px;color:var(--muted);display:block;margin-bottom:6px">시험 제목</label>
+          <label style="font-size:15px;color:var(--muted);display:block;margin-bottom:6px">시험 제목</label>
           <input type="text" id="c-title" placeholder="예: 4월 2주차 리뷰테스트" style="width:100%">
         </div>
         <div class="row" style="margin-top:8px">
@@ -176,7 +176,7 @@ textarea{resize:vertical;min-height:60px}
       <div class="row" style="justify-content:space-between;margin-bottom:16px">
         <div>
           <h2 id="d-title"></h2>
-          <p id="d-link" style="margin-bottom:0;font-size:13px;color:var(--muted)"></p>
+          <p id="d-link" style="margin-bottom:0;font-size:15px;color:var(--muted)"></p>
         </div>
         <div class="row">
           <button class="btn-outline" onclick="showScreen('screen-list')">← 목록</button>
@@ -198,7 +198,7 @@ textarea{resize:vertical;min-height:60px}
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <div>
           <div style="font-size:15px;font-weight:700">✏️ 채점</div>
-          <div style="font-size:13px;color:var(--muted)">학생 답안을 입력하면 객관식은 자동 채점됩니다</div>
+          <div style="font-size:15px;color:var(--muted)">학생 답안을 입력하면 객관식은 자동 채점됩니다</div>
         </div>
         <div class="row">
           <select id="score-class" style="min-width:140px" onchange="loadScoringGrid()">
@@ -278,7 +278,7 @@ async function loadTests(){
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
           <div style="font-size:16px;font-weight:700">${t.title}</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">${new Date(t.created_at).toLocaleDateString('ko-KR')}</div>
+          <div style="font-size:14px;color:var(--muted);margin-top:4px">${new Date(t.created_at).toLocaleDateString('ko-KR')}</div>
         </div>
         <div style="font-size:20px;color:var(--muted)">→</div>
       </div>
@@ -383,7 +383,7 @@ function showVersionDetail(){
   const totalPts = questions.reduce((s,q)=>s+(q.points||0),0);
 
   let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div style="font-size:13px;color:var(--muted)">${v.name} · ${questions.length}문항 · 총 <span id="v-total-pts">${totalPts}</span>점</div>
+    <div style="font-size:15px;color:var(--muted)">${v.name} · ${questions.length}문항 · 총 <span id="v-total-pts">${totalPts}</span>점</div>
     <div class="row">
       <button class="btn-red" onclick="deleteVersion('${v.id}')">버전 삭제</button>
     </div>
@@ -405,11 +405,11 @@ function showVersionDetail(){
         </div>
       </div>
       <div id="qgen-paste" style="display:none">
-        <div style="font-size:13px;color:var(--muted);margin-bottom:10px">
+        <div style="font-size:15px;color:var(--muted);margin-bottom:10px">
           시험지 텍스트를 붙여넣으면 문제 수·유형·정답을 자동 인식합니다
         </div>
         <textarea id="exam-paste-text" placeholder="시험지 텍스트를 여기에 붙여넣기 하세요...
-(빈칸, 순서배열, 문장삽입, 서술형 자동 인식)" style="width:100%;min-height:150px;padding:12px;font-size:13px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;resize:vertical;outline:none"></textarea>
+(빈칸, 순서배열, 문장삽입, 서술형 자동 인식)" style="width:100%;min-height:150px;padding:12px;font-size:15px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;resize:vertical;outline:none"></textarea>
         <div id="exam-parse-preview" style="margin-top:12px;display:none"></div>
         <div class="row" style="margin-top:12px;gap:8px">
           <button class="btn-outline" onclick="previewParsedExam()">미리보기</button>
@@ -426,18 +426,18 @@ function showVersionDetail(){
     <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;min-width:600px">
         <thead><tr>
-          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:40px">#</th>
-          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:70px">유형</th>
-          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:90px">카테고리</th>
-          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:60px">배점</th>
-          <th style="text-align:center;font-size:11px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border)">정답</th>
+          <th style="text-align:center;font-size:13px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:40px">#</th>
+          <th style="text-align:center;font-size:13px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:70px">유형</th>
+          <th style="text-align:center;font-size:13px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:90px">카테고리</th>
+          <th style="text-align:center;font-size:13px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border);width:60px">배점</th>
+          <th style="text-align:center;font-size:13px;color:var(--muted);padding:8px;border-bottom:1px solid var(--border)">정답</th>
           <th style="width:36px;border-bottom:1px solid var(--border)"></th>
         </tr></thead>
         <tbody>${questions.map((q,i)=>`<tr>
-          <td style="text-align:center;padding:4px;font-size:12px;font-weight:700;color:var(--muted)">${i+1}</td>
+          <td style="text-align:center;padding:4px;font-size:16px;font-weight:700;color:var(--muted)">${i+1}</td>
           <td style="padding:4px;text-align:center">
             <button onclick="toggleQType(${i})" style="
-              width:100%;padding:5px 4px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid;
+              width:100%;padding:5px 4px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid;
               font-family:'Noto Sans KR',sans-serif;transition:all .15s;
               ${q.type==='mc'
                 ?'background:rgba(79,70,229,.12);color:#6c63ff;border-color:rgba(79,70,229,.3)'
@@ -446,21 +446,21 @@ function showVersionDetail(){
           </td>
           <td style="padding:4px">
             <input type="text" list="cat-list" value="${q.category||''}" placeholder="-"
-              style="width:100%;text-align:center;padding:5px 2px;font-size:11px"
+              style="width:100%;text-align:center;padding:5px 2px;font-size:13px"
               data-qi="${i}" data-field="category" onchange="updateQField(${i},'category',this.value)">
           </td>
           <td style="padding:4px">
-            <input type="number" value="${q.points}" min="1" style="width:100%;text-align:center;padding:5px 2px;font-size:12px"
+            <input type="number" value="${q.points}" min="1" style="width:100%;text-align:center;padding:5px 2px;font-size:14px"
               data-qi="${i}" data-field="points" onchange="updateQField(${i},'points',this.value)">
           </td>
           <td style="padding:4px">
             ${q.type==='mc'
-              ?`<input type="text" value="${q.answer}" placeholder="정답" style="width:100%;text-align:center;padding:5px 2px;font-size:12px"
+              ?`<input type="text" value="${q.answer}" placeholder="정답" style="width:100%;text-align:center;padding:5px 2px;font-size:14px"
                   data-qi="${i}" data-field="answer" onchange="updateQField(${i},'answer',this.value)">`
-              :'<span style="font-size:11px;color:var(--yellow);display:block;text-align:center">직접채점</span>'}
+              :'<span style="font-size:13px;color:var(--yellow);display:block;text-align:center">직접채점</span>'}
           </td>
           <td style="padding:4px;text-align:center">
-            <button class="btn-red" onclick="removeQuestion(${i})" style="font-size:10px;padding:2px 5px">×</button>
+            <button class="btn-red" onclick="removeQuestion(${i})" style="font-size:12px;padding:2px 5px">×</button>
           </td>
         </tr>`).join('')}</tbody>
       </table>
@@ -613,11 +613,11 @@ function previewParsedExam(){
   preview.style.display='block';
   preview.innerHTML=`
     <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px">
-      <div style="font-size:14px;font-weight:700;margin-bottom:10px">📊 인식 결과: ${parsedQuestions.length}문항 · 총 ${parsedQuestions.reduce((s,q)=>s+q.points,0)}점</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:10px">📊 인식 결과: ${parsedQuestions.length}문항 · 총 ${parsedQuestions.reduce((s,q)=>s+q.points,0)}점</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:12px;padding:4px 10px;border-radius:6px;background:rgba(108,99,255,.1);color:#a0a7ff">${c} ${n}문항</span>`).join('')}
+        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:14px;padding:4px 10px;border-radius:6px;background:rgba(108,99,255,.1);color:#a0a7ff">${c} ${n}문항</span>`).join('')}
       </div>
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
         <thead><tr>
           <th style="padding:6px;border-bottom:1px solid var(--border);text-align:center">#</th>
           <th style="padding:6px;border-bottom:1px solid var(--border);text-align:center">유형</th>
@@ -883,7 +883,7 @@ async function loadScoringGrid(){
     const vId = r.version_id || currentVersions[0].id;
 
     return `<tr>
-      <td class="sticky-col" style="left:0;color:var(--muted);font-size:12px;padding:6px;background:var(--card)">${mi+1}</td>
+      <td class="sticky-col" style="left:0;color:var(--muted);font-size:14px;padding:6px;background:var(--card)">${mi+1}</td>
       <td class="sticky-col name-cell" style="left:36px;background:var(--card)">${m.name}</td>
       <td class="sticky-col" style="left:116px;background:var(--card)">
         <select data-member="${m.id}" onchange="onVersionSelect(this)">
@@ -908,7 +908,7 @@ async function loadScoringGrid(){
           onfocus="this.select()"></td>`;
       }).join('')}
       <td class="total-cell" id="total-${m.id}">${r.total_score!==undefined?r.total_score+'/'+r.total_points:'-'}</td>
-      <td><button class="btn-outline" style="font-size:11px;padding:4px 8px" onclick="saveStudentScore('${m.id}')">저장</button></td>
+      <td><button class="btn-outline" style="font-size:13px;padding:4px 8px" onclick="saveStudentScore('${m.id}')">저장</button></td>
     </tr>`;
   }).join('');
   renderStats();
@@ -1072,26 +1072,43 @@ document.addEventListener('keydown', function(e){
 });
 
 // ===== 문항별 통계 =====
+let statsVersionId=null;
+
 function renderStats(){
   const card=document.getElementById('stats-card');
   const content=document.getElementById('stats-content');
 
   // 채점 데이터가 있는 학생만
-  const scored=scoringMembers.filter(m=>{
+  const allScored=scoringMembers.filter(m=>{
     const r=scoringResponses[m.id];
     return r&&r.scores&&Object.keys(r.scores).length>0;
   });
 
-  if(!scored.length||!currentVersions.length){
+  if(!allScored.length||!currentVersions.length){
     card.style.display='none';
     return;
   }
   card.style.display='block';
 
-  // 첫 번째 버전 기준 문항
-  const v=currentVersions[0];
+  // 기본 버전 선택
+  if(!statsVersionId) statsVersionId=currentVersions[0].id;
+  const v=currentVersions.find(v=>v.id===statsVersionId)||currentVersions[0];
   const questions=typeof v.questions==='string'?JSON.parse(v.questions):v.questions;
   if(!questions.length) return;
+
+  // 해당 버전 학생만 필터
+  const scored=allScored.filter(m=>{
+    const r=scoringResponses[m.id];
+    return r&&(r.version_id===v.id||(currentVersions.length===1));
+  });
+
+  // 버전 탭
+  let html=`<div style="display:flex;gap:6px;margin-bottom:16px">
+    ${currentVersions.map(ver=>{
+      const cnt=allScored.filter(m=>scoringResponses[m.id]?.version_id===ver.id).length;
+      return `<button onclick="statsVersionId='${ver.id}';renderStats()" class="btn-outline${ver.id===v.id?' active':''}" style="font-size:14px;padding:5px 12px">${ver.name} (${cnt}명)</button>`;
+    }).join('')}
+  </div>`;
 
   // 문항별 정답률 계산
   const qStats=questions.map((q,i)=>{
@@ -1124,46 +1141,46 @@ function renderStats(){
   // 전체 평균
   const avgRate=qStats.length?Math.round(qStats.reduce((s,q)=>s+q.rate,0)/qStats.length):0;
 
-  let html=`
+  let html2=`
     <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap">
       <div style="flex:1;min-width:120px;background:var(--surface);border-radius:10px;padding:16px;text-align:center">
         <div style="font-size:24px;font-weight:800;color:${avgRate>=70?'var(--green)':'var(--red)'}">${avgRate}%</div>
-        <div style="font-size:11px;color:var(--muted)">전체 평균 정답률</div>
+        <div style="font-size:13px;color:var(--muted)">평균 정답률</div>
       </div>
       <div style="flex:1;min-width:120px;background:var(--surface);border-radius:10px;padding:16px;text-align:center">
         <div style="font-size:24px;font-weight:800;color:var(--accent)">${scored.length}</div>
-        <div style="font-size:11px;color:var(--muted)">채점 완료</div>
+        <div style="font-size:13px;color:var(--muted)">채점 완료</div>
       </div>
       <div style="flex:1;min-width:120px;background:var(--surface);border-radius:10px;padding:16px;text-align:center">
         <div style="font-size:24px;font-weight:800;color:var(--red)">${worst.length?worst[0].num+'번':'-'}</div>
-        <div style="font-size:11px;color:var(--muted)">가장 많이 틀린 문항</div>
+        <div style="font-size:13px;color:var(--muted)">가장 많이 틀린 문항</div>
       </div>
     </div>
 
-    <div style="font-size:13px;font-weight:700;margin-bottom:10px">문항별 정답률</div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:10px">문항별 정답률</div>
     <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px">
       ${qStats.map(s=>{
         const color=s.rate>=80?'#22c55e':s.rate>=50?'#f59e0b':'#ef4444';
         return `<div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:11px;font-weight:700;min-width:32px;color:var(--muted)">${s.num}번</span>
-          <span style="font-size:10px;min-width:60px;color:var(--muted)">${s.category||''}</span>
+          <span style="font-size:13px;font-weight:700;min-width:32px;color:var(--muted)">${s.num}번</span>
+          <span style="font-size:12px;min-width:60px;color:var(--muted)">${s.category||''}</span>
           <div style="flex:1;height:18px;background:var(--surface);border-radius:4px;overflow:hidden;position:relative">
             <div style="height:100%;width:${s.rate}%;background:${color};border-radius:4px;transition:width .5s"></div>
           </div>
-          <span style="font-size:11px;font-weight:700;min-width:36px;text-align:right;color:${color}">${s.rate}%</span>
-          <span style="font-size:10px;min-width:36px;color:var(--muted)">${s.correct}/${s.total}</span>
+          <span style="font-size:13px;font-weight:700;min-width:36px;text-align:right;color:${color}">${s.rate}%</span>
+          <span style="font-size:12px;min-width:36px;color:var(--muted)">${s.correct}/${s.total}</span>
         </div>`;
       }).join('')}
     </div>`;
 
   // 가장 많이 틀린 TOP 3
   if(worst.length){
-    html+=`<div style="font-size:13px;font-weight:700;margin-bottom:10px">🔥 가장 많이 틀린 문항 TOP 3</div>
+    html2+=`<div style="font-size:15px;font-weight:700;margin-bottom:10px">🔥 가장 많이 틀린 문항 TOP 3</div>
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
         ${worst.map((s,i)=>`<div style="flex:1;min-width:100px;background:${i===0?'rgba(239,68,68,.08)':'var(--surface)'};border:1px solid ${i===0?'rgba(239,68,68,.2)':'var(--border)'};border-radius:10px;padding:14px;text-align:center">
           <div style="font-size:20px;font-weight:800;color:var(--red)">${s.num}번</div>
-          <div style="font-size:11px;color:var(--muted);margin:4px 0">${s.category||''}</div>
-          <div style="font-size:14px;font-weight:700;color:var(--red)">${s.rate}%</div>
+          <div style="font-size:13px;color:var(--muted);margin:4px 0">${s.category||''}</div>
+          <div style="font-size:16px;font-weight:700;color:var(--red)">${s.rate}%</div>
         </div>`).join('')}
       </div>`;
   }
@@ -1171,23 +1188,23 @@ function renderStats(){
   // 카테고리별 평균
   const cats=Object.entries(catMap);
   if(cats.length>1 || (cats.length===1 && cats[0][0]!=='기타')){
-    html+=`<div style="font-size:13px;font-weight:700;margin-bottom:10px">📂 카테고리별 평균 정답률</div>
+    html2+=`<div style="font-size:15px;font-weight:700;margin-bottom:10px">📂 카테고리별 평균 정답률</div>
       <div style="display:flex;flex-direction:column;gap:6px">
         ${cats.map(([cat,d])=>{
           const avg=Math.round(d.sum/d.count);
           const color=avg>=80?'#22c55e':avg>=50?'#f59e0b':'#ef4444';
           return `<div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:12px;font-weight:600;min-width:80px">${cat}</span>
+            <span style="font-size:14px;font-weight:600;min-width:80px">${cat}</span>
             <div style="flex:1;height:18px;background:var(--surface);border-radius:4px;overflow:hidden">
               <div style="height:100%;width:${avg}%;background:${color};border-radius:4px;transition:width .5s"></div>
             </div>
-            <span style="font-size:12px;font-weight:700;min-width:36px;text-align:right;color:${color}">${avg}%</span>
+            <span style="font-size:16px;font-weight:700;min-width:36px;text-align:right;color:${color}">${avg}%</span>
           </div>`;
         }).join('')}
       </div>`;
   }
 
-  content.innerHTML=html;
+  content.innerHTML=html+html2;
 }
 
 // ===== 오답노트 생성 =====
@@ -1255,11 +1272,11 @@ function showWrongNoteOptions(){
     div.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center';
     div.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:380px;text-align:center">
       <div style="font-size:18px;font-weight:700;margin-bottom:6px">📝 오답노트 생성</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:20px">틀린 문제만 모아 오답노트를 만듭니다</div>
+      <div style="font-size:15px;color:var(--muted);margin-bottom:20px">틀린 문제만 모아 오답노트를 만듭니다</div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <button onclick="this.closest('div[style]').remove()" id="_wn_print" style="padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">🖨 전체 인쇄 (한 번에 출력)</button>
         <button onclick="this.closest('div[style]').remove()" id="_wn_zip" style="padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">📦 ZIP 다운로드 (개별 파일)</button>
-        <button onclick="this.closest('div[style]').remove()" id="_wn_cancel" style="padding:10px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+        <button onclick="this.closest('div[style]').remove()" id="_wn_cancel" style="padding:10px;background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;font-family:inherit">취소</button>
       </div>
     </div>`;
     document.body.appendChild(div);
@@ -1311,16 +1328,16 @@ function getNotesCSS(){
     .wn-student:last-child{page-break-after:auto}
     .wn-header{text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #4f46e5}
     .wn-logo{font-size:18px;font-weight:800;color:#4f46e5;letter-spacing:2px;margin-bottom:1px}
-    .wn-title{font-size:14px;font-weight:700;margin-bottom:6px}
-    .wn-info{display:flex;justify-content:center;gap:16px;font-size:10px;color:#64748b}
-    .wn-name{font-weight:700;color:#1e293b;font-size:12px}
+    .wn-title{font-size:16px;font-weight:700;margin-bottom:6px}
+    .wn-info{display:flex;justify-content:center;gap:16px;font-size:12px;color:#64748b}
+    .wn-name{font-weight:700;color:#1e293b;font-size:14px}
     .wn-item{border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:8px;overflow:visible}
     .wn-item-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-    .wn-qnum{font-size:11px;font-weight:800;color:#4f46e5}
+    .wn-qnum{font-size:13px;font-weight:800;color:#4f46e5}
     .wn-cat{font-size:8px;background:#eef2ff;color:#4f46e5;padding:1px 6px;border-radius:4px}
     .wn-pts{margin-left:auto;font-size:9px;color:#ef4444;font-weight:700}
     .wn-body{font-size:9px;line-height:1.5;color:#334155;white-space:pre-line;margin-bottom:8px;padding:8px;background:#f8fafc;border-radius:6px}
-    .wn-answer-row{display:flex;gap:16px;margin-bottom:8px;font-size:10px}
+    .wn-answer-row{display:flex;gap:16px;margin-bottom:8px;font-size:12px}
     .wn-wrong{color:#ef4444}
     .wn-wrong strong{background:#fef2f2;padding:1px 6px;border-radius:4px}
     .wn-correct{color:#16a34a}
@@ -1363,7 +1380,7 @@ async function downloadZipNotes(studentNotes){
   const statusEl=document.createElement('div');
   statusEl.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:400;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 40px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)';
   statusEl.innerHTML=`<div style="font-size:15px;font-weight:700;margin-bottom:8px">📝 PDF 생성 중...</div>
-    <div id="zip-progress" style="font-size:13px;color:var(--muted)">0 / ${studentNotes.length}</div>
+    <div id="zip-progress" style="font-size:15px;color:var(--muted)">0 / ${studentNotes.length}</div>
     <div style="margin-top:12px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden">
       <div id="zip-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#4f46e5,#7c3aed);border-radius:3px;transition:width .3s"></div>
     </div>`;
@@ -1375,7 +1392,7 @@ async function downloadZipNotes(studentNotes){
     document.getElementById('zip-bar').style.width=`${(i+1)/studentNotes.length*100}%`;
 
     // HTML 렌더링
-    container.innerHTML=`<div style="padding:20px;font-family:'Noto Sans KR',sans-serif;color:#1e293b;font-size:13px;line-height:1.6">
+    container.innerHTML=`<div style="padding:20px;font-family:'Noto Sans KR',sans-serif;color:#1e293b;font-size:15px;line-height:1.6">
       <style>${css.replace(/@page\{[^}]+\}/,'').replace(/@media print\{[^}]+\}/,'')}</style>
       ${buildNoteHTML(note, testTitle)}
     </div>`;

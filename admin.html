@@ -10,7 +10,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
-  --accent:#6c63ff;--accent2:#ff6584;--text:#e8e8f0;--muted:#8a8aa4;
+  --accent:#6c63ff;--accent2:#ff6584;--text:#f4f4fb;--muted:#a0a0be;
   --green:#22c55e;--red:#ff6584;--radius:14px;
 }
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(108,99,255,.25);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(108,99,255,.4)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -20,8 +20,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .header{position:sticky;top:0;z-index:10;background:rgba(20,20,34,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{display:flex;align-items:center;gap:12px}
 .logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
-.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
 .tab-nav{display:none}
 .tab-btn{display:none}
@@ -35,7 +35,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
 .sidebar-item{
   display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;
-  color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;
+  color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;
   text-decoration:none;border:none;background:none;font-family:inherit;
   transition:all .15s;white-space:nowrap;width:100%;text-align:left;
 }
@@ -43,7 +43,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .sidebar-item.active{background:rgba(108,99,255,.15);color:#a0a7ff;font-weight:700}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
-.sidebar-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
+.sidebar-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
 @media(max-width:640px){
   .app-layout{flex-direction:column;padding-bottom:64px}
   .sidebar{display:none}
@@ -56,7 +56,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   }
   .mobile-nav a,.mobile-nav button{
     display:flex;flex-direction:column;align-items:center;gap:2px;
-    background:none;border:none;color:var(--muted);font-size:10px;font-weight:500;
+    background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;
     font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;
     transition:color .15s;min-width:52px;
   }
@@ -73,7 +73,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   .mobile-more-menu a,.mobile-more-menu button{
     display:flex;flex-direction:column;align-items:center;gap:4px;
     background:var(--surface);border:1px solid var(--border);border-radius:12px;
-    color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;
+    color:var(--muted);font-size:13px;font-weight:500;font-family:inherit;
     cursor:pointer;text-decoration:none;padding:14px 8px;
   }
   .mobile-more-menu a:hover,.mobile-more-menu button:hover{color:var(--text);border-color:var(--accent)}
@@ -87,7 +87,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .tab-panel.active{display:block}
 .section-head{margin-bottom:24px}
 .section-head h2{font-size:20px;font-weight:700;margin-bottom:4px}
-.section-head p{font-size:13px;color:var(--muted)}
+.section-head p{font-size:15px;color:var(--muted)}
 .section-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .divider{height:1px;background:var(--border);margin:28px 0}
@@ -104,7 +104,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 /* 회원 개별 등록 */
 .add-row{display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .add-row input{flex:1;min-width:130px;width:auto}
-.btn-add{padding:12px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.btn-add{padding:12px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .2s}
 .btn-add:hover{opacity:.9}
 .btn-add:disabled{opacity:.5;cursor:not-allowed}
 
@@ -117,29 +117,29 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .excel-drop:hover,.excel-drop.drag{border-color:var(--green);background:rgba(34,197,94,.04)}
 .excel-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
 .excel-drop-icon{font-size:32px;margin-bottom:8px}
-.excel-drop-title{font-size:14px;font-weight:700;margin-bottom:4px}
-.excel-drop-sub{font-size:12px;color:var(--muted)}
+.excel-drop-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.excel-drop-sub{font-size:14px;color:var(--muted)}
 .excel-preview{
   background:var(--surface);border:1px solid var(--border);border-radius:10px;
   padding:14px;margin-bottom:12px;display:none;
 }
-.excel-preview-title{font-size:13px;font-weight:700;margin-bottom:8px;color:#a0a7ff}
-.excel-preview-list{font-size:12px;color:var(--muted);line-height:1.8;max-height:120px;overflow-y:auto}
-.btn-excel-upload{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;width:100%}
+.excel-preview-title{font-size:15px;font-weight:700;margin-bottom:8px;color:#a0a7ff}
+.excel-preview-list{font-size:14px;color:var(--muted);line-height:1.8;max-height:120px;overflow-y:auto}
+.btn-excel-upload{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;width:100%}
 .btn-excel-upload:hover{background:rgba(34,197,94,.25)}
 .btn-excel-upload:disabled{opacity:.4;cursor:not-allowed}
 
 /* 회원 목록 */
-.member-count{font-size:13px;color:var(--muted);margin-bottom:12px}
+.member-count{font-size:15px;color:var(--muted);margin-bottom:12px}
 .member-count span{color:var(--text);font-weight:700}
 .member-table{width:100%;border-collapse:collapse}
-.member-table th{text-align:left;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--border)}
+.member-table th{text-align:left;font-size:14px;color:var(--muted);font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--border)}
 .member-table td{padding:12px 14px;border-bottom:1px solid rgba(42,42,58,.5);font-size:14px;vertical-align:middle}
 .member-table tr:last-child td{border-bottom:none}
 .member-table tr:hover td{background:rgba(108,99,255,.04)}
-.badge-admin{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
-.badge-user{background:rgba(34,197,94,.1);color:#6ee7a0;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
-.btn-del-sm{padding:5px 12px;border:1px solid transparent;border-radius:6px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.badge-admin{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:13px;font-weight:700;padding:3px 8px;border-radius:6px}
+.badge-user{background:rgba(34,197,94,.1);color:#6ee7a0;font-size:13px;font-weight:700;padding:3px 8px;border-radius:6px}
+.btn-del-sm{padding:5px 12px;border:1px solid transparent;border-radius:6px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;transition:all .2s}
 .btn-del-sm:hover{background:rgba(255,101,132,.18)}
 #member-popup a:hover,#member-popup button:hover{background:rgba(108,99,255,.1)}
 
@@ -149,27 +149,27 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
 .upload-icon{font-size:36px;margin-bottom:10px}
 .upload-title{font-size:15px;font-weight:700;margin-bottom:4px}
-.upload-sub{font-size:13px;color:var(--muted)}
+.upload-sub{font-size:15px;color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
-.field label{font-size:13px;color:var(--muted);font-weight:500}
+.field label{font-size:15px;color:var(--muted);font-weight:500}
 .field input,.field textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
 .field input:focus,.field textarea:focus{border-color:var(--accent)}
 .field textarea{resize:vertical;min-height:64px}
 .btn-upload{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-bottom:32px}
 .btn-upload:hover{opacity:.9}
 .btn-upload:disabled{opacity:.4;cursor:not-allowed}
-.file-selected{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.3);border-radius:8px;padding:9px 14px;font-size:13px;color:#a0a7ff;margin-top:8px;display:none}
+.file-selected{background:rgba(108,99,255,.08);border:1px solid rgba(108,99,255,.3);border-radius:8px;padding:9px 14px;font-size:15px;color:#a0a7ff;margin-top:8px;display:none}
 .quiz-list{display:flex;flex-direction:column;gap:10px}
 .quiz-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;display:flex;align-items:center;gap:16px}
-.quiz-num{width:34px;height:34px;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+.quiz-num{width:34px;height:34px;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
 .quiz-info{flex:1}
 .quiz-title{font-size:15px;font-weight:700;margin-bottom:3px}
-.quiz-desc-text{font-size:13px;color:var(--muted);margin-bottom:3px}
-.quiz-date{font-size:12px;color:var(--muted)}
+.quiz-desc-text{font-size:15px;color:var(--muted);margin-bottom:3px}
+.quiz-date{font-size:14px;color:var(--muted)}
 .quiz-actions{display:flex;gap:8px;flex-shrink:0}
-.btn-preview{padding:7px 13px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-preview{padding:7px 13px;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-preview:hover{border-color:var(--accent);color:var(--accent)}
-.btn-del{padding:7px 13px;border:1px solid transparent;border-radius:7px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.btn-del{padding:7px 13px;border:1px solid transparent;border-radius:7px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-del:hover{background:rgba(255,101,132,.18)}
 .empty-state{text-align:center;padding:50px 20px;color:var(--muted)}
 .spinner{text-align:center;padding:40px;color:var(--muted)}
@@ -233,10 +233,10 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
     <!-- 엑셀 업로드 -->
     <div class="section-title">엑셀로 일괄 등록</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">1열: 이름 | 2열: 보호자번호 | 3열: 학생번호(선택) | 4열: 분반(선택) &nbsp;(첫 행 헤더 자동 건너뜀)</p>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:12px">1열: 이름 | 2열: 보호자번호 | 3열: 학생번호(선택) | 4열: 분반(선택) &nbsp;(첫 행 헤더 자동 건너뜀)</p>
     <div style="margin-bottom:12px">
-      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:6px">등록 시 분반 지정 (선택)</label>
-      <select id="excel-class" style="padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:13px;font-family:inherit;width:100%">
+      <label style="font-size:14px;color:var(--muted);display:block;margin-bottom:6px">등록 시 분반 지정 (선택)</label>
+      <select id="excel-class" style="padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:15px;font-family:inherit;width:100%">
         <option value="">분반 없음</option>
       </select>
     </div>
@@ -300,8 +300,8 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <button class="btn-sm" id="hview-member" style="border-color:var(--accent);color:var(--accent)" onclick="setHView('member')">회원별</button>
       <button class="btn-sm" id="hview-quiz" onclick="setHView('quiz')">퀴즈별</button>
-      <select id="filter-member" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"><option value="">전체 회원</option></select>
-      <select id="filter-quiz" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px"><option value="">전체 퀴즈</option></select>
+      <select id="filter-member" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:15px"><option value="">전체 회원</option></select>
+      <select id="filter-quiz" onchange="loadHistory()" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:15px"><option value="">전체 퀴즈</option></select>
     </div>
     <div id="history-list"><div class="empty-state">탭을 클릭하면 기록을 불러옵니다</div></div>
   </div>
@@ -331,7 +331,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
       <div class="section-title"><span id="class-detail-name"></span></div>
 
       <!-- 엑셀 업로드 -->
-      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">엑셀 파일 1열: 이름 &nbsp;|&nbsp; 2열: 핸드폰 번호 &nbsp;(헤더 행 자동 건너뜀)<br>이미 등록된 번호는 기존 학생을 반에 추가하고, 새 번호는 회원 등록 후 추가합니다.</p>
+      <p style="font-size:15px;color:var(--muted);margin-bottom:12px">엑셀 파일 1열: 이름 &nbsp;|&nbsp; 2열: 핸드폰 번호 &nbsp;(헤더 행 자동 건너뜀)<br>이미 등록된 번호는 기존 학생을 반에 추가하고, 새 번호는 회원 등록 후 추가합니다.</p>
 
       <div class="excel-drop" id="class-excel-drop">
         <input type="file" id="class-excel-input" accept=".xlsx,.xls" onchange="handleClassExcel(this.files[0])">
@@ -393,7 +393,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
       <p>발송된 문자 메시지 기록을 확인할 수 있어요.</p>
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
-      <input type="date" id="smslog-date" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px">
+      <input type="date" id="smslog-date" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:15px">
       <button class="btn-sm" onclick="loadSmsLogs()" style="white-space:nowrap">검색</button>
       <button class="btn-sm" onclick="document.getElementById('smslog-date').value='';loadSmsLogs()" style="white-space:nowrap">전체</button>
     </div>
@@ -423,11 +423,11 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
 <!-- 이름 클릭 팝업 -->
 <div id="member-popup" style="display:none;position:fixed;z-index:150;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);padding:6px;min-width:180px">
-  <a id="mp-report" href="#" target="_blank" style="display:block;padding:10px 14px;color:var(--text);text-decoration:none;font-size:13px;font-weight:500;border-radius:8px;transition:background .15s">📊 성적표 보기</a>
-  <div style="padding:4px 14px 2px;font-size:11px;color:var(--muted)">💬 문자 보내기</div>
-  <button onclick="mpSendSms('parent')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">👨‍👩‍👧 보호자에게</button>
-  <button id="mp-sms-student" onclick="mpSendSms('student')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">🎒 학생에게</button>
-  <button onclick="mpSendSms('both')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">👥 둘 다</button>
+  <a id="mp-report" href="#" target="_blank" style="display:block;padding:10px 14px;color:var(--text);text-decoration:none;font-size:15px;font-weight:500;border-radius:8px;transition:background .15s">📊 성적표 보기</a>
+  <div style="padding:4px 14px 2px;font-size:13px;color:var(--muted)">💬 문자 보내기</div>
+  <button onclick="mpSendSms('parent')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:15px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">👨‍👩‍👧 보호자에게</button>
+  <button id="mp-sms-student" onclick="mpSendSms('student')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:15px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">🎒 학생에게</button>
+  <button onclick="mpSendSms('both')" style="display:block;width:100%;text-align:left;padding:8px 14px 8px 24px;color:var(--text);background:none;border:none;font-size:15px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">👥 둘 다</button>
 </div>
 
 <!-- 회원 수정 모달 -->
@@ -436,15 +436,15 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <h3 style="font-size:17px;font-weight:700;margin-bottom:18px">회원 정보 수정</h3>
     <input type="hidden" id="edit-member-id">
     <div style="margin-bottom:12px">
-      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px">이름</label>
+      <label style="font-size:14px;color:var(--muted);display:block;margin-bottom:4px">이름</label>
       <input type="text" id="edit-member-name" style="width:100%">
     </div>
     <div style="margin-bottom:12px">
-      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px">보호자번호</label>
+      <label style="font-size:14px;color:var(--muted);display:block;margin-bottom:4px">보호자번호</label>
       <input type="tel" id="edit-member-phone" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="width:100%">
     </div>
     <div style="margin-bottom:18px">
-      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px">학생번호</label>
+      <label style="font-size:14px;color:var(--muted);display:block;margin-bottom:4px">학생번호</label>
       <input type="tel" id="edit-member-sphone" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="width:100%">
     </div>
     <div style="display:flex;gap:10px;justify-content:flex-end">
@@ -523,12 +523,12 @@ async function loadMembers(){
         <thead><tr><th>#</th><th>이름</th><th>보호자번호</th><th>학생번호</th><th>분반</th><th>구분</th><th></th></tr></thead>
         <tbody>${members.map((m,i)=>{
           const cls = memberClassMap[m.id]||[];
-          const clsHtml = cls.length ? cls.map(c=>`<a href="grade.html" onclick="sessionStorage.setItem('grade_class','${c.id}');sessionStorage.setItem('grade_class_name','${c.name}')" style="color:#a0a7ff;text-decoration:none;font-size:12px;background:rgba(108,99,255,.1);padding:2px 8px;border-radius:6px;margin-right:4px">${c.name}</a>`).join('') : '<span style="color:var(--muted);font-size:12px">-</span>';
+          const clsHtml = cls.length ? cls.map(c=>`<a href="grade.html" onclick="sessionStorage.setItem('grade_class','${c.id}');sessionStorage.setItem('grade_class_name','${c.name}')" style="color:#a0a7ff;text-decoration:none;font-size:14px;background:rgba(108,99,255,.1);padding:2px 8px;border-radius:6px;margin-right:4px">${c.name}</a>`).join('') : '<span style="color:var(--muted);font-size:14px">-</span>';
           return `<tr>
             <td style="color:var(--muted)">${i+1}</td>
             <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
-            <td style="font-family:monospace;font-size:13px">${m.phone}</td>
-            <td style="font-family:monospace;font-size:13px;color:var(--muted)">${m.student_phone||'-'}</td>
+            <td style="font-family:monospace;font-size:15px">${m.phone}</td>
+            <td style="font-family:monospace;font-size:15px;color:var(--muted)">${m.student_phone||'-'}</td>
             <td>${clsHtml}</td>
             <td>${m.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
             <td style="white-space:nowrap">${m.role!=='admin'?`<button class="btn-del-sm" style="background:rgba(108,99,255,.1);color:#a0a7ff;margin-right:4px" onclick="openEditMember('${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')">수정</button><button class="btn-del-sm" onclick="deleteMember('${m.id}','${m.name}')">삭제</button>`:''}</td>
@@ -930,18 +930,18 @@ async function loadHistory(){
       html += '<div class="quiz-item" style="flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:10px">';
       html += '<div style="display:flex;justify-content:space-between;width:100%;align-items:center">';
       html += '<div style="font-size:15px;font-weight:700">'+key+'</div>';
-      html += '<div style="font-size:12px;color:var(--muted)">'+countLabel+'</div></div>';
+      html += '<div style="font-size:14px;color:var(--muted)">'+countLabel+'</div></div>';
       recs.forEach(function(r){
         const pct = Math.round(r.score/r.total*100);
         const color = pct>=80 ? 'var(--green)' : 'var(--accent2)';
         const wrongHtml = (r.wrong_words&&r.wrong_words.length)
-          ? '<div style="font-size:12px;color:var(--accent2);margin-top:4px">틀린 단어: '+r.wrong_words.map(function(w){return w.eng||w;}).join(', ')+'</div>'
+          ? '<div style="font-size:14px;color:var(--accent2);margin-top:4px">틀린 단어: '+r.wrong_words.map(function(w){return w.eng||w;}).join(', ')+'</div>'
           : '';
         html += '<div style="width:100%;background:var(--surface);border-radius:8px;padding:12px 14px">';
         html += '<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
-        html += '<span style="font-size:13px;font-weight:500">'+r[labelKey]+'</span>';
-        html += '<span style="font-size:13px;font-weight:700;color:'+color+'">'+r.score+'/'+r.total+' ('+pct+'%)</span></div>';
-        html += '<div style="font-size:12px;color:var(--muted)">'+new Date(r.played_at).toLocaleString('ko-KR')+'</div>';
+        html += '<span style="font-size:15px;font-weight:500">'+r[labelKey]+'</span>';
+        html += '<span style="font-size:15px;font-weight:700;color:'+color+'">'+r.score+'/'+r.total+' ('+pct+'%)</span></div>';
+        html += '<div style="font-size:14px;color:var(--muted)">'+new Date(r.played_at).toLocaleString('ko-KR')+'</div>';
         html += wrongHtml+'</div>';
       });
       html += '</div>';
@@ -1005,15 +1005,15 @@ async function loadSmsLogs(){
         const t=new Date(l.created_at);
         const time=`${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
         const name=phoneMap[l.phone]||'';
-        const nameLabel=name?`${name}<br><span style="font-size:11px;color:var(--muted)">${l.phone}</span>`:l.phone;
+        const nameLabel=name?`${name}<br><span style="font-size:13px;color:var(--muted)">${l.phone}</span>`:l.phone;
         const msgShort=(l.message||'').length>40?(l.message.slice(0,40)+'...'):l.message;
-        const statusBadge=l.status==='sent'?'<span style="color:var(--green);font-size:12px">✓ 성공</span>':'<span style="color:var(--red);font-size:12px">✕ 실패</span>';
+        const statusBadge=l.status==='sent'?'<span style="color:var(--green);font-size:14px">✓ 성공</span>':'<span style="color:var(--red);font-size:14px">✕ 실패</span>';
         return `<tr>
-          <td style="font-size:12px;color:var(--muted);white-space:nowrap">${time}</td>
-          <td style="font-size:13px">${nameLabel}</td>
-          <td style="font-size:12px;color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${(l.message||'').replace(/"/g,'&quot;')}">${msgShort}</td>
+          <td style="font-size:14px;color:var(--muted);white-space:nowrap">${time}</td>
+          <td style="font-size:15px">${nameLabel}</td>
+          <td style="font-size:14px;color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${(l.message||'').replace(/"/g,'&quot;')}">${msgShort}</td>
           <td>${statusBadge}</td>
-          <td style="font-size:12px;color:var(--muted)">${l.sent_by||''}</td>
+          <td style="font-size:14px;color:var(--muted)">${l.sent_by||''}</td>
         </tr>`;
       }).join('')}</tbody>
     </table>`;
@@ -1074,8 +1074,8 @@ async function loadClasses(){
         border-radius:10px;padding:14px 20px;cursor:pointer;transition:all .2s;min-width:120px;
       " onclick="selectClass('${c.id}','${c.name.replace(/'/g,"\\'")}')">
         <div style="font-size:15px;font-weight:700;margin-bottom:4px">${c.name}</div>
-        <div style="font-size:12px;color:var(--muted)">${cnt}명</div>
-        <button class="btn-del-sm" style="margin-top:8px;font-size:11px" onclick="event.stopPropagation();deleteClass('${c.id}','${c.name.replace(/'/g,"\\'")}')">삭제</button>
+        <div style="font-size:14px;color:var(--muted)">${cnt}명</div>
+        <button class="btn-del-sm" style="margin-top:8px;font-size:13px" onclick="event.stopPropagation();deleteClass('${c.id}','${c.name.replace(/'/g,"\\'")}')">삭제</button>
       </div>`;
     }).join('')}</div>`;
   }catch(e){ document.getElementById('class-list').innerHTML='<div class="empty-state">불러오기 실패</div>' }
@@ -1132,7 +1132,7 @@ async function loadClassMembers(){
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
           <td style="font-weight:500">${m?m.name:'(삭제됨)'}</td>
-          <td style="font-family:monospace;font-size:13px">${m?m.phone:'-'}</td>
+          <td style="font-family:monospace;font-size:15px">${m?m.phone:'-'}</td>
           <td><button class="btn-del-sm" onclick="removeFromClass('${cm.id}')">제외</button></td>
         </tr>`;
       }).join('')}

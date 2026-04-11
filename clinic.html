@@ -10,7 +10,7 @@
 :root{
   --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
   --accent:#6c63ff;--accent2:#ff6584;--accent-light:rgba(108,99,255,.1);
-  --text:#e8e8f0;--muted:#8a8aa4;
+  --text:#f4f4fb;--muted:#a0a0be;
   --green:#22c55e;--red:#ff6584;--yellow:#f0c040;--radius:14px;
 }
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(108,99,255,.25);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(108,99,255,.4)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
@@ -19,19 +19,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .header{position:sticky;top:0;z-index:10;background:rgba(20,20,34,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{display:flex;align-items:center;gap:12px}
 .logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
-.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
 
 .main{position:relative;z-index:1;flex:1;min-width:0;padding:24px 32px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
 input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none}
 input:focus,select:focus{border-color:var(--accent)}
-.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap}
 .btn-primary:hover{opacity:.9}
-.btn-red{padding:6px 12px;border:1px solid transparent;border-radius:7px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer}
+.btn-red{padding:6px 12px;border:1px solid transparent;border-radius:7px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer}
 .btn-red:hover{background:rgba(255,101,132,.18)}
-.btn-green{padding:8px 16px;border:none;border-radius:8px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+.btn-green{padding:8px 16px;border:none;border-radius:8px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer}
 .btn-green:hover{background:rgba(34,197,94,.25)}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none}
@@ -42,50 +42,50 @@ input:focus,select:focus{border-color:var(--accent)}
 /* 빠른 입력 */
 .quick-add{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 .quick-add .field{display:flex;flex-direction:column;gap:4px}
-.quick-add .field label{font-size:11px;color:var(--muted);font-weight:600}
+.quick-add .field label{font-size:13px;color:var(--muted);font-weight:600}
 .quick-add select,.quick-add input{min-width:120px}
 
 /* 일정 카드 */
 .date-group{margin-bottom:20px}
 .date-header{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:10px}
 .date-header .day{color:var(--accent)}
-.date-header .count{font-size:12px;color:var(--muted);font-weight:400}
+.date-header .count{font-size:14px;color:var(--muted);font-weight:400}
 .clinic-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;transition:all .15s}
 .clinic-item:hover{border-color:var(--accent)}
-.clinic-time{font-size:14px;font-weight:700;color:var(--accent);min-width:55px}
+.clinic-time{font-size:16px;font-weight:700;color:var(--accent);min-width:55px}
 .clinic-name{font-size:14px;font-weight:500;flex:1}
-.clinic-phone{font-size:12px;color:var(--muted);font-family:monospace}
-.clinic-memo{font-size:12px;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.clinic-status{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600}
+.clinic-phone{font-size:14px;color:var(--muted);font-family:monospace}
+.clinic-memo{font-size:14px;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clinic-status{font-size:13px;padding:3px 8px;border-radius:6px;font-weight:600}
 .clinic-status.sent{background:rgba(34,197,94,.1);color:var(--green)}
 .clinic-status.pending{background:rgba(240,192,64,.1);color:var(--yellow)}
 
 /* 시간 버튼 */
 .time-chips{display:flex;gap:6px;flex-wrap:wrap}
-.time-chip{padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all .15s}
+.time-chip{padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;transition:all .15s}
 .time-chip:hover{border-color:var(--accent);color:var(--accent)}
 .time-chip.active{border-color:var(--accent);color:#fff;background:var(--accent)}
 .admin-tab-nav{display:none}
 .app-layout{display:flex;min-height:calc(100vh - 64px);position:relative;z-index:1}
 .sidebar{width:200px;flex-shrink:0;position:sticky;top:64px;height:calc(100vh - 64px);background:var(--surface);border-right:1px solid var(--border);padding:16px 0;overflow-y:auto;display:flex;flex-direction:column}
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
 .sidebar-item:hover{background:var(--card);color:var(--text)}
 .sidebar-item.active{background:rgba(108,99,255,.15);color:#a0a7ff;font-weight:700}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
-.sidebar-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
+.sidebar-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
 @media(max-width:640px){
   .app-layout{flex-direction:column;padding-bottom:64px}
   .sidebar{display:none}
   .main{padding:16px 16px 40px}
   .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
-  .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:10px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
+  .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
   .mobile-nav .active{color:#a0a7ff}
   .mobile-nav .nav-icon{font-size:20px;line-height:1}
   .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
   .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-  .mobile-more-menu a,.mobile-more-menu button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:14px 8px}
+  .mobile-more-menu a,.mobile-more-menu button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:14px 8px}
   .mobile-more-menu a:hover,.mobile-more-menu button:hover{color:var(--text);border-color:var(--accent)}
   .mobile-more-menu .nav-icon{font-size:20px}
   .mobile-overlay{display:none;position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.4)}
@@ -128,7 +128,7 @@ input:focus,select:focus{border-color:var(--accent)}
   <!-- 빠른 등록 -->
   <div class="card">
     <h2 style="font-size:18px;margin-bottom:4px">🏥 클리닉 일정 등록</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">학생과 날짜/시간을 선택하면 전날 밤 10시에 리마인드 문자가 자동 발송됩니다.</p>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:16px">학생과 날짜/시간을 선택하면 전날 밤 10시에 리마인드 문자가 자동 발송됩니다.</p>
 
     <div class="quick-add">
       <div class="field">
@@ -155,7 +155,7 @@ input:focus,select:focus{border-color:var(--accent)}
     </div>
 
     <div style="margin-top:14px">
-      <label style="font-size:11px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px">시간 선택</label>
+      <label style="font-size:13px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px">시간 선택</label>
       <div class="time-chips" id="time-chips">
         <button class="time-chip" onclick="setTime(this,'14:00')">14:00</button>
         <button class="time-chip" onclick="setTime(this,'15:00')">15:00</button>
@@ -165,15 +165,15 @@ input:focus,select:focus{border-color:var(--accent)}
         <button class="time-chip" onclick="setTime(this,'19:00')">19:00</button>
         <button class="time-chip" onclick="setTime(this,'20:00')">20:00</button>
         <button class="time-chip" onclick="setTime(this,'21:00')">21:00</button>
-        <input type="time" id="c-time-custom" value="17:00" style="padding:6px 10px;font-size:12px;min-width:90px"
+        <input type="time" id="c-time-custom" value="17:00" style="padding:6px 10px;font-size:14px;min-width:90px"
           onchange="selectedTime=this.value;document.querySelectorAll('.time-chip').forEach(b=>b.classList.remove('active'))">
       </div>
     </div>
 
     <!-- 장소 선택 -->
     <div style="margin-top:14px">
-      <label style="font-size:11px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px">장소 (선택)</label>
-      <select id="c-location" style="min-width:250px;padding:8px 12px;font-size:13px">
+      <label style="font-size:13px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px">장소 (선택)</label>
+      <select id="c-location" style="min-width:250px;padding:8px 12px;font-size:15px">
         <option value="">장소 선택 안 함</option>
       </select>
     </div>
@@ -182,7 +182,7 @@ input:focus,select:focus{border-color:var(--accent)}
     <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
       <div style="display:flex;gap:8px;align-items:center">
         <button class="btn-green" onclick="addBulkClinic()">📋 반 전체 등록</button>
-        <span style="font-size:12px;color:var(--muted)">선택한 반 전체 학생을 같은 날짜/시간으로 등록</span>
+        <span style="font-size:14px;color:var(--muted)">선택한 반 전체 학생을 같은 날짜/시간으로 등록</span>
       </div>
     </div>
   </div>
@@ -190,7 +190,7 @@ input:focus,select:focus{border-color:var(--accent)}
   <!-- 장소 관리 -->
   <div class="card">
     <h2 style="font-size:16px;margin-bottom:4px">📍 장소 관리</h2>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">클리닉 장소를 등록하면 예약 시 선택할 수 있고, 리마인드 문자에 주소와 네이버 링크가 포함됩니다.</p>
+    <p style="font-size:15px;color:var(--muted);margin-bottom:16px">클리닉 장소를 등록하면 예약 시 선택할 수 있고, 리마인드 문자에 주소와 네이버 링크가 포함됩니다.</p>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       <input type="text" id="loc-name" placeholder="장소 이름" style="min-width:120px;flex:1">
@@ -205,8 +205,8 @@ input:focus,select:focus{border-color:var(--accent)}
   <!-- 발송 -->
   <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px">
     <div>
-      <span style="font-size:14px;font-weight:700">📱 수동 리마인드 발송</span>
-      <span style="font-size:12px;color:var(--muted);margin-left:8px">자동은 전날 밤 10시</span>
+      <span style="font-size:16px;font-weight:700">📱 수동 리마인드 발송</span>
+      <span style="font-size:14px;color:var(--muted);margin-left:8px">자동은 전날 밤 10시</span>
     </div>
     <button class="btn-green" onclick="sendRemindersNow()">지금 내일 일정 발송</button>
   </div>
@@ -268,14 +268,14 @@ async function loadLocations(){
 
   // 목록 표시
   const list = document.getElementById('location-list');
-  if(!locations.length){ list.innerHTML='<div style="font-size:13px;color:var(--muted)">등록된 장소가 없어요</div>'; return; }
+  if(!locations.length){ list.innerHTML='<div style="font-size:15px;color:var(--muted)">등록된 장소가 없어요</div>'; return; }
   list.innerHTML = locations.map(l=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border-radius:8px;margin-bottom:6px;border:1px solid var(--border)">
     <div style="flex:1">
       <div style="font-size:14px;font-weight:600">${l.name}</div>
-      <div style="font-size:12px;color:var(--muted)">${l.address||''}</div>
-      ${l.naver_link?`<a href="${l.naver_link}" target="_blank" style="font-size:11px;color:var(--accent)">🗺 네이버 지도</a>`:''}
+      <div style="font-size:14px;color:var(--muted)">${l.address||''}</div>
+      ${l.naver_link?`<a href="${l.naver_link}" target="_blank" style="font-size:13px;color:var(--accent)">🗺 네이버 지도</a>`:''}
     </div>
-    <button class="btn-red" onclick="deleteLocation('${l.id}')" style="font-size:11px;padding:4px 8px">삭제</button>
+    <button class="btn-red" onclick="deleteLocation('${l.id}')" style="font-size:13px;padding:4px 8px">삭제</button>
   </div>`).join('');
 }
 
@@ -407,8 +407,8 @@ async function loadClinics(){
     const isToday = date === new Date().toISOString().split('T')[0];
     const isTomorrow = date === new Date(Date.now()+86400000).toISOString().split('T')[0];
     let label = `${date} (${dayName})`;
-    if(isToday) label += ' <span style="color:var(--green);font-size:12px">오늘</span>';
-    if(isTomorrow) label += ' <span style="color:var(--yellow);font-size:12px">내일</span>';
+    if(isToday) label += ' <span style="color:var(--green);font-size:14px">오늘</span>';
+    if(isTomorrow) label += ' <span style="color:var(--yellow);font-size:14px">내일</span>';
 
     html += `<div class="date-group">
       <div class="date-header"><span class="day">${label}</span><span class="count">${items.length}명</span></div>`;
@@ -419,9 +419,9 @@ async function loadClinics(){
         <div class="clinic-name">${c.member_name}</div>
         <div class="clinic-phone">${c.member_phone||''}</div>
         ${c.memo?`<div class="clinic-memo" title="${c.memo}">${c.memo}</div>`:''}
-        ${c.location?(()=>{try{const l=JSON.parse(c.location);return `<div style="font-size:11px;color:var(--accent);background:rgba(108,99,255,.08);padding:2px 8px;border-radius:4px">📍${l.name||c.location}</div>`;}catch(e){return `<div style="font-size:11px;color:var(--accent)">📍${c.location}</div>`;}})():''}
+        ${c.location?(()=>{try{const l=JSON.parse(c.location);return `<div style="font-size:13px;color:var(--accent);background:rgba(108,99,255,.08);padding:2px 8px;border-radius:4px">📍${l.name||c.location}</div>`;}catch(e){return `<div style="font-size:13px;color:var(--accent)">📍${c.location}</div>`;}})():''}
         <div class="clinic-status ${c.reminder_sent?'sent':'pending'}">${c.reminder_sent?'발송됨':'대기'}</div>
-        <button class="btn-red" onclick="deleteClinic('${c.id}')" style="font-size:11px;padding:3px 8px">×</button>
+        <button class="btn-red" onclick="deleteClinic('${c.id}')" style="font-size:13px;padding:3px 8px">×</button>
       </div>`;
     });
 
