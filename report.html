@@ -180,9 +180,48 @@ body::after{
 .file-item .fi-icon{font-size:22px;flex-shrink:0}
 .file-item .fi-name{flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .file-item .fi-meta{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* ── Notice Overlay ── */
+.notice-overlay{
+  position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;transition:opacity .3s;
+}
+.notice-overlay.show{opacity:1}
+.notice-overlay.locked{pointer-events:none}
+.notice-box{
+  background:#fff;border-radius:20px;width:100%;max-width:420px;
+  padding:32px 28px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2);
+  transform:translateY(20px);transition:transform .3s;
+}
+.notice-overlay.show .notice-box{transform:translateY(0)}
+.notice-box .nb-badge{
+  display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  color:#fff;font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;
+  margin-bottom:16px;letter-spacing:.5px;
+}
+.notice-box .nb-content{font-size:15px;line-height:1.8;color:#1e293b;white-space:pre-line;margin-bottom:20px}
+.notice-box .nb-hint{font-size:12px;color:#94a3b8}
+.notice-reopen{
+  display:none;position:fixed;top:80px;right:16px;z-index:50;
+  background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;
+  border:none;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:600;
+  font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(79,70,229,.3);
+}
+.notice-reopen:active{transform:scale(.95)}
 </style>
 </head>
 <body>
+<!-- Notice Overlay -->
+<div class="notice-overlay locked" id="notice-overlay" onclick="dismissNotice()">
+  <div class="notice-box" onclick="event.stopPropagation()">
+    <div class="nb-badge">📢 공지사항</div>
+    <div class="nb-content" id="notice-content"></div>
+    <div class="nb-hint">화면을 터치하면 닫힙니다</div>
+  </div>
+</div>
+<button class="notice-reopen" id="notice-reopen" onclick="reopenNotice()">📢 공지</button>
+
 <div class="container">
   <div class="logo">
     <div class="logo-title">META ENGLISH</div>
@@ -350,6 +389,15 @@ async function loadReport(){
 
     // 성적 추이 차트 렌더링
     if(classId) renderScoreChart(classId, memberId);
+
+    // 공지사항 표시
+    if(session.notice && session.notice.trim()){
+      document.getElementById('notice-content').textContent = session.notice;
+      const overlay = document.getElementById('notice-overlay');
+      overlay.classList.add('show');
+      // 0.5초 동안 클릭 차단
+      setTimeout(()=>overlay.classList.remove('locked'), 500);
+    }
   }catch(e){
     content.innerHTML = `<div class="state-msg"><div class="icon">😥</div><div class="title">성적표를 불러올 수 없어요</div><div class="desc">링크가 올바른지 확인하시고,<br>문제가 계속되면 선생님께 문의해주세요.</div></div>`;
   }
@@ -472,6 +520,23 @@ async function renderScoreChart(classId, myMemberId){
       }
     });
   }catch(e){console.log('차트 렌더링 실패',e)}
+}
+
+// ── 공지사항 ──
+function dismissNotice(){
+  const overlay=document.getElementById('notice-overlay');
+  if(overlay.classList.contains('locked')) return;
+  overlay.classList.remove('show');
+  setTimeout(()=>{overlay.style.display='none'},300);
+  document.getElementById('notice-reopen').style.display='block';
+}
+function reopenNotice(){
+  const overlay=document.getElementById('notice-overlay');
+  overlay.style.display='flex';
+  overlay.classList.add('locked');
+  setTimeout(()=>overlay.classList.add('show'),10);
+  setTimeout(()=>overlay.classList.remove('locked'),500);
+  document.getElementById('notice-reopen').style.display='none';
 }
 
 /* ── Chat ── */

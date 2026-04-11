@@ -301,6 +301,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
     </div>
 
+    <!-- 공지사항 -->
+    <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h3 style="font-size:15px;font-weight:700;margin:0">📢 공지사항</h3>
+        <button class="btn-green" onclick="saveNotice()" style="font-size:12px;padding:6px 14px">저장</button>
+      </div>
+      <textarea id="session-notice" placeholder="성적표에 표시될 공지사항을 입력하세요 (학부모에게 보여짐)" style="width:100%;min-height:80px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px;resize:vertical;outline:none"></textarea>
+    </div>
+
     <!-- 반 자료실 -->
     <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -610,6 +619,7 @@ async function selectSessionCard(sessionId){
   showView('view-grid');
   await loadGrid();
   loadClassFiles();
+  document.getElementById('session-notice').value = currentSession.notice || '';
 }
 
 // ===== 세션 관리 =====
@@ -1572,6 +1582,20 @@ function deleteQuickMsg(i){
   setQuickMsgs(msgs);
   renderQuickMsgList();
   renderQuickBtns();
+}
+
+// ── 공지사항 ──
+async function saveNotice(){
+  if(!currentSession) return;
+  const notice=document.getElementById('session-notice').value.trim();
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${currentSession.id}`,{
+      method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},
+      body:JSON.stringify({notice:notice||null})
+    });
+    currentSession.notice=notice;
+    showToast('공지사항 저장 완료 ✓','ok');
+  }catch(e){showToast('저장 실패','err')}
 }
 
 // ── 반 자료실 ──
