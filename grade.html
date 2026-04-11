@@ -1605,7 +1605,8 @@ async function uploadFiles(fileList){
   let uploaded=0;
   for(const file of fileList){
     status.textContent=`업로드 중... (${uploaded+1}/${fileList.length}) ${file.name}`;
-    const path=`${selectedClassId}/${Date.now()}_${file.name}`;
+    const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    const path=`${selectedClassId}/${Date.now()}_${safeName}`;
     try{
       const{error}=await sb.storage.from('class-files').upload(path,file);
       if(error) throw error;
