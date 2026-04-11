@@ -409,10 +409,18 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
 
     <!-- 탭 -->
-    <div style="display:flex;gap:4px;margin-bottom:16px">
+    <div style="display:flex;gap:4px;margin-bottom:10px">
       <button class="btn-outline active" id="sms-tab-report" onclick="switchSmsTab('report')">📊 성적표 발송</button>
       <button class="btn-outline" id="sms-tab-bulk" onclick="switchSmsTab('bulk')">📢 단체 문자</button>
       <button class="btn-outline" id="sms-tab-single" onclick="switchSmsTab('single')">💬 개별 문자</button>
+    </div>
+
+    <!-- 발송 대상 선택 -->
+    <div style="display:flex;gap:6px;margin-bottom:14px;align-items:center">
+      <span style="font-size:12px;color:var(--muted);margin-right:4px">발송 대상:</span>
+      <button class="btn-outline active" id="sms-target-parent" onclick="setSmsTarget('parent')" style="font-size:11px;padding:4px 10px">👨‍👩‍👧 보호자</button>
+      <button class="btn-outline" id="sms-target-student" onclick="setSmsTarget('student')" style="font-size:11px;padding:4px 10px">🎒 학생</button>
+      <button class="btn-outline" id="sms-target-both" onclick="setSmsTarget('both')" style="font-size:11px;padding:4px 10px">👥 둘 다</button>
     </div>
 
     <!-- 성적표 발송 -->
@@ -1381,6 +1389,27 @@ async function saveScoringModal(){
 
 // ===== 문자 발송 =====
 let smsMemberList = [];
+let smsTarget = 'parent'; // 'parent', 'student', 'both'
+
+function setSmsTarget(t){
+  smsTarget=t;
+  ['parent','student','both'].forEach(x=>{
+    document.getElementById('sms-target-'+x).classList.toggle('active',x===t);
+  });
+  // 목록 새로고침
+  const activeTab=document.querySelector('#sms-tab-report.active')?'report':document.querySelector('#sms-tab-bulk.active')?'bulk':'single';
+  if(activeTab==='report') renderReportList();
+  if(activeTab==='bulk') renderBulkList();
+  if(activeTab==='single') onSingleSelect();
+}
+
+function getSmsPhones(member){
+  const phones=[];
+  if((smsTarget==='parent'||smsTarget==='both')&&member.phone) phones.push(member.phone);
+  if((smsTarget==='student'||smsTarget==='both')&&member.student_phone) phones.push(member.student_phone);
+  if(!phones.length&&member.phone) phones.push(member.phone); // 폴백
+  return phones;
+}
 
 async function loadSmsMembers(){
   if(currentSession && currentSession.class_id){
@@ -1447,12 +1476,13 @@ function renderReportList(){
   const baseUrl = window.location.origin || 'https://xn--oh5bnfltpyu64c.com';
   const list = document.getElementById('sms-report-list');
   list.innerHTML = smsMemberList.map(m=>{
+    const phones=getSmsPhones(m);
     return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
       <div style="flex:1;min-width:0">
         <div style="font-size:14px;font-weight:600">${m.name}</div>
-        <div style="font-size:12px;color:var(--muted);font-family:monospace">${m.phone}</div>
+        <div style="font-size:12px;color:var(--muted);font-family:monospace">${phones.join(' / ')}</div>
       </div>
-      <button class="btn-outline" style="font-size:12px;padding:6px 12px" onclick="sendOneReport('${m.id}','${m.name}','${m.phone}')">발송</button>
+      <button class="btn-outline" style="font-size:12px;padding:6px 12px" onclick="sendOneReport('${m.id}','${m.name}')">발송</button>
       <button class="btn-outline" style="font-size:12px;padding:6px 12px" onclick="copyOneReport('${m.name}','${m.id}')">복사</button>
     </div>`;
   }).join('');
@@ -1465,10 +1495,14 @@ function getReportMsg(name, memberId){
     .replace('{이름}',name).replace('{링크}',link);
 }
 
-async function sendOneReport(memberId, name, phone){
+async function sendOneReport(memberId, name){
+  const m = smsMemberList.find(x=>x.id===memberId);
+  if(!m) return;
   const msg = getReportMsg(name, memberId);
-  const ok = await sendSms(phone, msg);
-  showToast(ok?`${name} 발송 완료 ✓`:`${name} 발송 실패`, ok?'ok':'err');
+  const phones = getSmsPhones(m);
+  let ok=false;
+  for(const p of phones){ if(await sendSms(p, msg)) ok=true; }
+  showToast(ok?`${name} 발송 완료 (${phones.length}건) ✓`:`${name} 발송 실패`, ok?'ok':'err');
 }
 
 function copyOneReport(name, memberId){
@@ -1482,11 +1516,11 @@ async function sendBulkReport(){
   for(const m of smsMemberList){
     status.textContent=`발송 중... ${sent+fail+1}/${smsMemberList.length}`;
     const msg = getReportMsg(m.name, m.id);
-    const ok = await sendSms(m.phone, msg);
-    if(ok) sent++; else fail++;
+    const phones = getSmsPhones(m);
+    for(const p of phones){ if(await sendSms(p, msg)) sent++; else fail++; }
   }
-  status.textContent=`완료: ${sent}명 성공${fail?' / '+fail+'명 실패':''}`;
-  showToast(`${sent}명 발송 완료 ✓`,'ok');
+  status.textContent=`완료: ${sent}건 성공${fail?' / '+fail+'건 실패':''}`;
+  showToast(`${sent}건 발송 완료 ✓`,'ok');
 }
 
 function copyAllReport(){
@@ -1499,12 +1533,13 @@ function copyAllReport(){
 // --- 단체 문자 탭 ---
 function renderBulkList(){
   document.getElementById('sms-bulk-count').textContent = smsMemberList.length;
-  document.getElementById('sms-bulk-list').innerHTML = smsMemberList.map(m=>
-    `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+  document.getElementById('sms-bulk-list').innerHTML = smsMemberList.map(m=>{
+    const phones=getSmsPhones(m);
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
       <span style="font-size:13px;font-weight:500;flex:1">${m.name}</span>
-      <span style="font-size:11px;color:var(--muted);font-family:monospace">${m.phone}</span>
-    </div>`
-  ).join('');
+      <span style="font-size:11px;color:var(--muted);font-family:monospace">${phones.join(', ')}</span>
+    </div>`;
+  }).join('');
 }
 
 async function sendBulkCustom(){
@@ -1515,18 +1550,18 @@ async function sendBulkCustom(){
   for(const m of smsMemberList){
     status.textContent=`발송 중... ${sent+fail+1}/${smsMemberList.length}`;
     const text = msg.replace(/\{이름\}/g, m.name);
-    const ok = await sendSms(m.phone, text);
-    if(ok) sent++; else fail++;
+    const phones = getSmsPhones(m);
+    for(const p of phones){ if(await sendSms(p, text)) sent++; else fail++; }
   }
-  status.textContent=`완료: ${sent}명 성공${fail?' / '+fail+'명 실패':''}`;
-  showToast(`${sent}명 발송 완료 ✓`,'ok');
+  status.textContent=`완료: ${sent}건 성공${fail?' / '+fail+'건 실패':''}`;
+  showToast(`${sent}건 발송 완료 ✓`,'ok');
 }
 
 // --- 개별 문자 탭 ---
 function renderSingleSelect(){
   const sel = document.getElementById('sms-single-to');
   sel.innerHTML = '<option value="">-- 학생 선택 --</option>' +
-    smsMemberList.map(m=>`<option value="${m.id}" data-phone="${m.phone}">${m.name}</option>`).join('');
+    smsMemberList.map(m=>`<option value="${m.id}" data-phone="${m.phone}" data-sphone="${m.student_phone||''}">${m.name}</option>`).join('');
   document.getElementById('sms-single-phone').textContent='';
   document.getElementById('sms-single-msg').value='';
   document.getElementById('sms-single-status').textContent='';
@@ -1536,7 +1571,11 @@ function onSingleSelect(){
   const sel = document.getElementById('sms-single-to');
   const opt = sel.selectedOptions[0];
   if(opt && opt.value){
-    document.getElementById('sms-single-phone').textContent='📞 '+opt.getAttribute('data-phone');
+    const m = smsMemberList.find(x=>x.id===opt.value);
+    if(m){
+      const phones=getSmsPhones(m);
+      document.getElementById('sms-single-phone').textContent='📞 '+phones.join(' / ');
+    }
   } else {
     document.getElementById('sms-single-phone').textContent='';
   }
@@ -1548,13 +1587,16 @@ async function sendSingleMsg(){
   if(!opt||!opt.value){ showToast('학생을 선택해주세요','err'); return }
   const msg = document.getElementById('sms-single-msg').value.trim();
   if(!msg){ showToast('메시지를 입력해주세요','err'); return }
-  const phone = opt.getAttribute('data-phone');
-  const name = opt.textContent;
+  const m = smsMemberList.find(x=>x.id===opt.value);
+  if(!m) return;
+  const name = m.name;
   const text = msg.replace(/\{이름\}/g, name);
+  const phones = getSmsPhones(m);
   const status = document.getElementById('sms-single-status');
   status.textContent='발송 중...';
-  const ok = await sendSms(phone, text);
-  status.textContent = ok?'발송 완료 ✓':'발송 실패';
+  let ok=false;
+  for(const p of phones){ if(await sendSms(p, text)) ok=true; }
+  status.textContent = ok?`발송 완료 (${phones.length}건) ✓`:'발송 실패';
   showToast(ok?`${name} 발송 완료 ✓`:`발송 실패`, ok?'ok':'err');
 }
 
