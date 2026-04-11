@@ -1189,29 +1189,29 @@ function buildNoteHTML(note, testTitle){
 
 function getNotesCSS(){
   return `
-    @page{size:A4;margin:20mm 15mm}
+    @page{size:A4;margin:12mm 12mm}
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Noto Sans KR',-apple-system,sans-serif;color:#1e293b;font-size:13px;line-height:1.6}
+    body{font-family:'Noto Sans KR',-apple-system,sans-serif;color:#1e293b;font-size:9px;line-height:1.4}
     .wn-student{page-break-after:always}
     .wn-student:last-child{page-break-after:auto}
-    .wn-header{text-align:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #4f46e5}
-    .wn-logo{font-size:24px;font-weight:800;color:#4f46e5;letter-spacing:2px;margin-bottom:2px}
-    .wn-title{font-size:18px;font-weight:700;margin-bottom:10px}
-    .wn-info{display:flex;justify-content:center;gap:20px;font-size:13px;color:#64748b}
-    .wn-name{font-weight:700;color:#1e293b;font-size:15px}
-    .wn-item{border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:14px;break-inside:avoid}
-    .wn-item-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-    .wn-qnum{font-size:15px;font-weight:800;color:#4f46e5}
-    .wn-cat{font-size:11px;background:#eef2ff;color:#4f46e5;padding:2px 8px;border-radius:4px}
-    .wn-pts{margin-left:auto;font-size:12px;color:#ef4444;font-weight:700}
-    .wn-body{font-size:12px;line-height:1.8;color:#334155;white-space:pre-line;margin-bottom:12px;padding:12px;background:#f8fafc;border-radius:8px;max-height:300px;overflow:hidden}
-    .wn-answer-row{display:flex;gap:20px;margin-bottom:12px;font-size:13px}
+    .wn-header{text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #4f46e5}
+    .wn-logo{font-size:18px;font-weight:800;color:#4f46e5;letter-spacing:2px;margin-bottom:1px}
+    .wn-title{font-size:14px;font-weight:700;margin-bottom:6px}
+    .wn-info{display:flex;justify-content:center;gap:16px;font-size:10px;color:#64748b}
+    .wn-name{font-weight:700;color:#1e293b;font-size:12px}
+    .wn-item{border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid}
+    .wn-item-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .wn-qnum{font-size:11px;font-weight:800;color:#4f46e5}
+    .wn-cat{font-size:8px;background:#eef2ff;color:#4f46e5;padding:1px 6px;border-radius:4px}
+    .wn-pts{margin-left:auto;font-size:9px;color:#ef4444;font-weight:700}
+    .wn-body{font-size:9px;line-height:1.5;color:#334155;white-space:pre-line;margin-bottom:8px;padding:8px;background:#f8fafc;border-radius:6px}
+    .wn-answer-row{display:flex;gap:16px;margin-bottom:8px;font-size:10px}
     .wn-wrong{color:#ef4444}
-    .wn-wrong strong{background:#fef2f2;padding:2px 8px;border-radius:4px}
+    .wn-wrong strong{background:#fef2f2;padding:1px 6px;border-radius:4px}
     .wn-correct{color:#16a34a}
-    .wn-correct strong{background:#f0fdf4;padding:2px 8px;border-radius:4px}
-    .wn-memo-label{font-size:11px;color:#94a3b8;margin-bottom:6px}
-    .wn-memo-lines{height:60px;background:repeating-linear-gradient(transparent,transparent 19px,#e2e8f0 19px,#e2e8f0 20px)}
+    .wn-correct strong{background:#f0fdf4;padding:1px 6px;border-radius:4px}
+    .wn-memo-label{font-size:8px;color:#94a3b8;margin-bottom:4px}
+    .wn-memo-lines{height:40px;background:repeating-linear-gradient(transparent,transparent 13px,#e2e8f0 13px,#e2e8f0 14px)}
     @media print{.no-print{display:none!important}}
   `;
 }
