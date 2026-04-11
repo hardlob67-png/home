@@ -106,6 +106,7 @@ body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;heigh
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <script>
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
@@ -313,56 +314,45 @@ async function load(){
         });
         const p = r.total_points>0?Math.round(r.total_score/r.total_points*100):0;
         const title = r.test_sets ? r.test_sets.title : '';
-        return {p, title, isCurrent:r.test_set_id===testSetId, catScores, totalScore:r.total_score, totalPoints:r.total_points};
+        return {p, title, isCurrent:r.test_set_id===testSetId, catScores, totalScore:r.total_score, totalPoints:r.total_points, tid:r.test_set_id};
       });
 
-      // 전체 추이
+      // 전체 추이 - 반 평균/최고 데이터 로드
+      const testSetIds = [...new Set(allResponses.map(r=>r.test_set_id).filter(Boolean))];
+      let classAvgMap={}, classMaxMap={};
+      if(testSetIds.length){
+        const classRes = await fetch(`${SUPA_URL}/rest/v1/test_responses?test_set_id=in.(${testSetIds.join(',')})&select=test_set_id,total_score,total_points`,{headers:HDR});
+        const classData = await classRes.json();
+        if(Array.isArray(classData)){
+          const grouped={};
+          classData.forEach(r=>{
+            if(!grouped[r.test_set_id]) grouped[r.test_set_id]=[];
+            const p=r.total_points>0?Math.round(r.total_score/r.total_points*100):0;
+            grouped[r.test_set_id].push(p);
+          });
+          Object.entries(grouped).forEach(([id,arr])=>{
+            classAvgMap[id]=Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
+            classMaxMap[id]=Math.max(...arr);
+          });
+        }
+      }
+
+      // 전체 추이 선 그래프
       html += `<div class="card"><div class="trend-section">
         <div class="trend-title">📈 전체 점수 추이</div>
-        <div class="trend-chart">`;
-      trendData.forEach(d=>{
-        const h = Math.max(4, d.p*1.3);
-        const short = d.title.length>6?d.title.slice(0,6)+'..':d.title;
-        html += `<div class="trend-bar-wrap" title="${d.title}: ${d.totalScore}/${d.totalPoints}">
-          <div class="trend-score">${d.p}%</div>
-          <div class="trend-bar ${d.isCurrent?'current':''}" style="height:${h}px"></div>
-          <div class="trend-label">${short}</div>
-        </div>`;
-      });
-      html += `</div>`;
+        <canvas id="trend-total-chart" height="180"></canvas>`;
 
-      // 카테고리별 추이
+      // 카테고리별 추이 선 그래프
       const catList = [...allCats];
       const catColors = {'어휘':'#4f46e5','문법':'#7c3aed','독해':'#2563eb','듣기':'#0891b2','쓰기':'#059669'};
       if(catList.length > 0){
-        html += `<div style="margin-top:24px"><div class="trend-title">📂 카테고리별 추이</div>`;
-        catList.forEach(cat=>{
-          const color = catColors[cat] || '#6366f1';
-          html += `<div style="margin-bottom:16px">
-            <div style="font-size:13px;font-weight:600;margin-bottom:8px;color:${color}">${cat}</div>
-            <div style="display:flex;align-items:flex-end;gap:6px;height:60px">`;
-          trendData.forEach(d=>{
-            const cs = d.catScores[cat];
-            const p = cs && cs.max>0 ? Math.round(cs.score/cs.max*100) : null;
-            if(p !== null){
-              const h = Math.max(4, p*0.5);
-              html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px" title="${d.title}: ${cs.score}/${cs.max}">
-                <div style="font-size:10px;font-weight:700;color:${p>=70?'var(--green)':'var(--red)'}">${p}%</div>
-                <div style="width:100%;height:${h}px;border-radius:4px 4px 0 0;background:${d.isCurrent?color:'#c7d2fe'}"></div>
-              </div>`;
-            } else {
-              html += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
-                <div style="font-size:10px;color:var(--muted)">-</div>
-                <div style="width:100%;height:4px;border-radius:4px;background:#e2e8f0"></div>
-              </div>`;
-            }
-          });
-          html += `</div></div>`;
-        });
-        html += `</div>`;
+        html += `<div style="margin-top:24px"><div class="trend-title">📂 카테고리별 추이</div>
+          <canvas id="trend-cat-chart" height="180"></canvas></div>`;
       }
-
       html += `</div></div>`;
+
+      // 차트 데이터 저장 (innerHTML 후 렌더링용)
+      window._chartData = {trendData, catList, catColors, classAvgMap, classMaxMap};
     }
 
     // 응원
@@ -380,6 +370,59 @@ async function load(){
     html += `<div class="footer">META ENGLISH · 궁금한 점은 선생님께 문의해주세요 😊</div>`;
 
     content.innerHTML = html;
+
+    // 선 그래프 렌더링
+    if(window._chartData){
+      const {trendData, catList, catColors, classAvgMap, classMaxMap} = window._chartData;
+      const labels = trendData.map(d=>d.title.length>6?d.title.slice(0,6)+'..':d.title);
+      const myScores = trendData.map(d=>d.p);
+      const avgLine = trendData.map(d=>classAvgMap[d.tid]||null);
+      const maxLine = trendData.map(d=>classMaxMap[d.tid]||null);
+
+      const totalCtx = document.getElementById('trend-total-chart');
+      if(totalCtx){
+        new Chart(totalCtx,{
+          type:'line',
+          data:{
+            labels,
+            datasets:[
+              {label:'내 점수',data:myScores,borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,.1)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#4f46e5'},
+              {label:'반 최고',data:maxLine,borderColor:'#22c55e',borderDash:[6,3],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#22c55e'},
+              {label:'반 평균',data:avgLine,borderColor:'#f59e0b',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#f59e0b'}
+            ]
+          },
+          options:{
+            responsive:true,
+            plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Noto Sans KR'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
+            scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
+            interaction:{intersect:false,mode:'index'}
+          }
+        });
+      }
+
+      // 카테고리별 선 그래프
+      const catCtx = document.getElementById('trend-cat-chart');
+      if(catCtx && catList.length){
+        const datasets = catList.map(cat=>{
+          const color = catColors[cat]||'#6366f1';
+          const data = trendData.map(d=>{
+            const cs=d.catScores[cat];
+            return cs&&cs.max>0?Math.round(cs.score/cs.max*100):null;
+          });
+          return {label:cat,data,borderColor:color,tension:.3,borderWidth:2,pointRadius:4,pointBackgroundColor:color,spanGaps:true};
+        });
+        new Chart(catCtx,{
+          type:'line',
+          data:{labels,datasets},
+          options:{
+            responsive:true,
+            plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Noto Sans KR'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
+            scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
+            interaction:{intersect:false,mode:'index'}
+          }
+        });
+      }
+    }
 
   }catch(e){
     console.error(e);
