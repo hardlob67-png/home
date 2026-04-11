@@ -197,7 +197,21 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
 .sidebar-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
 @media(max-width:768px){
-  .app-layout{flex-direction:column}
+  .app-layout{flex-direction:column;padding-bottom:64px}
+  .sidebar{display:none}
+  .main{padding:16px 16px 40px}
+  .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
+  .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:10px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
+  .mobile-nav .active{color:#a0a7ff}
+  .mobile-nav .nav-icon{font-size:20px;line-height:1}
+  .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+  .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .mobile-more-menu a,.mobile-more-menu button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:14px 8px}
+  .mobile-more-menu a:hover,.mobile-more-menu button:hover{color:var(--text);border-color:var(--accent)}
+  .mobile-more-menu .nav-icon{font-size:20px}
+  .mobile-overlay{display:none;position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.4)}
+  .mobile-overlay.show{display:block}
+}
   .sidebar{width:100%;height:auto;position:sticky;top:64px;flex-direction:row;padding:10px;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid var(--border)}
   .sidebar::-webkit-scrollbar{display:none}
   .sidebar-nav{flex-direction:row;gap:4px;padding:0;flex-wrap:nowrap}
@@ -292,6 +306,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <button class="btn-clear" onclick="clearSelection()">선택 해제</button>
         <span class="hint">Ctrl+C 복사 · Ctrl+V 붙여넣기 · Shift+클릭 범위선택</span>
       </div>
+    </div>
+
+    <!-- 반 자료실 -->
+    <div style="margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <h3 style="font-size:15px;font-weight:700;margin:0">📁 반 자료실</h3>
+        <label style="padding:8px 16px;background:rgba(108,99,255,.15);color:#a0a7ff;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+          📎 파일 업로드
+          <input type="file" multiple style="display:none" onchange="uploadFiles(this.files)">
+        </label>
+      </div>
+      <div id="file-upload-status" style="font-size:12px;color:var(--muted);margin-bottom:8px;display:none"></div>
+      <div id="class-files-list"><div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">파일이 없습니다</div></div>
     </div>
   </div>
 </div>
@@ -473,12 +500,30 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 </div>
 </div><!-- /app-layout -->
 
+<div class="mobile-nav" style="display:none">
+  <a href="admin.html"><span class="nav-icon">👥</span>회원</a>
+  <a href="grade.html" class="active"><span class="nav-icon">📝</span>성적</a>
+  <a href="chat.html"><span class="nav-icon">💬</span>채팅</a>
+  <a href="clinic.html"><span class="nav-icon">🏥</span>클리닉</a>
+  <button onclick="toggleMore()"><span class="nav-icon">⋯</span>더보기</button>
+</div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMore()"></div>
+<div class="mobile-more-menu" id="mobile-more">
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','quizzes')"><span class="nav-icon">📂</span>퀴즈 관리</a>
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','history')"><span class="nav-icon">📊</span>풀이 기록</a>
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','classes')"><span class="nav-icon">🏫</span>분반 관리</a>
+  <a href="test.html"><span class="nav-icon">✏️</span>실전테스트</a>
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','settings')"><span class="nav-icon">⚙️</span>설정</a>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
@@ -571,6 +616,7 @@ async function selectSessionCard(sessionId){
   document.getElementById('grid-title').textContent = `[${selectedClassName}] ${currentSession.title}`;
   showView('view-grid');
   await loadGrid();
+  loadClassFiles();
 }
 
 // ===== 세션 관리 =====
@@ -1102,6 +1148,7 @@ function showToast(msg,type='ok'){
   t.textContent=msg; t.className='toast '+type+' show';
   setTimeout(()=>t.classList.remove('show'),2500);
 }
+function toggleMore(){document.getElementById('mobile-more').classList.toggle('show');document.getElementById('mobile-overlay').classList.toggle('show')}
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
 
 // ===== 마킹지 입력 모달 =====
@@ -1532,6 +1579,63 @@ function deleteQuickMsg(i){
   setQuickMsgs(msgs);
   renderQuickMsgList();
   renderQuickBtns();
+}
+
+// ── 반 자료실 ──
+async function loadClassFiles(){
+  const el=document.getElementById('class-files-list');
+  if(!selectedClassId){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">반을 선택하세요</div>';return}
+  try{
+    const res=await fetch(`${SUPA_URL}/rest/v1/class_files?class_id=eq.${selectedClassId}&select=*&order=created_at.desc`,{headers:HDR});
+    const files=await res.json();
+    if(!Array.isArray(files)||!files.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px">파일이 없습니다</div>';return}
+    el.innerHTML=files.map(f=>{
+      const size=f.file_size?(f.file_size/1024).toFixed(0)+'KB':'';
+      const date=new Date(f.created_at).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+      const ext=(f.file_name.split('.').pop()||'').toLowerCase();
+      const icon=ext==='pdf'?'📄':ext==='jpg'||ext==='png'||ext==='jpeg'?'🖼':ext==='mp3'||ext==='mp4'?'🎬':'📎';
+      const url=`${SUPA_URL}/storage/v1/object/public/class-files/${f.file_path}`;
+      return `<div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:6px">
+        <span style="font-size:22px">${icon}</span>
+        <a href="${url}" target="_blank" style="flex:1;min-width:0;color:var(--text);text-decoration:none;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.file_name}</a>
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap">${size} · ${date}</span>
+        <button onclick="deleteFile('${f.id}','${f.file_path}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px" title="삭제">🗑</button>
+      </div>`;
+    }).join('');
+  }catch(e){console.log('파일 로드 실패',e)}
+}
+
+async function uploadFiles(fileList){
+  if(!selectedClassId||!fileList.length) return;
+  const status=document.getElementById('file-upload-status');
+  status.style.display='block';
+  let uploaded=0;
+  for(const file of fileList){
+    status.textContent=`업로드 중... (${uploaded+1}/${fileList.length}) ${file.name}`;
+    const path=`${selectedClassId}/${Date.now()}_${file.name}`;
+    try{
+      const{error}=await sb.storage.from('class-files').upload(path,file);
+      if(error) throw error;
+      await fetch(`${SUPA_URL}/rest/v1/class_files`,{
+        method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+        body:JSON.stringify({class_id:selectedClassId,file_name:file.name,file_path:path,file_size:file.size,uploaded_by:user.name||'관리자'})
+      });
+      uploaded++;
+    }catch(e){showToast(`${file.name} 업로드 실패`,'err');console.log(e)}
+  }
+  status.style.display='none';
+  showToast(`${uploaded}개 파일 업로드 완료`,'ok');
+  loadClassFiles();
+}
+
+async function deleteFile(id,path){
+  if(!confirm('이 파일을 삭제할까요?')) return;
+  try{
+    await sb.storage.from('class-files').remove([path]);
+    await fetch(`${SUPA_URL}/rest/v1/class_files?id=eq.${id}`,{method:'DELETE',headers:{...HDR,'Prefer':'return=minimal'}});
+    showToast('파일 삭제됨','ok');
+    loadClassFiles();
+  }catch(e){showToast('삭제 실패','err')}
 }
 
 // 초기 렌더링

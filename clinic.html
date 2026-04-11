@@ -75,7 +75,22 @@ input:focus,select:focus{border-color:var(--accent)}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
 .sidebar-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
-@media(max-width:768px){.app-layout{flex-direction:column}.sidebar{width:100%;height:auto;position:sticky;top:64px;flex-direction:row;padding:10px;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid var(--border)}.sidebar::-webkit-scrollbar{display:none}.sidebar-nav{flex-direction:row;gap:4px;padding:0;flex-wrap:nowrap}.sidebar-item{padding:8px 14px;flex-shrink:0}.sidebar-divider,.sidebar-label{display:none}}
+@media(max-width:768px){
+  .app-layout{flex-direction:column;padding-bottom:64px}
+  .sidebar{display:none}
+  .main{padding:16px 16px 40px}
+  .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
+  .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:10px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
+  .mobile-nav .active{color:#a0a7ff}
+  .mobile-nav .nav-icon{font-size:20px;line-height:1}
+  .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+  .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .mobile-more-menu a,.mobile-more-menu button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:14px 8px}
+  .mobile-more-menu a:hover,.mobile-more-menu button:hover{color:var(--text);border-color:var(--accent)}
+  .mobile-more-menu .nav-icon{font-size:20px}
+  .mobile-overlay{display:none;position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.4)}
+  .mobile-overlay.show{display:block}
+}.sidebar{width:100%;height:auto;position:sticky;top:64px;flex-direction:row;padding:10px;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid var(--border)}.sidebar::-webkit-scrollbar{display:none}.sidebar-nav{flex-direction:row;gap:4px;padding:0;flex-wrap:nowrap}.sidebar-item{padding:8px 14px;flex-shrink:0}.sidebar-divider,.sidebar-label{display:none}}
 </style>
 </head>
 <body>
@@ -200,6 +215,22 @@ input:focus,select:focus{border-color:var(--accent)}
   <div id="clinic-list"><div style="text-align:center;padding:40px;color:var(--muted)">불러오는 중...</div></div>
 </div>
 </div><!-- /app-layout -->
+
+<div class="mobile-nav" style="display:none">
+  <a href="admin.html"><span class="nav-icon">👥</span>회원</a>
+  <a href="grade.html"><span class="nav-icon">📝</span>성적</a>
+  <a href="chat.html"><span class="nav-icon">💬</span>채팅</a>
+  <a href="clinic.html" class="active"><span class="nav-icon">🏥</span>클리닉</a>
+  <button onclick="toggleMore()"><span class="nav-icon">⋯</span>더보기</button>
+</div>
+<div class="mobile-overlay" id="mobile-overlay" onclick="toggleMore()"></div>
+<div class="mobile-more-menu" id="mobile-more">
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','quizzes')"><span class="nav-icon">📂</span>퀴즈 관리</a>
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','history')"><span class="nav-icon">📊</span>풀이 기록</a>
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','classes')"><span class="nav-icon">🏫</span>분반 관리</a>
+  <a href="test.html"><span class="nav-icon">✏️</span>실전테스트</a>
+  <a href="admin.html" onclick="sessionStorage.setItem('admin_tab','settings')"><span class="nav-icon">⚙️</span>설정</a>
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -455,6 +486,7 @@ function showToast(msg,type='ok'){
   t.textContent=msg; t.className='toast '+type+' show';
   setTimeout(()=>t.classList.remove('show'),2500);
 }
+function toggleMore(){document.getElementById('mobile-more').classList.toggle('show');document.getElementById('mobile-overlay').classList.toggle('show')}
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
 
 loadClasses();
