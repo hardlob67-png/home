@@ -100,11 +100,11 @@ body::after{
 
 /* ── Chat Overlay ── */
 .chat-btn{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:6px 14px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 20px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);
   border:1px solid rgba(255,255,255,.3);border-radius:20px;
-  color:#fff;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;
-  margin-top:8px;transition:all .2s;
+  color:#fff;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;
+  margin-top:10px;transition:all .2s;
 }
 .chat-btn:active{transform:scale(.96)}
 .chat-btn .dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 1.5s infinite}
@@ -345,8 +345,12 @@ async function loadReport(){
     let html = `<div class="report-card">
       <div class="report-header">
         <div class="report-session">${session.title}</div>
-        <div class="report-name">${name} <button class="chat-btn" onclick="openChat()"><span class="dot"></span>선생님과 채팅<span id="chat-unread-inline" style="display:none" class="chat-unread-badge">0</span></button></div>
-        <div class="report-date">${date}${session.notice&&session.notice.trim()?'<button id="notice-btn-inline" onclick="reopenNotice()" style="margin-left:12px;padding:4px 12px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#fff;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">📢 공지</button>':''}</div>
+        <div class="report-name">${name}</div>
+        <div class="report-date">${date}</div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="chat-btn" onclick="openChat()"><span class="dot"></span>선생님과 채팅<span id="chat-unread-inline" style="display:none" class="chat-unread-badge">0</span></button>
+          ${session.notice&&session.notice.trim()?'<button class="chat-btn" onclick="reopenNotice()">📢 공지사항</button>':''}
+        </div>
       </div>
       <div class="grade-list">`;
 

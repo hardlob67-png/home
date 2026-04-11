@@ -349,6 +349,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <input type="tel" id="info-student-phone" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="width:100%;padding:8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:monospace;font-size:13px;outline:none">
   </div>
   <button class="btn-primary" onclick="saveStudentInfo()" style="width:100%;font-size:13px;padding:8px">저장</button>
+  <a id="info-report-link" href="#" target="_blank" style="display:block;text-align:center;margin-top:8px;padding:8px;border:1px solid var(--border);border-radius:8px;color:var(--accent);font-size:13px;font-weight:600;text-decoration:none">📊 최근 성적표 보기</a>
 </div>
 
 <!-- 클리닉 빠른 예약 팝업 -->
@@ -805,6 +806,8 @@ function popupStudentInfo(){
   document.getElementById('info-popup-name').textContent = popupMemberName;
   document.getElementById('info-parent-phone').value = popupMemberPhone;
   document.getElementById('info-student-phone').value = popupStudentPhone;
+  const baseUrl = window.location.origin || 'https://xn--oh5bnfltpyu64c.com';
+  document.getElementById('info-report-link').href = `${baseUrl}/report.html?member=${popupMemberId}`;
   const popup = document.getElementById('info-popup');
   const np = document.getElementById('name-popup');
   popup.style.left = np.style.left;
