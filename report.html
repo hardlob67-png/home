@@ -408,7 +408,7 @@ async function loadReport(){
         const obs=new IntersectionObserver((entries)=>{
           if(entries[0].isIntersecting){
             obs.disconnect();
-            renderScoreChart(classId, memberId);
+            renderScoreChart(classId, memberId, session.chart_options||{});
           }
         },{threshold:0.1});
         obs.observe(chartEl);
@@ -445,8 +445,14 @@ function avgScore(scores){
   return vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
 }
 
-async function renderScoreChart(classId, myMemberId){
+async function renderScoreChart(classId, myMemberId, chartOpts){
   try{
+    const opts=chartOpts||{};
+    const showAvg=opts.showAvg!==false;
+    const showMax=opts.showMax!==false;
+    const showPct=!!opts.showPct;
+    const pctValue=opts.pctValue||30;
+
     // Chart.js 동적 로드
     if(!window.Chart){
       await new Promise((resolve,reject)=>{
@@ -474,6 +480,7 @@ async function renderScoreChart(classId, myMemberId){
     const myScores=[];
     const avgScores=[];
     const maxScores=[];
+    const pctScores=[];
 
     sessions.forEach(s=>{
       const sessionGrades=allGrades.filter(g=>g.session_id===s.id);
@@ -495,6 +502,15 @@ async function renderScoreChart(classId, myMemberId){
 
       avgScores.push(allParsed.length?Math.round(allParsed.reduce((a,b)=>a+b,0)/allParsed.length):null);
       maxScores.push(allParsed.length?Math.max(...allParsed):null);
+
+      // 상위 퍼센트
+      if(showPct&&allParsed.length){
+        const sorted=[...allParsed].sort((a,b)=>b-a);
+        const idx=Math.max(0,Math.ceil(sorted.length*pctValue/100)-1);
+        pctScores.push(sorted[idx]||null);
+      } else {
+        pctScores.push(null);
+      }
     });
 
     // 데이터가 1개 이하면 차트 불필요
@@ -503,44 +519,53 @@ async function renderScoreChart(classId, myMemberId){
     const ctx=document.getElementById('score-chart');
     if(!ctx) return;
 
+    const datasets=[
+      {
+        label:'내 점수',
+        data:myScores,
+        borderColor:'#4f46e5',
+        backgroundColor:'rgba(79,70,229,.1)',
+        fill:true,
+        tension:.3,
+        borderWidth:3,
+        pointRadius:5,
+        pointBackgroundColor:'#4f46e5',
+      }
+    ];
+    if(showMax) datasets.push({
+      label:'반 최고',
+      data:maxScores,
+      borderColor:'#22c55e',
+      borderDash:[6,3],
+      tension:.3,
+      borderWidth:2,
+      pointRadius:3,
+      pointBackgroundColor:'#22c55e',
+    });
+    if(showAvg) datasets.push({
+      label:'반 평균',
+      data:avgScores,
+      borderColor:'#f59e0b',
+      borderDash:[4,4],
+      tension:.3,
+      borderWidth:2,
+      pointRadius:3,
+      pointBackgroundColor:'#f59e0b',
+    });
+    if(showPct) datasets.push({
+      label:`상위 ${pctValue}%`,
+      data:pctScores,
+      borderColor:'#ec4899',
+      borderDash:[8,4],
+      tension:.3,
+      borderWidth:2,
+      pointRadius:3,
+      pointBackgroundColor:'#ec4899',
+    });
+
     new Chart(ctx,{
       type:'line',
-      data:{
-        labels,
-        datasets:[
-          {
-            label:'내 점수',
-            data:myScores,
-            borderColor:'#4f46e5',
-            backgroundColor:'rgba(79,70,229,.1)',
-            fill:true,
-            tension:.3,
-            borderWidth:3,
-            pointRadius:5,
-            pointBackgroundColor:'#4f46e5',
-          },
-          {
-            label:'반 최고',
-            data:maxScores,
-            borderColor:'#22c55e',
-            borderDash:[6,3],
-            tension:.3,
-            borderWidth:2,
-            pointRadius:3,
-            pointBackgroundColor:'#22c55e',
-          },
-          {
-            label:'반 평균',
-            data:avgScores,
-            borderColor:'#f59e0b',
-            borderDash:[4,4],
-            tension:.3,
-            borderWidth:2,
-            pointRadius:3,
-            pointBackgroundColor:'#f59e0b',
-          }
-        ]
-      },
+      data:{labels,datasets},
       options:{
         responsive:true,
         plugins:{

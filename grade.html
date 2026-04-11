@@ -288,6 +288,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <h2 style="font-size:16px;font-weight:700" id="grid-title"></h2>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-green" onclick="openChartSettings()" style="background:rgba(34,197,94,.1);color:var(--green)">📊 차트 설정</button>
         <button class="btn-green" onclick="deleteSession()">🗑 삭제</button>
         <button class="btn-green" onclick="openSmsModal()" style="background:rgba(108,99,255,.15);color:#a0a7ff">📱 문자 발송</button>
       </div>
@@ -394,6 +395,45 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <button class="btn-primary" onclick="saveScoringModal()">💾 저장</button>
       <a id="scoring-modal-detail" target="_blank" class="btn-sm" style="text-decoration:none;display:flex;align-items:center">📊 상세 분석</a>
     </div>
+  </div>
+</div>
+
+<!-- 차트 설정 모달 -->
+<div class="modal-bg" id="modal-chart">
+  <div class="modal" style="max-width:400px;padding:24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="margin:0">📊 성적표 차트 설정</h3>
+      <button class="btn-sm" onclick="document.getElementById('modal-chart').classList.remove('show')" style="padding:4px 12px">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">학부모 성적표에서 보이는 차트 항목을 설정합니다</p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px">
+        <input type="checkbox" id="chart-opt-my" checked disabled style="width:18px;height:18px">
+        <span>📈 내 점수 (항상 표시)</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px">
+        <input type="checkbox" id="chart-opt-avg" checked style="width:18px;height:18px">
+        <span>📉 반 평균</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px">
+        <input type="checkbox" id="chart-opt-max" checked style="width:18px;height:18px">
+        <span>🏆 반 최고점</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px">
+        <input type="checkbox" id="chart-opt-pct" style="width:18px;height:18px">
+        <span>📊 상위 퍼센트 표시</span>
+      </label>
+      <div id="chart-pct-wrap" style="display:none;margin-left:28px">
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:4px">상위 몇 %?</label>
+        <select id="chart-opt-pct-val" style="padding:8px;width:100%">
+          <option value="10">상위 10%</option>
+          <option value="20">상위 20%</option>
+          <option value="30" selected>상위 30%</option>
+          <option value="50">상위 50%</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="saveChartSettings()" style="width:100%;margin-top:18px">저장</button>
   </div>
 </div>
 
@@ -1684,6 +1724,41 @@ function deleteQuickMsg(i){
   setQuickMsgs(msgs);
   renderQuickMsgList();
   renderQuickBtns();
+}
+
+// ── 차트 설정 ──
+document.getElementById('chart-opt-pct').addEventListener('change',function(){
+  document.getElementById('chart-pct-wrap').style.display=this.checked?'block':'none';
+});
+
+function openChartSettings(){
+  if(!currentSession) return;
+  const opts=currentSession.chart_options||{};
+  document.getElementById('chart-opt-avg').checked=opts.showAvg!==false;
+  document.getElementById('chart-opt-max').checked=opts.showMax!==false;
+  document.getElementById('chart-opt-pct').checked=!!opts.showPct;
+  document.getElementById('chart-pct-wrap').style.display=opts.showPct?'block':'none';
+  if(opts.pctValue) document.getElementById('chart-opt-pct-val').value=opts.pctValue;
+  document.getElementById('modal-chart').classList.add('show');
+}
+
+async function saveChartSettings(){
+  if(!currentSession) return;
+  const opts={
+    showAvg:document.getElementById('chart-opt-avg').checked,
+    showMax:document.getElementById('chart-opt-max').checked,
+    showPct:document.getElementById('chart-opt-pct').checked,
+    pctValue:parseInt(document.getElementById('chart-opt-pct-val').value)
+  };
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${currentSession.id}`,{
+      method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},
+      body:JSON.stringify({chart_options:opts})
+    });
+    currentSession.chart_options=opts;
+    document.getElementById('modal-chart').classList.remove('show');
+    showToast('차트 설정 저장 완료 ✓','ok');
+  }catch(e){showToast('저장 실패','err')}
 }
 
 // ── 공지사항 ──
