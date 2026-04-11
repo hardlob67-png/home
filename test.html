@@ -414,13 +414,31 @@ function showVersionDetail(){
   </div>`;
 
   if(!questions.length){
-    // 문항 수 입력 화면
-    html += `<div style="background:var(--surface);border-radius:10px;padding:24px;text-align:center">
-      <div style="font-size:14px;margin-bottom:12px">먼저 문항 수를 정해주세요</div>
-      <div class="row" style="justify-content:center">
-        <input type="number" id="q-count" placeholder="문항 수" min="1" max="100" value="20"
-          style="width:100px;text-align:center" onkeydown="if(event.key==='Enter')generateQuestions()">
-        <button class="btn-primary" onclick="generateQuestions()">문항 생성</button>
+    // 문항 생성 화면 (수동 / 텍스트 붙여넣기)
+    html += `<div style="background:var(--surface);border-radius:10px;padding:24px">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button class="btn-outline active" id="qgen-tab-manual" onclick="switchQgenTab('manual')">✏️ 직접 입력</button>
+        <button class="btn-outline" id="qgen-tab-paste" onclick="switchQgenTab('paste')">📋 텍스트 붙여넣기</button>
+      </div>
+      <div id="qgen-manual">
+        <div style="font-size:14px;margin-bottom:12px;text-align:center">먼저 문항 수를 정해주세요</div>
+        <div class="row" style="justify-content:center">
+          <input type="number" id="q-count" placeholder="문항 수" min="1" max="100" value="20"
+            style="width:100px;text-align:center" onkeydown="if(event.key==='Enter')generateQuestions()">
+          <button class="btn-primary" onclick="generateQuestions()">문항 생성</button>
+        </div>
+      </div>
+      <div id="qgen-paste" style="display:none">
+        <div style="font-size:13px;color:var(--muted);margin-bottom:10px">
+          시험지 텍스트를 붙여넣으면 문제 수·유형·정답을 자동 인식합니다
+        </div>
+        <textarea id="exam-paste-text" placeholder="시험지 텍스트를 여기에 붙여넣기 하세요...
+(빈칸, 순서배열, 문장삽입, 서술형 자동 인식)" style="width:100%;min-height:150px;padding:12px;font-size:13px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;resize:vertical;outline:none"></textarea>
+        <div id="exam-parse-preview" style="margin-top:12px;display:none"></div>
+        <div class="row" style="margin-top:12px;gap:8px">
+          <button class="btn-outline" onclick="previewParsedExam()">미리보기</button>
+          <button class="btn-primary" id="btn-apply-parsed" onclick="applyParsedExam()" style="display:none">적용하기</button>
+        </div>
       </div>
     </div>`;
   } else {
@@ -480,6 +498,168 @@ function showVersionDetail(){
 
   document.getElementById('version-detail').innerHTML = html;
   document.getElementById('scoring-card').style.display = questions.length ? 'block' : 'none';
+}
+
+// ===== 텍스트 붙여넣기 파싱 =====
+function switchQgenTab(tab){
+  document.getElementById('qgen-manual').style.display=tab==='manual'?'block':'none';
+  document.getElementById('qgen-paste').style.display=tab==='paste'?'block':'none';
+  document.getElementById('qgen-tab-manual').classList.toggle('active',tab==='manual');
+  document.getElementById('qgen-tab-paste').classList.toggle('active',tab==='paste');
+}
+
+let parsedQuestions=[];
+
+function parseExamText(text){
+  const lines=text.split('\n');
+  const questions=[];
+  let currentCategory='';
+
+  // 정답 섹션 파싱
+  const answerMap={};
+  const answerSection=text.match(/(?:빠른\s*정답|정답\s*및|정답\s*$)[^\n]*\n([\s\S]*)/m);
+  if(answerSection){
+    const ansText=answerSection[1];
+    // "1. ④" or "정답: ④" or "1. ④  2. ①" 패턴
+    const ansMatches=[...ansText.matchAll(/(\d+)\.\s*([①②③④⑤]|\d)/g)];
+    const circleMap={'①':'1','②':'2','③':'3','④':'4','⑤':'5'};
+    ansMatches.forEach(m=>{
+      answerMap[m[1]]=circleMap[m[2]]||m[2];
+    });
+    // "정답: ③" 패턴도 (번호 바로 위에 문제번호가 있는 경우)
+    const singleAns=[...ansText.matchAll(/(\d+)[\.\s]*정답[:\s]*([①②③④⑤]|\d)/g)];
+    singleAns.forEach(m=>{
+      answerMap[m[1]]=circleMap[m[2]]||m[2];
+    });
+  }
+
+  // 문제 파싱
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i].trim();
+
+    // 카테고리 헤더 감지: < ... > 형태면 뭐든 인식
+    if(line.match(/^<\s*.+\s*>$/) || (line.includes('<') && line.includes('>') && line.length < 40)){
+      const catMatch = line.match(/<\s*(.+?)\s*>/);
+      if(catMatch){
+        let cat = catMatch[1].trim();
+        // 불필요한 기호 제거
+        cat = cat.replace(/^[─\s]+|[─\s]+$/g, '');
+        if(cat) currentCategory = cat;
+      }
+      continue;
+    }
+
+    // ── 또는 ═ 로만 된 구분선은 무시
+    if(/^[─═\-=]{5,}$/.test(line)) continue;
+
+    // 문제 번호 감지 (1. 다음 글의~ / 5. 주어진~ / 6. 글의~)
+    const qMatch=line.match(/^(\d+)\.\s/);
+    if(qMatch){
+      const num=parseInt(qMatch[1]);
+      // 이미 정답 섹션이면 무시
+      if(answerMap[num]!==undefined&&questions.find(q=>q.num===num)) continue;
+
+      // 배점 감지: [3점], [각 3점], [각 2점, 총 6점] 등
+      let points=0;
+      const nearby=lines.slice(Math.max(0,i-1),i+3).join(' ');
+      const ptMatch=nearby.match(/\[(?:각\s*)?(\d+)점/);
+      if(ptMatch) points=parseInt(ptMatch[1]);
+
+      const isMc=text.slice(text.indexOf(line)).match(/[①②③④⑤]/);
+      const type=currentCategory.includes('서술형')?'sa':(isMc?'mc':'sa');
+      if(!points) points=0; // 0이면 나중에 자동 배분
+
+      questions.push({
+        num,
+        type,
+        points,
+        answer:answerMap[String(num)]||'',
+        category:currentCategory
+      });
+    }
+  }
+
+  // 정답만 있고 문제가 파싱 안 된 경우 정답 기반으로 생성
+  if(!questions.length&&Object.keys(answerMap).length){
+    Object.entries(answerMap).forEach(([num,ans])=>{
+      questions.push({num:parseInt(num),type:'mc',points:0,answer:ans,category:''});
+    });
+    questions.sort((a,b)=>a.num-b.num);
+  }
+
+  // 배점 자동 배분: 명시된 배점 없는 문항들에 100점 기준으로 배분
+  const withPoints=questions.filter(q=>q.points>0);
+  const withoutPoints=questions.filter(q=>q.points===0);
+  if(withoutPoints.length){
+    const usedPoints=withPoints.reduce((s,q)=>s+q.points,0);
+    const remaining=Math.max(0, 100-usedPoints);
+    const each=withoutPoints.length>0?Math.floor(remaining/withoutPoints.length):0;
+    const leftover=remaining-each*withoutPoints.length;
+    withoutPoints.forEach((q,i)=>{
+      q.points=each+(i<leftover?1:0);
+    });
+  }
+
+  return questions;
+}
+
+function previewParsedExam(){
+  const text=document.getElementById('exam-paste-text').value;
+  if(!text.trim()){showToast('텍스트를 붙여넣어주세요','err');return}
+
+  parsedQuestions=parseExamText(text);
+  if(!parsedQuestions.length){showToast('문제를 인식할 수 없습니다','err');return}
+
+  // 카테고리별 통계
+  const catCount={};
+  parsedQuestions.forEach(q=>{
+    const c=q.category||'기타';
+    catCount[c]=(catCount[c]||0)+1;
+  });
+
+  const preview=document.getElementById('exam-parse-preview');
+  preview.style.display='block';
+  preview.innerHTML=`
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">📊 인식 결과: ${parsedQuestions.length}문항 · 총 ${parsedQuestions.reduce((s,q)=>s+q.points,0)}점</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:12px;padding:4px 10px;border-radius:6px;background:rgba(108,99,255,.1);color:#a0a7ff">${c} ${n}문항</span>`).join('')}
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr>
+          <th style="padding:6px;border-bottom:1px solid var(--border);text-align:center">#</th>
+          <th style="padding:6px;border-bottom:1px solid var(--border);text-align:center">유형</th>
+          <th style="padding:6px;border-bottom:1px solid var(--border);text-align:center">카테고리</th>
+          <th style="padding:6px;border-bottom:1px solid var(--border);text-align:center">배점</th>
+          <th style="padding:6px;border-bottom:1px solid var(--border);text-align:center">정답</th>
+        </tr></thead>
+        <tbody>${parsedQuestions.map(q=>`<tr>
+          <td style="padding:4px;text-align:center">${q.num}</td>
+          <td style="padding:4px;text-align:center;color:${q.type==='mc'?'#6c63ff':'#d97706'}">${q.type==='mc'?'객관식':'주관식'}</td>
+          <td style="padding:4px;text-align:center;color:var(--muted)">${q.category||'-'}</td>
+          <td style="padding:4px;text-align:center">${q.points}</td>
+          <td style="padding:4px;text-align:center;font-weight:700">${q.answer||'-'}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+
+  document.getElementById('btn-apply-parsed').style.display='inline-flex';
+}
+
+async function applyParsedExam(){
+  if(!parsedQuestions.length) return;
+  const v=currentVersions.find(v=>v.id===selectedVersionId);
+  if(!v) return;
+
+  await fetch(`${SUPA_URL}/rest/v1/test_versions?id=eq.${v.id}`,{
+    method:'PATCH',headers:HDR,
+    body:JSON.stringify({questions:parsedQuestions})
+  });
+
+  v.questions=parsedQuestions;
+  parsedQuestions=[];
+  showVersionDetail();
+  showToast(`${v.questions.length}문항 자동 생성 완료 ✓`,'ok');
 }
 
 // 문항 수 입력 후 한 번에 생성
