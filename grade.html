@@ -746,7 +746,9 @@ async function createSession(){
 
 async function deleteSession(){
   if(!currentSession) return;
-  if(!confirm('이 성적표와 모든 입력 데이터가 삭제됩니다. 계속할까요?')) return;
+  if(!confirm('⚠️ 이 성적표와 모든 입력 데이터가 삭제됩니다.\n\n정말 삭제하시겠습니까?')) return;
+  const input=prompt('삭제를 확인하려면 "삭제"를 입력하세요:');
+  if(input!=='삭제'){showToast('삭제가 취소되었습니다','err');return}
   await fetch(`${SUPA_URL}/rest/v1/grade_sessions?id=eq.${currentSession.id}`,{method:'DELETE',headers:HDR});
   currentSession=null;
   backToSessions();
@@ -791,7 +793,7 @@ async function loadGrid(){
   document.getElementById('grid-head').innerHTML = `<tr>
     <th style="min-width:50px">#</th>
     <th style="min-width:100px">이름</th>
-    ${cols.map((c,ci)=>`<th class="col-selectable" style="min-width:100px" onclick="selectColumn(${ci})">${c}${testColMap[c]?' 📝':''}</th>`).join('')}
+    ${cols.map((c,ci)=>`<th class="col-selectable" style="min-width:100px" onclick="showColMenu(event,${ci},'${c.replace(/'/g,"\\'")}')">${c}${testColMap[c]?' 📝':''}</th>`).join('')}
     <th style="min-width:160px">개별 전달 사항</th>
     <th style="min-width:80px"></th>
   </tr>`;
@@ -1084,6 +1086,87 @@ function selectColumn(colIdx){
   }
   lastClickedCell = {row:0,col:colIdx};
   updateSelectionUI();
+}
+
+// 컬럼 헤더 클릭 메뉴
+function showColMenu(e, colIdx, colName){
+  e.stopPropagation();
+  const existing = document.getElementById('col-menu-popup');
+  if(existing) existing.remove();
+
+  const linked = testColMap[colName];
+  const div = document.createElement('div');
+  div.id='col-menu-popup';
+  div.style.cssText='position:fixed;z-index:150;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);padding:6px;min-width:160px';
+  div.style.left=Math.min(e.clientX,window.innerWidth-180)+'px';
+  div.style.top=e.clientY+'px';
+  div.innerHTML=`
+    <button onclick="document.getElementById('col-menu-popup').remove();selectColumn(${colIdx})" style="display:block;width:100%;text-align:left;padding:10px 14px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">📊 열 전체 선택</button>
+    <button onclick="document.getElementById('col-menu-popup').remove();openTestLink('${colName.replace(/'/g,"\\'")}')" style="display:block;width:100%;text-align:left;padding:10px 14px;color:var(--text);background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">${linked?'📝 시험 연결 변경':'📝 시험 연결'}</button>
+    ${linked?`<button onclick="document.getElementById('col-menu-popup').remove();unlinkTest('${colName.replace(/'/g,"\\'")}')" style="display:block;width:100%;text-align:left;padding:10px 14px;color:#ef4444;background:none;border:none;font-size:13px;font-family:inherit;cursor:pointer;border-radius:8px;transition:background .15s">🔗 연결 해제</button>`:''}
+  `;
+  document.body.appendChild(div);
+  setTimeout(()=>{
+    document.addEventListener('click',function handler(){
+      div.remove();document.removeEventListener('click',handler);
+    });
+  },10);
+}
+
+async function openTestLink(colName){
+  const res=await fetch(`${SUPA_URL}/rest/v1/test_sets?select=id,title&order=created_at.desc`,{headers:HDR});
+  const tests=await res.json();
+  if(!Array.isArray(tests)||!tests.length){showToast('등록된 시험이 없습니다. 실전테스트에서 먼저 만들어주세요.','err');return}
+
+  const existing=document.getElementById('test-link-modal');
+  if(existing) existing.remove();
+
+  const div=document.createElement('div');
+  div.id='test-link-modal';
+  div.style.cssText='position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center';
+  div.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:400px">
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:14px">📝 "${colName}" 항목에 시험 연결</h3>
+    <select id="test-link-select" style="width:100%;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      ${tests.map(t=>`<option value="${t.id}" ${testColMap[colName]===t.id?'selected':''}>${t.title}</option>`).join('')}
+    </select>
+    <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end">
+      <button class="btn-sm" onclick="document.getElementById('test-link-modal').remove()">취소</button>
+      <button class="btn-primary" onclick="saveTestLink('${colName.replace(/'/g,"\\'")}')">연결</button>
+    </div>
+  </div>`;
+  document.body.appendChild(div);
+}
+
+async function saveTestLink(colName){
+  const testId=document.getElementById('test-link-select').value;
+  if(!testId) return;
+  try{
+    // 기존 연결 해제 (같은 세션의 같은 컬럼)
+    const oldRes=await fetch(`${SUPA_URL}/rest/v1/test_sets?grade_session_id=eq.${currentSession.id}&grade_column=eq.${encodeURIComponent(colName)}&select=id`,{headers:HDR});
+    const oldTests=await oldRes.json();
+    for(const t of (oldTests||[])){
+      await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${t.id}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({grade_session_id:null,grade_column:null})});
+    }
+    // 새 연결
+    await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${testId}`,{
+      method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},
+      body:JSON.stringify({grade_session_id:currentSession.id,grade_column:colName})
+    });
+    document.getElementById('test-link-modal').remove();
+    showToast('시험 연결 완료 ✓','ok');
+    loadGrid();
+  }catch(e){showToast('연결 실패','err')}
+}
+
+async function unlinkTest(colName){
+  if(!confirm(`"${colName}" 항목의 시험 연결을 해제할까요?`)) return;
+  const res=await fetch(`${SUPA_URL}/rest/v1/test_sets?grade_session_id=eq.${currentSession.id}&grade_column=eq.${encodeURIComponent(colName)}&select=id`,{headers:HDR});
+  const tests=await res.json();
+  for(const t of (tests||[])){
+    await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${t.id}`,{method:'PATCH',headers:{...HDR,'Prefer':'return=minimal'},body:JSON.stringify({grade_session_id:null,grade_column:null})});
+  }
+  showToast('연결 해제 완료','ok');
+  loadGrid();
 }
 
 function clearSelection(){

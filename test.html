@@ -303,7 +303,9 @@ async function createTest(){
 
 async function deleteTest(){
   if(!currentTest) return;
-  if(!confirm('이 시험과 모든 채점 데이터가 삭제됩니다. 계속할까요?')) return;
+  if(!confirm('⚠️ 이 시험과 모든 채점 데이터가 삭제됩니다.\n\n정말 삭제하시겠습니까?')) return;
+  const input=prompt('삭제를 확인하려면 "삭제"를 입력하세요:');
+  if(input!=='삭제'){showToast('삭제가 취소되었습니다','err');return}
   await fetch(`${SUPA_URL}/rest/v1/test_sets?id=eq.${currentTest.id}`,{method:'DELETE',headers:HDR});
   currentTest=null;
   showScreen('screen-list');
