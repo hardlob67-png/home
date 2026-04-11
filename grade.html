@@ -1417,7 +1417,6 @@ function switchSmsTab(tab){
 
 // --- Solapi API 호출 (Edge Function 경유) ---
 async function sendSms(phone, message){
-  // Edge Function URL (Solapi 연동 후 활성화)
   const EDGE_URL = `${SUPA_URL}/functions/v1/send-sms`;
   try{
     const res = await fetch(EDGE_URL, {
@@ -1426,9 +1425,19 @@ async function sendSms(phone, message){
       body:JSON.stringify({to:phone, text:message})
     });
     const data = await res.json();
-    return data.success !== false;
+    const ok = data.success !== false;
+    // 발송 내역 저장
+    fetch(`${SUPA_URL}/rest/v1/sms_logs`,{
+      method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+      body:JSON.stringify({phone,message,status:ok?'sent':'failed',sent_by:user.name||'관리자'})
+    }).catch(()=>{});
+    return ok;
   }catch(e){
     console.error('SMS 발송 실패:', e);
+    fetch(`${SUPA_URL}/rest/v1/sms_logs`,{
+      method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+      body:JSON.stringify({phone,message,status:'failed',sent_by:user.name||'관리자'})
+    }).catch(()=>{});
     return false;
   }
 }

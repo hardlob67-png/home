@@ -141,6 +141,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .badge-user{background:rgba(34,197,94,.1);color:#6ee7a0;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
 .btn-del-sm{padding:5px 12px;border:1px solid transparent;border-radius:6px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
 .btn-del-sm:hover{background:rgba(255,101,132,.18)}
+#member-popup a:hover,#member-popup button:hover{background:rgba(108,99,255,.1)}
 
 /* 퀴즈 업로드 */
 .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:var(--radius);padding:40px 24px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:16px;position:relative}
@@ -206,6 +207,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <a class="sidebar-item" href="clinic.html"><span class="icon">🏥</span>클리닉</a>
     <div class="sidebar-divider"></div>
     <a class="sidebar-item" href="chat.html"><span class="icon">💬</span>채팅</a>
+    <button class="sidebar-item" data-tab="smslog" onclick="switchTab('smslog')"><span class="icon">📱</span>문자 내역</button>
     <button class="sidebar-item" data-tab="settings" onclick="switchTab('settings')"><span class="icon">⚙️</span>설정</button>
   </div>
 </nav>
@@ -384,6 +386,20 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     </div>
   </div>
 
+  <!-- 문자 내역 탭 -->
+  <div class="tab-panel" id="tab-smslog">
+    <div class="section-head">
+      <h2>📱 문자 발송 내역</h2>
+      <p>발송된 문자 메시지 기록을 확인할 수 있어요.</p>
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center">
+      <input type="date" id="smslog-date" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px">
+      <button class="btn-sm" onclick="loadSmsLogs()" style="white-space:nowrap">검색</button>
+      <button class="btn-sm" onclick="document.getElementById('smslog-date').value='';loadSmsLogs()" style="white-space:nowrap">전체</button>
+    </div>
+    <div id="smslog-list"><div class="spinner">불러오는 중...</div></div>
+  </div>
+
 </div>
 </div><!-- /app-layout -->
 
@@ -402,6 +418,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <button onclick="switchTab('classes');toggleMore()"><span class="nav-icon">🏫</span>분반 관리</button>
   <a href="test.html"><span class="nav-icon">✏️</span>실전테스트</a>
   <button onclick="switchTab('settings');toggleMore()"><span class="nav-icon">⚙️</span>설정</button>
+  <button onclick="switchTab('smslog');toggleMore()"><span class="nav-icon">📱</span>문자 내역</button>
 </div>
 
 <!-- 이름 클릭 팝업 -->
@@ -451,7 +468,7 @@ function toggleMore(){
 }
 
 function switchTab(t){
-  const tabs=['members','quizzes','history','classes','settings'];
+  const tabs=['members','quizzes','history','classes','settings','smslog'];
   document.querySelectorAll('.sidebar-item[data-tab]').forEach(b=>{
     b.classList.toggle('active', b.getAttribute('data-tab')===t);
   });
@@ -461,6 +478,7 @@ function switchTab(t){
   });
   if(t==='history') loadHistory();
   if(t==='classes') loadClasses();
+  if(t==='smslog') loadSmsLogs();
 }
 
 // 다른 페이지에서 돌아왔을 때 탭 자동 전환
@@ -600,8 +618,10 @@ function mpSendSms(){
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},
     body:JSON.stringify({to:mpPhone,text:msg.trim()})
   }).then(r=>{
-    if(r.ok) showToast('문자 발송 완료 ✓','ok');
-    else showToast('발송 실패','err');
+    const ok=r.ok;
+    showToast(ok?'문자 발송 완료 ✓':'발송 실패',ok?'ok':'err');
+    fetch(`${SUPA_URL}/rest/v1/sms_logs`,{method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+      body:JSON.stringify({phone:mpPhone,message:msg.trim(),status:ok?'sent':'failed',sent_by:user.name||'관리자'})}).catch(()=>{});
   }).catch(()=>showToast('발송 실패','err'));
 }
 document.addEventListener('click',function(e){
@@ -942,6 +962,48 @@ function showToast(msg,type='ok'){
   t.textContent=msg; t.className='toast '+type+' show';
   setTimeout(()=>t.classList.remove('show'),2500);
 }
+// ===== 문자 내역 =====
+async function loadSmsLogs(){
+  const el=document.getElementById('smslog-list');
+  el.innerHTML='<div class="spinner">불러오는 중...</div>';
+  try{
+    let url=`${SUPA_URL}/rest/v1/sms_logs?select=*&order=created_at.desc&limit=100`;
+    const dateVal=document.getElementById('smslog-date').value;
+    if(dateVal){
+      url+=`&created_at=gte.${dateVal}T00:00:00&created_at=lt.${dateVal}T23:59:59`;
+    }
+    const res=await fetch(url,{headers:HDR});
+    const logs=await res.json();
+    if(!Array.isArray(logs)||!logs.length){el.innerHTML='<div class="empty-state">발송 내역이 없어요</div>';return}
+
+    // phone → name 매핑
+    const phones=[...new Set(logs.map(l=>l.phone))];
+    const mRes=await fetch(`${SUPA_URL}/rest/v1/members?phone=in.(${phones.join(',')})&select=phone,name`,{headers:HDR});
+    const mData=await mRes.json();
+    const phoneMap={};
+    if(Array.isArray(mData)) mData.forEach(m=>{phoneMap[m.phone]=m.name});
+
+    el.innerHTML=`<table class="member-table">
+      <thead><tr><th>시간</th><th>받는 사람</th><th>내용</th><th>상태</th><th>발송자</th></tr></thead>
+      <tbody>${logs.map(l=>{
+        const t=new Date(l.created_at);
+        const time=`${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+        const name=phoneMap[l.phone]||'';
+        const nameLabel=name?`${name}<br><span style="font-size:11px;color:var(--muted)">${l.phone}</span>`:l.phone;
+        const msgShort=(l.message||'').length>40?(l.message.slice(0,40)+'...'):l.message;
+        const statusBadge=l.status==='sent'?'<span style="color:var(--green);font-size:12px">✓ 성공</span>':'<span style="color:var(--red);font-size:12px">✕ 실패</span>';
+        return `<tr>
+          <td style="font-size:12px;color:var(--muted);white-space:nowrap">${time}</td>
+          <td style="font-size:13px">${nameLabel}</td>
+          <td style="font-size:12px;color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${(l.message||'').replace(/"/g,'&quot;')}">${msgShort}</td>
+          <td>${statusBadge}</td>
+          <td style="font-size:12px;color:var(--muted)">${l.sent_by||''}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+  }catch(e){el.innerHTML='<div class="empty-state">불러오기 실패</div>'}
+}
+
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
 
 async function changeAdminPhone(){
