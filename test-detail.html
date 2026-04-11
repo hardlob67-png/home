@@ -319,7 +319,7 @@ async function load(){
 
       // 전체 추이 - 반 평균/최고 데이터 로드
       const testSetIds = [...new Set(allResponses.map(r=>r.test_set_id).filter(Boolean))];
-      let classAvgMap={}, classMaxMap={};
+      let classAvgMap={}, classMaxMap={}, classPctMap={};
       if(testSetIds.length){
         const classRes = await fetch(`${SUPA_URL}/rest/v1/test_responses?test_set_id=in.(${testSetIds.join(',')})&select=test_set_id,total_score,total_points`,{headers:HDR});
         const classData = await classRes.json();
@@ -333,6 +333,9 @@ async function load(){
           Object.entries(grouped).forEach(([id,arr])=>{
             classAvgMap[id]=Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
             classMaxMap[id]=Math.max(...arr);
+            const sorted=[...arr].sort((a,b)=>b-a);
+            const idx=Math.max(0,Math.ceil(sorted.length*0.3)-1);
+            classPctMap[id]=sorted[idx]||0;
           });
         }
       }
@@ -352,7 +355,7 @@ async function load(){
       html += `</div></div>`;
 
       // 차트 데이터 저장 (innerHTML 후 렌더링용)
-      window._chartData = {trendData, catList, catColors, classAvgMap, classMaxMap};
+      window._chartData = {trendData, catList, catColors, classAvgMap, classMaxMap, classPctMap};
     }
 
     // 응원
@@ -373,11 +376,12 @@ async function load(){
 
     // 선 그래프 렌더링
     if(window._chartData){
-      const {trendData, catList, catColors, classAvgMap, classMaxMap} = window._chartData;
+      const {trendData, catList, catColors, classAvgMap, classMaxMap, classPctMap} = window._chartData;
       const labels = trendData.map(d=>d.title.length>6?d.title.slice(0,6)+'..':d.title);
       const myScores = trendData.map(d=>d.p);
       const avgLine = trendData.map(d=>classAvgMap[d.tid]||null);
       const maxLine = trendData.map(d=>classMaxMap[d.tid]||null);
+      const pctLine = trendData.map(d=>classPctMap[d.tid]||null);
 
       const totalCtx = document.getElementById('trend-total-chart');
       if(totalCtx){
@@ -388,7 +392,8 @@ async function load(){
             datasets:[
               {label:'내 점수',data:myScores,borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,.1)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#4f46e5'},
               {label:'반 최고',data:maxLine,borderColor:'#22c55e',borderDash:[6,3],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#22c55e'},
-              {label:'반 평균',data:avgLine,borderColor:'#f59e0b',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#f59e0b'}
+              {label:'반 평균',data:avgLine,borderColor:'#f59e0b',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#f59e0b'},
+              {label:'상위 30%',data:pctLine,borderColor:'#ec4899',borderDash:[8,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#ec4899'}
             ]
           },
           options:{
