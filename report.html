@@ -214,7 +214,7 @@ body::after{
 <body>
 <!-- Notice Overlay -->
 <div class="notice-overlay locked" id="notice-overlay" onclick="dismissNotice()">
-  <div class="notice-box" onclick="event.stopPropagation()">
+  <div class="notice-box" >
     <div class="nb-badge">📢 공지사항</div>
     <div class="nb-content" id="notice-content"></div>
     <div class="nb-hint">화면을 터치하면 닫힙니다</div>
@@ -392,7 +392,7 @@ async function loadReport(){
       const overlay = document.getElementById('notice-overlay');
       overlay.classList.add('show');
       // 0.5초 동안 클릭 차단
-      setTimeout(()=>overlay.classList.remove('locked'), 500);
+      setTimeout(()=>overlay.classList.remove('locked'), 200);
     }
   }catch(e){
     content.innerHTML = `<div class="state-msg"><div class="icon">😥</div><div class="title">성적표를 불러올 수 없어요</div><div class="desc">링크가 올바른지 확인하시고,<br>문제가 계속되면 선생님께 문의해주세요.</div></div>`;
@@ -531,7 +531,7 @@ function reopenNotice(){
   overlay.style.display='flex';
   overlay.classList.add('locked');
   setTimeout(()=>overlay.classList.add('show'),10);
-  setTimeout(()=>overlay.classList.remove('locked'),500);
+  setTimeout(()=>overlay.classList.remove('locked'),200);
   document.getElementById('notice-reopen').style.display='none';
 }
 
