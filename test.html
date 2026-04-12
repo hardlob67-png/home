@@ -8,19 +8,19 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
-  --accent:#6c63ff;--accent2:#ff6584;--text:#ffffff;--muted:#b8b8d0;
-  --green:#22c55e;--red:#ff6584;--yellow:#f0c040;--radius:14px;
+  --bg:#FAF6F0;--surface:#F0EBE3;--card:#FFFFFF;--border:#E0D8CE;
+  --accent:#C96442;--accent2:#E89848;--text:#2D2B28;--muted:#8B8178;
+  --green:#D4964A;--red:#ff6584;--yellow:#f0c040;--radius:14px;
 }
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(108,99,255,.25);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(108,99,255,.4)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(201,100,66,.2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(201,100,66,.35)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,100,66,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(201,100,66,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
-.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 70%);top:-50px;left:-50px}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(201,100,66,.1) 0%,transparent 70%);top:-50px;left:-50px}
 
-.header{position:sticky;top:0;z-index:10;background:rgba(20,20,34,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{display:flex;align-items:center;gap:12px}
-.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#C96442,#E89848);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-badge{background:rgba(201,100,66,.1);color:#C96442;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
 @keyframes pulse-noti{0%,100%{opacity:1}50%{opacity:.6}}
 .btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
@@ -35,16 +35,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 textarea{resize:vertical;min-height:60px}
 
-.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#C96442,#E89848);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
 .btn-primary:hover{opacity:.9}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(34,197,94,.15);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.btn-green:hover{background:rgba(34,197,94,.25)}
-.btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(255,101,132,.08);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;transition:all .2s}
-.btn-red:hover{background:rgba(255,101,132,.18)}
+.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(212,150,74,.1);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-green:hover{background:rgba(212,150,74,.25)}
+.btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(239,68,68,.06);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-red:hover{background:rgba(239,68,68,.12)}
 .btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(108,99,255,.1)}
+.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(201,100,66,.08)}
 
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .divider{height:1px;background:var(--border);margin:24px 0}
@@ -56,9 +56,9 @@ textarea{resize:vertical;min-height:60px}
 
 /* 문항 목록 */
 .q-item{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface);border-radius:10px;margin-bottom:8px}
-.q-num{width:32px;height:32px;border-radius:8px;background:rgba(108,99,255,.15);color:#a0a7ff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.q-num{width:32px;height:32px;border-radius:8px;background:rgba(201,100,66,.1);color:#C96442;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
 .q-type{font-size:13px;padding:2px 8px;border-radius:4px;font-weight:600}
-.q-type.mc{background:rgba(34,197,94,.1);color:var(--green)}
+.q-type.mc{background:rgba(212,150,74,.1);color:var(--green)}
 .q-type.sa{background:rgba(240,192,64,.1);color:var(--yellow)}
 .q-pts{font-size:14px;color:var(--muted)}
 .q-ans{font-size:15px;color:var(--text);font-weight:500}
@@ -71,9 +71,9 @@ textarea{resize:vertical;min-height:60px}
 .score-grid td.sticky-col{position:sticky;z-index:1;background:var(--card)}
 .score-grid .name-cell{text-align:left;padding:8px 10px;font-weight:500;font-size:15px;white-space:nowrap}
 .score-grid input{width:44px;background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 2px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;text-align:center;outline:none;transition:all .2s}
-.score-grid input:focus{background:rgba(108,99,255,.08);border-color:var(--accent)}
-.score-grid .correct{background:rgba(34,197,94,.12);color:var(--green);font-weight:700}
-.score-grid .wrong{background:rgba(255,101,132,.12);color:var(--red)}
+.score-grid input:focus{background:rgba(201,100,66,.06);border-color:var(--accent)}
+.score-grid .correct{background:rgba(212,150,74,.12);color:var(--green);font-weight:700}
+.score-grid .wrong{background:rgba(232,152,72,.06);color:var(--red)}
 .score-grid .total-cell{font-weight:700;font-size:14px;padding:8px 6px;white-space:nowrap}
 .score-grid select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;width:70px}
 
@@ -86,7 +86,7 @@ textarea{resize:vertical;min-height:60px}
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
 .sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
 .sidebar-item:hover{background:var(--card);color:var(--text)}
-.sidebar-item.active{background:rgba(108,99,255,.15);color:#a0a7ff;font-weight:700}
+.sidebar-item.active{background:rgba(201,100,66,.1);color:#C96442;font-weight:700}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
 .sidebar-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
@@ -96,14 +96,14 @@ textarea{resize:vertical;min-height:60px}
   .main{padding:16px 16px 40px}
   .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
   .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
-  .mobile-nav .active{color:#a0a7ff}
+  .mobile-nav .active{color:#C96442}
   .mobile-nav .nav-icon{font-size:20px;line-height:1}
-  .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.3)}
+  .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.05)}
   .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
   .mobile-more-menu a,.mobile-more-menu button{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:14px 8px}
   .mobile-more-menu a:hover,.mobile-more-menu button:hover{color:var(--text);border-color:var(--accent)}
   .mobile-more-menu .nav-icon{font-size:20px}
-  .mobile-overlay{display:none;position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.4)}
+  .mobile-overlay{display:none;position:fixed;inset:0;z-index:98;background:rgba(0,0,0,.06)}
   .mobile-overlay.show{display:block}
 }
 </style>
@@ -207,7 +207,7 @@ textarea{resize:vertical;min-height:60px}
             <option value="">-- 반 선택 --</option>
           </select>
           <button class="btn-green" onclick="saveAllScores()">전체 저장</button>
-          <button class="btn-green" onclick="generateAllWrongNotes()" style="background:rgba(108,99,255,.15);color:#a0a7ff">📝 오답노트</button>
+          <button class="btn-green" onclick="generateAllWrongNotes()" style="background:rgba(201,100,66,.1);color:#C96442">📝 오답노트</button>
         </div>
       </div>
       <div style="overflow-x:auto">
@@ -442,7 +442,7 @@ function showVersionDetail(){
               width:100%;padding:5px 4px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid;
               font-family:'Noto Sans KR',sans-serif;transition:all .15s;
               ${q.type==='mc'
-                ?'background:rgba(79,70,229,.12);color:#6c63ff;border-color:rgba(79,70,229,.3)'
+                ?'background:rgba(201,100,66,.1);color:#C96442;border-color:rgba(201,100,66,.15)'
                 :'background:rgba(240,192,64,.12);color:#d97706;border-color:rgba(240,192,64,.3)'}
             ">${q.type==='mc'?'객관식':'주관식'}</button>
           </td>
@@ -617,7 +617,7 @@ function previewParsedExam(){
     <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px">
       <div style="font-size:16px;font-weight:700;margin-bottom:10px">📊 인식 결과: ${parsedQuestions.length}문항 · 총 ${parsedQuestions.reduce((s,q)=>s+q.points,0)}점</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:14px;padding:4px 10px;border-radius:6px;background:rgba(108,99,255,.1);color:#a0a7ff">${c} ${n}문항</span>`).join('')}
+        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:14px;padding:4px 10px;border-radius:6px;background:rgba(201,100,66,.08);color:#C96442">${c} ${n}문항</span>`).join('')}
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         <thead><tr>
@@ -1162,7 +1162,7 @@ function renderStats(){
     <div style="font-size:15px;font-weight:700;margin-bottom:10px">문항별 정답률</div>
     <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px">
       ${qStats.map(s=>{
-        const color=s.rate>=80?'#22c55e':s.rate>=50?'#f59e0b':'#ef4444';
+        const color=s.rate>=80?'#D4964A':s.rate>=50?'#f59e0b':'#ef4444';
         return `<div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:13px;font-weight:700;min-width:32px;color:var(--muted)">${s.num}번</span>
           <span style="font-size:12px;min-width:60px;color:var(--muted)">${s.category||''}</span>
@@ -1194,7 +1194,7 @@ function renderStats(){
       <div style="display:flex;flex-direction:column;gap:6px">
         ${cats.map(([cat,d])=>{
           const avg=Math.round(d.sum/d.count);
-          const color=avg>=80?'#22c55e':avg>=50?'#f59e0b':'#ef4444';
+          const color=avg>=80?'#D4964A':avg>=50?'#f59e0b':'#ef4444';
           return `<div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:14px;font-weight:600;min-width:80px">${cat}</span>
             <div style="flex:1;height:18px;background:var(--surface);border-radius:4px;overflow:hidden">
@@ -1271,7 +1271,7 @@ async function generateAllWrongNotes(){
 function showWrongNoteOptions(){
   return new Promise(resolve=>{
     const div=document.createElement('div');
-    div.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center';
+    div.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center';
     div.innerHTML=`<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:380px;text-align:center">
       <div style="font-size:18px;font-weight:700;margin-bottom:6px">📝 오답노트 생성</div>
       <div style="font-size:15px;color:var(--muted);margin-bottom:20px">틀린 문제만 모아 오답노트를 만듭니다</div>
@@ -1325,25 +1325,25 @@ function getNotesCSS(){
   return `
     @page{size:A4;margin:12mm 12mm}
     *{box-sizing:border-box;margin:0;padding:0}
-    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(108,99,255,.25);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(108,99,255,.4)}body{font-family:'Noto Sans KR',-apple-system,sans-serif;color:#1e293b;font-size:9px;line-height:1.4}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(201,100,66,.2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(201,100,66,.35)}body{font-family:'Noto Sans KR',-apple-system,sans-serif;color:#1e293b;font-size:9px;line-height:1.4}
     .wn-student{page-break-after:always}
     .wn-student:last-child{page-break-after:auto}
-    .wn-header{text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #4f46e5}
-    .wn-logo{font-size:18px;font-weight:800;color:#4f46e5;letter-spacing:2px;margin-bottom:1px}
+    .wn-header{text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #C96442}
+    .wn-logo{font-size:18px;font-weight:800;color:#C96442;letter-spacing:2px;margin-bottom:1px}
     .wn-title{font-size:16px;font-weight:700;margin-bottom:6px}
     .wn-info{display:flex;justify-content:center;gap:16px;font-size:12px;color:#64748b}
     .wn-name{font-weight:700;color:#1e293b;font-size:14px}
     .wn-item{border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:8px;overflow:visible}
     .wn-item-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-    .wn-qnum{font-size:13px;font-weight:800;color:#4f46e5}
-    .wn-cat{font-size:8px;background:#eef2ff;color:#4f46e5;padding:1px 6px;border-radius:4px}
+    .wn-qnum{font-size:13px;font-weight:800;color:#C96442}
+    .wn-cat{font-size:8px;background:#FFF5EE;color:#C96442;padding:1px 6px;border-radius:4px}
     .wn-pts{margin-left:auto;font-size:9px;color:#ef4444;font-weight:700}
     .wn-body{font-size:9px;line-height:1.5;color:#334155;white-space:pre-line;margin-bottom:8px;padding:8px;background:#f8fafc;border-radius:6px}
     .wn-answer-row{display:flex;gap:16px;margin-bottom:8px;font-size:12px}
     .wn-wrong{color:#ef4444}
     .wn-wrong strong{background:#fef2f2;padding:1px 6px;border-radius:4px}
-    .wn-correct{color:#16a34a}
-    .wn-correct strong{background:#f0fdf4;padding:1px 6px;border-radius:4px}
+    .wn-correct{color:#D4964A}
+    .wn-correct strong{background:#FFF8F0;padding:1px 6px;border-radius:4px}
     .wn-memo-label{font-size:8px;color:#94a3b8;margin-bottom:4px}
     .wn-memo-lines{height:40px;background:repeating-linear-gradient(transparent,transparent 13px,#e2e8f0 13px,#e2e8f0 14px)}
     @media print{.no-print{display:none!important}}
@@ -1359,9 +1359,9 @@ function openPrintableNotes(studentNotes){
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>${getNotesCSS()}</style>
   </head><body>
-    <div class="no-print" style="text-align:center;padding:16px;background:#4f46e5;color:#fff;font-size:14px;font-weight:600">
+    <div class="no-print" style="text-align:center;padding:16px;background:#C96442;color:#fff;font-size:14px;font-weight:600">
       ${studentNotes.length}명의 오답노트 · Ctrl+P로 인쇄하세요 (프린터 설정에서 스테이플 선택)
-      <button onclick="window.print()" style="margin-left:16px;padding:8px 20px;background:#fff;color:#4f46e5;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🖨 인쇄</button>
+      <button onclick="window.print()" style="margin-left:16px;padding:8px 20px;background:#fff;color:#C96442;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🖨 인쇄</button>
     </div>
     ${studentNotes.map(n=>buildNoteHTML(n, testTitle)).join('')}
   </body></html>`);
@@ -1380,11 +1380,11 @@ async function downloadZipNotes(studentNotes){
   document.body.appendChild(container);
 
   const statusEl=document.createElement('div');
-  statusEl.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:400;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 40px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)';
+  statusEl.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:400;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 40px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.06)';
   statusEl.innerHTML=`<div style="font-size:15px;font-weight:700;margin-bottom:8px">📝 PDF 생성 중...</div>
     <div id="zip-progress" style="font-size:15px;color:var(--muted)">0 / ${studentNotes.length}</div>
     <div style="margin-top:12px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden">
-      <div id="zip-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#4f46e5,#7c3aed);border-radius:3px;transition:width .3s"></div>
+      <div id="zip-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#C96442,#D4764E);border-radius:3px;transition:width .3s"></div>
     </div>`;
   document.body.appendChild(statusEl);
 

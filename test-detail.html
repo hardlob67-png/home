@@ -9,9 +9,9 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#f0f4ff;--surface:#ffffff;--card:#ffffff;--border:#e2e8f0;
-  --accent:#4f46e5;--accent2:#7c3aed;--accent-light:#eef2ff;
+  --accent:#C96442;--accent2:#D4764E;--accent-light:#FFF5EE;
   --text:#1e293b;--muted:#64748b;
-  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --green:#D4964A;--green-bg:#FFF8F0;--green-border:#F0D8B8;
   --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;
   --yellow:#d97706;--yellow-bg:#fffbeb;
   --radius:16px;
@@ -24,7 +24,7 @@ body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;heigh
 .logo-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
 
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.06);margin-bottom:16px}
-.card-header{padding:24px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff}
+.card-header{padding:24px;background:linear-gradient(135deg,#C96442,#D4764E);color:#fff}
 .card-header .name{font-size:24px;font-weight:700}
 .card-header .sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px}
 .card-body{padding:20px 24px}
@@ -34,7 +34,7 @@ body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;heigh
 .score-box{flex:1;text-align:center;padding:16px 12px;border-radius:12px;border:1px solid var(--border)}
 .score-box .num{font-size:28px;font-weight:700;line-height:1}
 .score-box .label{font-size:11px;color:var(--muted);margin-top:6px}
-.score-box.main{background:var(--accent-light);border-color:#c7d2fe}
+.score-box.main{background:var(--accent-light);border-color:#E8C4A8}
 .score-box.main .num{color:var(--accent)}
 .score-box.good{background:var(--green-bg);border-color:var(--green-border)}
 .score-box.good .num{color:var(--green)}
@@ -48,7 +48,7 @@ body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;heigh
 .type-name{font-size:14px;font-weight:600;width:60px;flex-shrink:0}
 .type-bar-wrap{flex:1;height:24px;background:#f1f5f9;border-radius:12px;overflow:hidden;position:relative}
 .type-bar{height:100%;border-radius:12px;transition:width .5s}
-.type-bar.green{background:linear-gradient(90deg,#22c55e,#4ade80)}
+.type-bar.green{background:linear-gradient(90deg,#D4964A,#E8B870)}
 .type-bar.red{background:linear-gradient(90deg,#f87171,#fca5a5)}
 .type-pct{font-size:13px;font-weight:700;width:50px;text-align:right;flex-shrink:0}
 
@@ -78,8 +78,8 @@ body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;heigh
 .trend-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .trend-chart{position:relative;height:160px;display:flex;align-items:flex-end;gap:8px;padding-bottom:24px;border-bottom:1px solid var(--border)}
 .trend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.trend-bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--accent),#818cf8);transition:height .5s;min-height:4px}
-.trend-bar.current{background:linear-gradient(180deg,#7c3aed,#a78bfa)}
+.trend-bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--accent),#D4764E);transition:height .5s;min-height:4px}
+.trend-bar.current{background:linear-gradient(180deg,#D4764E,#a78bfa)}
 .trend-label{font-size:10px;color:var(--muted);position:absolute;bottom:4px;text-align:center;width:100%}
 .trend-score{font-size:11px;font-weight:700;color:var(--accent)}
 
@@ -347,7 +347,7 @@ async function load(){
 
       // 카테고리별 추이 선 그래프
       const catList = [...allCats];
-      const catColors = {'어휘':'#4f46e5','문법':'#7c3aed','독해':'#2563eb','듣기':'#0891b2','쓰기':'#059669'};
+      const catColors = {'어휘':'#C96442','문법':'#D4764E','독해':'#6B8E7B','듣기':'#7B9EA8','쓰기':'#C96442'};
       if(catList.length > 0){
         html += `<div style="margin-top:24px"><div class="trend-title">📂 카테고리별 추이</div>
           <canvas id="trend-cat-chart" height="180"></canvas></div>`;
@@ -390,8 +390,8 @@ async function load(){
           data:{
             labels,
             datasets:[
-              {label:'내 점수',data:myScores,borderColor:'#4f46e5',backgroundColor:'rgba(79,70,229,.1)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#4f46e5'},
-              {label:'반 최고',data:maxLine,borderColor:'#22c55e',borderDash:[6,3],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#22c55e'},
+              {label:'내 점수',data:myScores,borderColor:'#C96442',backgroundColor:'rgba(201,100,66,.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#C96442'},
+              {label:'반 최고',data:maxLine,borderColor:'#D4964A',borderDash:[6,3],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#D4964A'},
               {label:'반 평균',data:avgLine,borderColor:'#f59e0b',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#f59e0b'},
               {label:'상위 30%',data:pctLine,borderColor:'#ec4899',borderDash:[8,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#ec4899'}
             ]

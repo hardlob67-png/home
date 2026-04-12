@@ -8,8 +8,8 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#141422;--surface:#1e1e32;--card:#26263e;--border:#3c3c58;
-  --accent:#6c63ff;--accent2:#ff6584;--text:#ffffff;--muted:#b8b8d0;--radius:14px;
+  --bg:#FAF6F0;--surface:#F0EBE3;--card:#FFFFFF;--border:#E0D8CE;
+  --accent:#C96442;--accent2:#E89848;--text:#2D2B28;--muted:#8B8178;--radius:14px;
 }
 body{
   font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);
@@ -18,21 +18,21 @@ body{
 }
 body::before{
   content:'';position:fixed;inset:0;
-  background-image:linear-gradient(rgba(108,99,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.03) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(201,100,66,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(201,100,66,.03) 1px,transparent 1px);
   background-size:40px 40px;pointer-events:none;z-index:0;
 }
 .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
-.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.18) 0%,transparent 70%);top:-100px;left:-100px}
-.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(255,101,132,.12) 0%,transparent 70%);bottom:-50px;right:-50px}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(201,100,66,.06) 0%,transparent 70%);top:-100px;left:-100px}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(232,152,72,.06) 0%,transparent 70%);bottom:-50px;right:-50px}
 .container{position:relative;z-index:1;width:100%;max-width:420px;padding:20px}
 .logo{text-align:center;margin-bottom:40px}
 .logo-title{
   font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;line-height:1;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  background:linear-gradient(135deg,#C96442,#E89848);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .logo-sub{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;box-shadow:0 20px 60px rgba(0,0,0,.08)}
 .card-title{font-size:18px;font-weight:700;margin-bottom:6px}
 .card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
 .form{display:flex;flex-direction:column;gap:16px}
@@ -47,7 +47,7 @@ input:focus{border-color:var(--accent)}
 input::placeholder{color:var(--muted)}
 .btn{
   padding:15px;border:none;border-radius:10px;
-  background:linear-gradient(135deg,var(--accent),#8b84ff);
+  background:linear-gradient(135deg,#C96442,#E89848);
   color:#fff;font-family:'Noto Sans KR',sans-serif;
   font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;
   transition:opacity .2s,transform .1s;letter-spacing:.5px;

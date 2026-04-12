@@ -9,9 +9,9 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#f0f4ff;--surface:#ffffff;--card:#ffffff;--border:#e2e8f0;
-  --accent:#4f46e5;--accent2:#7c3aed;--accent-light:#eef2ff;
+  --accent:#C96442;--accent2:#D4764E;--accent-light:#FFF5EE;
   --text:#1e293b;--muted:#64748b;
-  --green:#16a34a;--green-bg:#f0fdf4;--green-border:#bbf7d0;
+  --green:#D4964A;--green-bg:#FFF8F0;--green-border:#F0D8B8;
   --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;
   --yellow:#d97706;
   --radius:16px;
@@ -44,7 +44,7 @@ body::after{
 }
 .report-header{
   padding:28px 24px;
-  background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  background:linear-gradient(135deg,#C96442,#D4764E);
   color:#fff;
 }
 .report-session{font-size:12px;color:rgba(255,255,255,.7);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
@@ -66,7 +66,7 @@ body::after{
 .grade-value{font-size:16px;font-weight:700;padding:4px 14px;border-radius:8px}
 .grade-value.pass{color:var(--green);background:var(--green-bg);border:1px solid var(--green-border)}
 .grade-value.fail{color:var(--red);background:var(--red-bg);border:1px solid var(--red-border)}
-.grade-value.score{color:var(--accent);background:var(--accent-light);border:1px solid #c7d2fe}
+.grade-value.score{color:var(--accent);background:var(--accent-light);border:1px solid #E8C4A8}
 .grade-value.clickable{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
 .grade-value.clickable:hover{opacity:.8;transform:scale(1.05);transition:all .15s}
 .grade-value.none{color:var(--muted);background:#f8fafc}
@@ -78,7 +78,7 @@ body::after{
 .memo-text{font-size:14px;line-height:1.7;color:var(--text)}
 .cheer-section{
   margin:0 24px 20px;padding:18px;
-  background:linear-gradient(135deg,#f0fdf4,#ecfdf5);
+  background:linear-gradient(135deg,#FFF8F0,#ecfdf5);
   border:1px solid var(--green-border);border-radius:12px;text-align:center;
 }
 .cheer-emoji{font-size:28px;margin-bottom:6px}
@@ -107,7 +107,7 @@ body::after{
   margin-top:10px;transition:all .2s;
 }
 .chat-btn:active{transform:scale(.96)}
-.chat-btn .dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 1.5s infinite}
+.chat-btn .dot{width:8px;height:8px;border-radius:50%;background:#E8B870;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .chat-unread-badge{
   background:#ff4757;color:#fff;font-size:10px;font-weight:700;
@@ -117,7 +117,7 @@ body::after{
 /* ── Floating Chat Widget ── */
 .chat-fab{
   position:fixed;bottom:24px;left:24px;z-index:90;width:56px;height:56px;
-  border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;
+  border-radius:50%;background:linear-gradient(135deg,#C96442,#D4764E);border:none;
   color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(79,70,229,.4);
   transition:all .2s;display:flex;align-items:center;justify-content:center;
 }
@@ -138,7 +138,7 @@ body::after{
 .chat-overlay.open{display:flex}
 .chat-overlay-header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:14px 20px;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;
+  padding:14px 20px;background:linear-gradient(135deg,#C96442,#D4764E);color:#fff;
 }
 .chat-overlay-header h3{font-size:16px;font-weight:600}
 .chat-close{background:none;border:none;color:rgba(255,255,255,.8);font-size:24px;cursor:pointer;padding:0 4px}
@@ -216,7 +216,7 @@ body::after{
 }
 .notice-overlay.show .notice-box{transform:translateY(0)}
 .notice-box .nb-badge{
-  display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);
+  display:inline-block;background:linear-gradient(135deg,#C96442,#D4764E);
   color:#fff;font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;
   margin-bottom:16px;letter-spacing:.5px;
 }
@@ -224,7 +224,7 @@ body::after{
 .notice-box .nb-hint{font-size:12px;color:#94a3b8}
 .notice-reopen{
   display:none;position:fixed;top:80px;right:16px;z-index:50;
-  background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;
+  background:linear-gradient(135deg,#C96442,#D4764E);color:#fff;
   border:none;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:600;
   font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(79,70,229,.3);
 }
@@ -546,24 +546,24 @@ async function renderScoreChart(classId, myMemberId, chartOpts){
       {
         label:'내 점수',
         data:myScores,
-        borderColor:'#4f46e5',
-        backgroundColor:'rgba(79,70,229,.1)',
+        borderColor:'#C96442',
+        backgroundColor:'rgba(201,100,66,.08)',
         fill:true,
         tension:.3,
         borderWidth:3,
         pointRadius:5,
-        pointBackgroundColor:'#4f46e5',
+        pointBackgroundColor:'#C96442',
       }
     ];
     if(showMax) datasets.push({
       label:'반 최고',
       data:maxScores,
-      borderColor:'#22c55e',
+      borderColor:'#D4964A',
       borderDash:[6,3],
       tension:.3,
       borderWidth:2,
       pointRadius:3,
-      pointBackgroundColor:'#22c55e',
+      pointBackgroundColor:'#D4964A',
     });
     if(showAvg) datasets.push({
       label:'반 평균',
