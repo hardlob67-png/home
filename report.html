@@ -13,7 +13,7 @@
   --text:#1e293b;--muted:#64748b;
   --green:#8B7355;--green-bg:#FFF8F0;--green-border:#F0D8B8;
   --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;
-  --yellow:#d97706;
+  --yellow:#B8976A;
   --radius:16px;
 }
 body{
@@ -107,7 +107,7 @@ body::after{
   margin-top:10px;transition:all .2s;
 }
 .chat-btn:active{transform:scale(.96)}
-.chat-btn .dot{width:8px;height:8px;border-radius:50%;background:#E8B870;animation:pulse 1.5s infinite}
+.chat-btn .dot{width:8px;height:8px;border-radius:50%;background:#B8976A;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .chat-unread-badge{
   background:#ff4757;color:#fff;font-size:10px;font-weight:700;
@@ -568,12 +568,12 @@ async function renderScoreChart(classId, myMemberId, chartOpts){
     if(showAvg) datasets.push({
       label:'반 평균',
       data:avgScores,
-      borderColor:'#f59e0b',
+      borderColor:'#B8976A',
       borderDash:[4,4],
       tension:.3,
       borderWidth:2,
       pointRadius:3,
-      pointBackgroundColor:'#f59e0b',
+      pointBackgroundColor:'#B8976A',
     });
     if(showPct) datasets.push({
       label:`상위 ${pctValue}%`,

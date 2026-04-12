@@ -951,7 +951,7 @@ async function loadQuizzes(){
           <div class="quiz-date">${new Date(q.added).toLocaleString('ko-KR')} 업로드</div>
         </div>
         <div class="quiz-actions">
-          <button class="btn-preview" onclick="toggleLeaderboard('${q.id}',${!q.leaderboard})" style="${q.leaderboard?'color:#FFD700;border-color:#FFD700':''}">🏆 ${q.leaderboard?"ON":"OFF"}</button><button class="btn-preview" onclick="previewQuiz('${q.id}')">미리보기</button>
+          <button class="btn-preview" onclick="toggleLeaderboard('${q.id}',${!q.leaderboard})" style="${q.leaderboard?'color:#B8976A;border-color:#B8976A':''}">🏆 ${q.leaderboard?"ON":"OFF"}</button><button class="btn-preview" onclick="previewQuiz('${q.id}')">미리보기</button>
           <button class="btn-del" onclick="deleteQuiz('${q.id}')">삭제</button>
         </div>
       </div>`).join('')}</div>`;

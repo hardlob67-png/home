@@ -10,7 +10,7 @@
 :root{
   --bg:#FAF6F0;--surface:#F0EBE3;--card:#FFFFFF;--border:#E0D8CE;
   --accent:#C96442;--accent2:#E89848;--text:#2D2B28;--muted:#8B8178;
-  --green:#8B7355;--red:#ff6584;--yellow:#f0c040;--radius:14px;
+  --green:#8B7355;--red:#ff6584;--yellow:#B8976A;--radius:14px;
 }
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(61,57,41,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(61,57,41,.25)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,180,150,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,180,150,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
@@ -59,7 +59,7 @@ textarea{resize:vertical;min-height:60px}
 .q-num{width:32px;height:32px;border-radius:8px;background:rgba(61,57,41,.08);color:#3D3929;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
 .q-type{font-size:13px;padding:2px 8px;border-radius:4px;font-weight:600}
 .q-type.mc{background:rgba(61,57,41,.08);color:#3D3929}
-.q-type.sa{background:rgba(240,192,64,.1);color:var(--yellow)}
+.q-type.sa{background:rgba(184,151,106,.08);color:var(--yellow)}
 .q-pts{font-size:14px;color:var(--muted)}
 .q-ans{font-size:15px;color:var(--text);font-weight:500}
 
@@ -443,7 +443,7 @@ function showVersionDetail(){
               font-family:'Noto Sans KR',sans-serif;transition:all .15s;
               ${q.type==='mc'
                 ?'background:rgba(61,57,41,.08);color:#3D3929;border-color:rgba(201,100,66,.15)'
-                :'background:rgba(240,192,64,.12);color:#d97706;border-color:rgba(240,192,64,.3)'}
+                :'background:rgba(184,151,106,.1);color:#8B7355;border-color:rgba(184,151,106,.2)'}
             ">${q.type==='mc'?'객관식':'주관식'}</button>
           </td>
           <td style="padding:4px">
@@ -629,7 +629,7 @@ function previewParsedExam(){
         </tr></thead>
         <tbody>${parsedQuestions.map(q=>`<tr>
           <td style="padding:4px;text-align:center">${q.num}</td>
-          <td style="padding:4px;text-align:center;color:${q.type==='mc'?'#6c63ff':'#d97706'}">${q.type==='mc'?'객관식':'주관식'}</td>
+          <td style="padding:4px;text-align:center;color:${q.type==='mc'?'#6c63ff':'#8B7355'}">${q.type==='mc'?'객관식':'주관식'}</td>
           <td style="padding:4px;text-align:center;color:var(--muted)">${q.category||'-'}</td>
           <td style="padding:4px;text-align:center">${q.points}</td>
           <td style="padding:4px;text-align:center;font-weight:700">${q.answer||'-'}</td>
@@ -1162,7 +1162,7 @@ function renderStats(){
     <div style="font-size:15px;font-weight:700;margin-bottom:10px">문항별 정답률</div>
     <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px">
       ${qStats.map(s=>{
-        const color=s.rate>=80?'#D4964A':s.rate>=50?'#f59e0b':'#ef4444';
+        const color=s.rate>=80?'#D4964A':s.rate>=50?'#B8976A':'#ef4444';
         return `<div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:13px;font-weight:700;min-width:32px;color:var(--muted)">${s.num}번</span>
           <span style="font-size:12px;min-width:60px;color:var(--muted)">${s.category||''}</span>
@@ -1194,7 +1194,7 @@ function renderStats(){
       <div style="display:flex;flex-direction:column;gap:6px">
         ${cats.map(([cat,d])=>{
           const avg=Math.round(d.sum/d.count);
-          const color=avg>=80?'#D4964A':avg>=50?'#f59e0b':'#ef4444';
+          const color=avg>=80?'#D4964A':avg>=50?'#B8976A':'#ef4444';
           return `<div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:14px;font-weight:600;min-width:80px">${cat}</span>
             <div style="flex:1;height:18px;background:var(--surface);border-radius:4px;overflow:hidden">

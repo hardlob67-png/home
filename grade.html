@@ -151,7 +151,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   display:inline-flex;align-items:center;gap:6px;font-size:14px;
   padding:4px 10px;border-radius:6px;transition:all .3s;
 }
-.save-indicator.saving{color:#f0c040;background:rgba(240,192,64,.1)}
+.save-indicator.saving{color:#B8976A;background:rgba(184,151,106,.08)}
 .save-indicator.saved{color:var(--green);background:rgba(212,150,74,.1)}
 .save-indicator.idle{color:var(--muted);background:transparent}
 
@@ -1004,7 +1004,7 @@ async function loadClinicSummary(){
     const isTomorrow=date===new Date(Date.now()+86400000).toISOString().split('T')[0];
     let tag='';
     if(isToday) tag='<span style="color:var(--green);font-size:13px;margin-left:6px">오늘</span>';
-    if(isTomorrow) tag='<span style="color:#f0c040;font-size:13px;margin-left:6px">내일</span>';
+    if(isTomorrow) tag='<span style="color:#B8976A;font-size:13px;margin-left:6px">내일</span>';
 
     html += `<div style="margin-bottom:12px">
       <div style="font-size:15px;font-weight:600;margin-bottom:6px;color:var(--accent)">${date} (${dayName})${tag}</div>
