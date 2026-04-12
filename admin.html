@@ -5,7 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>META ENGLISH - 관리자</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+
+// ===== 리더보드 토글 =====
+async function toggleLeaderboard(id,enable){
+  await fetch(SUPA_URL+'/rest/v1/quizzes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify({leaderboard:enable})});
+  showToast(enable?'🏆 리더보드 활성화':'리더보드 비활성화','ok');
+  loadQuizzes();
+}
+
+// ===== 공지사항 =====
+async function loadNotices(){
+  try{
+    const res=await fetch(SUPA_URL+'/rest/v1/announcements?select=*&order=created_at.desc',{headers:HDR});
+    const notices=await res.json();
+    const el=document.getElementById('notice-list');
+    if(!notices.length){el.innerHTML='<div class="empty-state">등록된 공지가 없어요</div>';return}
+    el.innerHTML=notices.map(n=>`
+      <div class="notice-item ${n.active?'':'inactive'}">
+        <div class="notice-title-row">
+          <span class="notice-title-text">${n.title}</span>
+          <span class="notice-badge ${n.active?'on':'off'}">${n.active?'활성':'비활성'}</span>
+        </div>
+        <div class="notice-body">${n.content}</div>
+        <div class="notice-date">${new Date(n.created_at).toLocaleString('ko-KR')}</div>
+        <div class="notice-actions">
+          <button class="btn-preview" onclick="toggleNotice('${n.id}',${!n.active})">${n.active?'비활성화':'활성화'}</button>
+          <button class="btn-del" onclick="deleteNotice('${n.id}')">삭제</button>
+        </div>
+      </div>`).join('');
+  }catch(e){document.getElementById('notice-list').innerHTML='<div class="empty-state">불러오기 실패</div>'}
+}
+async function postNotice(){
+  const title=document.getElementById('notice-title').value.trim();
+  const content=document.getElementById('notice-content').value.trim();
+  if(!title||!content){showToast('제목과 내용을 입력해주세요','err');return}
+  try{
+    await fetch(SUPA_URL+'/rest/v1/announcements',{method:'POST',headers:HDR,body:JSON.stringify({title,content,active:true})});
+    document.getElementById('notice-title').value='';
+    document.getElementById('notice-content').value='';
+    showToast('공지 등록 완료 ✓','ok');
+    loadNotices();
+  }catch(e){showToast('등록 실패','err')}
+}
+async function toggleNotice(id,active){
+  await fetch(SUPA_URL+'/rest/v1/announcements?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify({active})});
+  showToast(active?'활성화됨':'비활성화됨','ok');
+  loadNotices();
+}
+async function deleteNotice(id){
+  if(!confirm('이 공지를 삭제할까요?'))return;
+  await fetch(SUPA_URL+'/rest/v1/announcements?id=eq.'+id,{method:'DELETE',headers:HDR});
+  showToast('삭제했어요','ok');
+  loadNotices();
+}
+// Load notices when tab switches
+const origSwitch=window.switchTab||function(){};
+const _oldSwitchTab=switchTab;
+switchTab=function(t){_oldSwitchTab(t);if(t==='notices')loadNotices()};
+
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -178,6 +237,17 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast.ok{border-color:var(--green);color:var(--green)}
 .toast.err{border-color:var(--red);color:var(--red)}
+
+.notice-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:10px;position:relative}
+.notice-item.inactive{opacity:.5}
+.notice-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.notice-title-text{font-size:15px;font-weight:700}
+.notice-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.notice-badge.on{background:rgba(34,197,94,.15);color:#22c55e}
+.notice-badge.off{background:rgba(255,94,94,.1);color:#ff5e5e}
+.notice-body{font-size:13px;color:var(--muted);line-height:1.6;white-space:pre-wrap;margin-bottom:10px}
+.notice-date{font-size:12px;color:var(--muted)}
+.notice-actions{display:flex;gap:8px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -202,6 +272,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <div class="sidebar-nav">
     <button class="sidebar-item active" data-tab="members" onclick="switchTab('members')"><span class="icon">👥</span>회원 명단</button>
     <button class="sidebar-item" data-tab="quizzes" onclick="switchTab('quizzes')"><span class="icon">📂</span>퀴즈 관리</button>
+    <button class="sidebar-item" data-tab="notices" onclick="switchTab('notices')"><span class="icon">📢</span>공지사항</button>
     <button class="sidebar-item" data-tab="history" onclick="switchTab('history')"><span class="icon">📊</span>풀이 기록</button>
     <button class="sidebar-item" data-tab="classes" onclick="switchTab('classes')"><span class="icon">🏫</span>분반 관리</button>
     <div class="sidebar-divider"></div>
@@ -293,6 +364,26 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
     <div class="section-title">등록된 퀴즈</div>
     <div id="quiz-list"><div class="spinner">불러오는 중...</div></div>
+  </div>
+
+
+  <!-- 공지사항 탭 -->
+  <div class="tab-panel" id="tab-notices">
+    <div class="section-head">
+      <h2>📢 공지사항</h2>
+      <p>학생 대시보드에 팝업으로 표시돼요. 활성 공지만 보여집니다.</p>
+    </div>
+    <div class="field">
+      <label>제목</label>
+      <input type="text" id="notice-title" placeholder="예: 이번 주 단어 퀴즈 안내">
+    </div>
+    <div class="field">
+      <label>내용</label>
+      <textarea id="notice-content" rows="4" placeholder="공지 내용을 입력하세요. 줄바꿈 가능."></textarea>
+    </div>
+    <button class="btn-upload" onclick="postNotice()" style="margin-top:12px">공지 등록하기</button>
+    <div class="section-title" style="margin-top:24px">등록된 공지</div>
+    <div id="notice-list"><div class="spinner">불러오는 중...</div></div>
   </div>
 
   <!-- 풀이 기록 탭 -->
@@ -418,6 +509,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 <div class="mobile-overlay" id="mobile-overlay" onclick="toggleMore()"></div>
 <div class="mobile-more-menu" id="mobile-more">
   <button onclick="switchTab('quizzes');toggleMore()"><span class="nav-icon">📂</span>퀴즈 관리</button>
+  <button onclick="switchTab('notices');toggleMore()"><span class="nav-icon">📢</span>공지사항</button>
   <button onclick="switchTab('history');toggleMore()"><span class="nav-icon">📊</span>풀이 기록</button>
   <button onclick="switchTab('classes');toggleMore()"><span class="nav-icon">🏫</span>분반 관리</button>
   <a href="test.html"><span class="nav-icon">✏️</span>실전테스트</a>
@@ -475,7 +567,7 @@ function toggleMore(){
 }
 
 function switchTab(t){
-  const tabs=['members','quizzes','history','classes','settings','smslog'];
+  const tabs=['members','quizzes','history','classes','settings','smslog','notices'];
   document.querySelectorAll('.sidebar-item[data-tab]').forEach(b=>{
     b.classList.toggle('active', b.getAttribute('data-tab')===t);
   });
@@ -846,7 +938,7 @@ async function previewQuiz(id){
 
 async function loadQuizzes(){
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{headers:HDR});
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added,leaderboard&order=added.desc`,{headers:HDR});
     const quizzes = await res.json();
     const list = document.getElementById('quiz-list');
     if(!quizzes.length){ list.innerHTML='<div class="empty-state">아직 업로드된 퀴즈가 없어요</div>'; return }
@@ -859,7 +951,7 @@ async function loadQuizzes(){
           <div class="quiz-date">${new Date(q.added).toLocaleString('ko-KR')} 업로드</div>
         </div>
         <div class="quiz-actions">
-          <button class="btn-preview" onclick="previewQuiz('${q.id}')">미리보기</button>
+          <button class="btn-preview" onclick="toggleLeaderboard('${q.id}',${!q.leaderboard})" style="${q.leaderboard?'color:#FFD700;border-color:#FFD700':''}">🏆 ${q.leaderboard?"ON":"OFF"}</button><button class="btn-preview" onclick="previewQuiz('${q.id}')">미리보기</button>
           <button class="btn-del" onclick="deleteQuiz('${q.id}')">삭제</button>
         </div>
       </div>`).join('')}</div>`;
@@ -1282,6 +1374,65 @@ async function checkUnreadChats(){
 }
 checkUnreadChats();
 setInterval(checkUnreadChats, 300000);
+
+
+
+// ===== 리더보드 토글 =====
+async function toggleLeaderboard(id,enable){
+  await fetch(SUPA_URL+'/rest/v1/quizzes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify({leaderboard:enable})});
+  showToast(enable?'🏆 리더보드 활성화':'리더보드 비활성화','ok');
+  loadQuizzes();
+}
+
+// ===== 공지사항 =====
+async function loadNotices(){
+  try{
+    const res=await fetch(SUPA_URL+'/rest/v1/announcements?select=*&order=created_at.desc',{headers:HDR});
+    const notices=await res.json();
+    const el=document.getElementById('notice-list');
+    if(!notices.length){el.innerHTML='<div class="empty-state">등록된 공지가 없어요</div>';return}
+    el.innerHTML=notices.map(n=>`
+      <div class="notice-item ${n.active?'':'inactive'}">
+        <div class="notice-title-row">
+          <span class="notice-title-text">${n.title}</span>
+          <span class="notice-badge ${n.active?'on':'off'}">${n.active?'활성':'비활성'}</span>
+        </div>
+        <div class="notice-body">${n.content}</div>
+        <div class="notice-date">${new Date(n.created_at).toLocaleString('ko-KR')}</div>
+        <div class="notice-actions">
+          <button class="btn-preview" onclick="toggleNotice('${n.id}',${!n.active})">${n.active?'비활성화':'활성화'}</button>
+          <button class="btn-del" onclick="deleteNotice('${n.id}')">삭제</button>
+        </div>
+      </div>`).join('');
+  }catch(e){document.getElementById('notice-list').innerHTML='<div class="empty-state">불러오기 실패</div>'}
+}
+async function postNotice(){
+  const title=document.getElementById('notice-title').value.trim();
+  const content=document.getElementById('notice-content').value.trim();
+  if(!title||!content){showToast('제목과 내용을 입력해주세요','err');return}
+  try{
+    await fetch(SUPA_URL+'/rest/v1/announcements',{method:'POST',headers:HDR,body:JSON.stringify({title,content,active:true})});
+    document.getElementById('notice-title').value='';
+    document.getElementById('notice-content').value='';
+    showToast('공지 등록 완료 ✓','ok');
+    loadNotices();
+  }catch(e){showToast('등록 실패','err')}
+}
+async function toggleNotice(id,active){
+  await fetch(SUPA_URL+'/rest/v1/announcements?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify({active})});
+  showToast(active?'활성화됨':'비활성화됨','ok');
+  loadNotices();
+}
+async function deleteNotice(id){
+  if(!confirm('이 공지를 삭제할까요?'))return;
+  await fetch(SUPA_URL+'/rest/v1/announcements?id=eq.'+id,{method:'DELETE',headers:HDR});
+  showToast('삭제했어요','ok');
+  loadNotices();
+}
+// Load notices when tab switches
+const origSwitch=window.switchTab||function(){};
+const _oldSwitchTab=switchTab;
+switchTab=function(t){_oldSwitchTab(t);if(t==='notices')loadNotices()};
 
 </script>
 </body>

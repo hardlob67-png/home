@@ -184,6 +184,37 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   .chat-panel{left:8px;right:8px;bottom:80px;width:auto;height:60vh}
   .chat-fab{bottom:16px;left:16px}
 }
+
+/* Notice Popup */
+.notice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;transition:opacity .3s;pointer-events:none}
+.notice-overlay.show{opacity:1;pointer-events:auto}
+.notice-popup{background:var(--card);border:1px solid var(--border);border-radius:20px;max-width:420px;width:100%;padding:0;overflow:hidden;transform:translateY(20px) scale(.95);transition:transform .3s;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.notice-overlay.show .notice-popup{transform:translateY(0) scale(1)}
+.notice-pop-header{background:linear-gradient(135deg,var(--accent),var(--accent2));padding:24px 28px;text-align:center}
+.notice-pop-icon{font-size:36px;margin-bottom:8px}
+.notice-pop-title{font-size:18px;font-weight:700;color:#fff}
+.notice-pop-body{padding:24px 28px;font-size:14px;color:var(--muted);line-height:1.8;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+.notice-pop-footer{padding:16px 28px 24px;text-align:center}
+.notice-pop-btn{padding:12px 40px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),#8b84ff);color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.notice-pop-btn:hover{opacity:.9;transform:translateY(-1px)}
+.notice-pop-dismiss{display:block;margin:10px auto 0;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit}
+
+
+/* Leaderboard */
+.lb-section{margin-bottom:40px;display:none}
+.lb-quiz{margin-bottom:20px}
+.lb-quiz-title{font-size:14px;font-weight:700;color:var(--gold);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.lb-quiz-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.lb-list{display:flex;flex-direction:column;gap:6px}
+.lb-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;transition:all .2s}
+.lb-top{border-color:rgba(255,215,0,.25);background:linear-gradient(135deg,rgba(255,215,0,.05),rgba(255,107,53,.05))}
+.lb-rank{font-size:18px;width:32px;text-align:center;font-weight:800;flex-shrink:0}
+.lb-top .lb-rank{font-size:22px}
+.lb-streak{flex:1;font-size:20px;font-weight:800;color:var(--text)}
+.lb-streak small{font-size:11px;color:var(--muted);margin-left:4px;font-weight:400}
+.lb-top .lb-streak{background:linear-gradient(135deg,var(--gold),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.lb-date{font-size:11px;color:var(--muted);flex-shrink:0}
+
 </style>
 </head>
 <body>
@@ -283,7 +314,7 @@ document.getElementById('hero-name').textContent = user.name;
 function showView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  if(v==='quiz'){ loadBadges(); loadQuizzes(); }
+  if(v==='quiz'){ loadBadges(); loadQuizzes(); loadLeaderboard(); }
   if(v==='grades'){ loadGrades(); }
 }
 
@@ -453,7 +484,12 @@ async function saveQuizRecord(data){
 
 // ── Listen for quiz results from iframe ──
 window.addEventListener('message', function(e){
-  if(!e.data || e.data.type !== 'quiz-result') return;
+  if(!e.data) return;
+  if(e.data.type === 'combo-result'){
+    saveComboRecord(e.data);
+    return;
+  }
+  if(e.data.type !== 'quiz-result') return;
   const d = e.data;
   const quizTitle = sessionStorage.getItem('qhub_current_quiz_title') || '';
 
@@ -530,6 +566,7 @@ window.addEventListener('popstate', ()=>{
 });
 
 function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.html' }
+
 </script>
 
 <!-- Floating Chat -->
@@ -546,7 +583,8 @@ function logout(){ sessionStorage.removeItem('qhub_user'); location.href='index.
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+</script>
 <script>
 const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
@@ -628,7 +666,109 @@ async function sendChat(){
 }
 
 loadChat();
+
+
+// ===== 무한콤보 리더보드 =====
+async function saveComboRecord(d){
+  var qid=sessionStorage.getItem('qhub_current_quiz_id')||'';
+  var qtitle=d.quizTitle||sessionStorage.getItem('qhub_current_quiz_title')||'';
+  if(!qid||!d.streak)return;
+  try{
+    await fetch(SUPA_URL+'/rest/v1/combo_records',{
+      method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+      body:JSON.stringify({quiz_id:qid,quiz_title:qtitle,streak:d.streak})
+    });
+  }catch(e){}
+  loadLeaderboard();
+}
+
+async function loadLeaderboard(){
+  var el=document.getElementById('leaderboard-section');
+  if(!el)return;
+  try{
+    // Get quizzes with leaderboard enabled
+    var qRes=await fetch(SUPA_URL+'/rest/v1/quizzes?leaderboard=eq.true&select=id,title',{headers:HDR});
+    var lbQuizzes=await qRes.json();
+    if(!lbQuizzes||!lbQuizzes.length){el.style.display='none';return}
+    
+    el.style.display='block';
+    var ids=lbQuizzes.map(function(q){return q.id});
+    
+    // Get top records for these quizzes
+    var rRes=await fetch(SUPA_URL+'/rest/v1/combo_records?quiz_id=in.('+ids.join(',')+')'+'&select=quiz_id,quiz_title,streak,played_at&order=streak.desc&limit=50',{headers:HDR});
+    var records=await rRes.json();
+    
+    // Group by quiz
+    var byQuiz={};
+    lbQuizzes.forEach(function(q){byQuiz[q.id]={title:q.title,records:[]}});
+    records.forEach(function(r){if(byQuiz[r.quiz_id])byQuiz[r.quiz_id].records.push(r)});
+    
+    var html='';
+    Object.keys(byQuiz).forEach(function(qid){
+      var q=byQuiz[qid];
+      if(!q.records.length)return;
+      var top10=q.records.slice(0,10);
+      html+='<div class="lb-quiz"><div class="lb-quiz-title">'+q.title+'</div><div class="lb-list">';
+      top10.forEach(function(r,i){
+        var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+        var cls=i<3?'lb-top':'';
+        var date=new Date(r.played_at).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
+        html+='<div class="lb-row '+cls+'"><span class="lb-rank">'+(medal||(i+1))+'</span><span class="lb-streak">'+r.streak+'<small>연속</small></span><span class="lb-date">'+date+'</span></div>';
+      });
+      html+='</div></div>';
+    });
+    
+    document.getElementById('leaderboard-content').innerHTML=html||'<div style="text-align:center;color:var(--muted);padding:20px">아직 기록이 없어요</div>';
+  }catch(e){el.style.display='none'}
+}
+
+// ===== 공지 팝업 =====
+var currentNoticeId=null;
+async function checkNotice(){
+  try{
+    var res=await fetch(SUPA_URL+'/rest/v1/announcements?active=eq.true&order=created_at.desc&limit=1',{headers:HDR});
+    var notices=await res.json();
+    if(!notices||!notices.length)return;
+    var n=notices[0];
+    var dismissed=localStorage.getItem('notice_dismissed_'+n.id);
+    if(dismissed)return;
+    currentNoticeId=n.id;
+    document.getElementById('noticePopTitle').textContent=n.title;
+    document.getElementById('noticePopBody').textContent=n.content;
+    setTimeout(function(){document.getElementById('noticeOverlay').classList.add('show')},500);
+  }catch(e){}
+}
+function closeNotice(dontShow){
+  document.getElementById('noticeOverlay').classList.remove('show');
+  if(dontShow&&currentNoticeId){
+    localStorage.setItem('notice_dismissed_'+currentNoticeId,'1');
+  }
+}
+// 로그인 후 공지 체크
+var _origInit=window.initDashboard||null;
+if(typeof initDashboard==='function'){
+  var _oldInit=initDashboard;
+  initDashboard=function(){_oldInit.apply(this,arguments);checkNotice()};
+}else{
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(checkNotice,1500)});
+}
+
 </script>
+
+
+<div class="notice-overlay" id="noticeOverlay">
+  <div class="notice-popup">
+    <div class="notice-pop-header">
+      <div class="notice-pop-icon">📢</div>
+      <div class="notice-pop-title" id="noticePopTitle"></div>
+    </div>
+    <div class="notice-pop-body" id="noticePopBody"></div>
+    <div class="notice-pop-footer">
+      <button class="notice-pop-btn" onclick="closeNotice()">확인</button>
+      <button class="notice-pop-dismiss" onclick="closeNotice(true)">다시 보지 않기</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
