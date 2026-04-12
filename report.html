@@ -114,9 +114,26 @@ body::after{
   min-width:18px;height:18px;border-radius:9px;
   display:inline-flex;align-items:center;justify-content:center;padding:0 5px;margin-left:4px;
 }
+/* ── Floating Chat Widget ── */
+.chat-fab{
+  position:fixed;bottom:24px;left:24px;z-index:90;width:56px;height:56px;
+  border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;
+  color:#fff;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(79,70,229,.4);
+  transition:all .2s;display:flex;align-items:center;justify-content:center;
+}
+.chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(79,70,229,.5)}
+.chat-fab:active{transform:scale(.95)}
+.chat-fab-badge{
+  position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;
+  background:#ef4444;color:#fff;font-size:11px;font-weight:700;
+  border-radius:10px;display:none;align-items:center;justify-content:center;padding:0 5px;
+}
+.chat-fab-badge.show{display:flex}
 .chat-overlay{
-  position:fixed;inset:0;z-index:100;background:#fff;
-  display:none;flex-direction:column;
+  position:fixed;bottom:90px;left:24px;z-index:100;
+  width:360px;height:500px;max-height:70vh;
+  background:#fff;border-radius:16px;box-shadow:0 12px 50px rgba(0,0,0,.25);
+  display:none;flex-direction:column;overflow:hidden;
 }
 .chat-overlay.open{display:flex}
 .chat-overlay-header{
@@ -137,11 +154,14 @@ body::after{
 .chat-empty{text-align:center;color:var(--muted);font-size:13px;padding:40px 0}
 .chat-input-row{
   display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--border);background:#fff;
-  padding-bottom:max(10px, env(safe-area-inset-bottom));
 }
 .chat-input-row input{
   flex:1;min-width:0;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;
   font-size:16px;font-family:inherit;outline:none;
+}
+@media(max-width:480px){
+  .chat-overlay{left:8px;right:8px;bottom:80px;width:auto;height:60vh}
+  .chat-fab{bottom:16px;left:16px}
 }
 .chat-input-row input:focus{border-color:var(--accent)}
 .chat-input-row button{
@@ -236,7 +256,10 @@ body::after{
   <div id="past-reports"></div>
   <div id="class-files"></div>
   <div id="chat-container" style="display:none">
-    <div class="chat-overlay" id="chat-overlay">
+<!-- Floating Chat Button -->
+<button class="chat-fab" onclick="toggleChat()" id="chat-fab">💬<span class="chat-fab-badge" id="chat-fab-badge">0</span></button>
+
+<div class="chat-overlay" id="chat-overlay">
       <div class="chat-overlay-header">
         <h3>💬 선생님과 채팅</h3>
         <button class="chat-close" onclick="closeChat()">✕</button>
@@ -600,10 +623,21 @@ function reopenNotice(){
 /* ── Chat ── */
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
+function toggleChat(){
+  const overlay=document.getElementById('chat-overlay');
+  if(overlay.classList.contains('open')){
+    closeChat();
+  } else {
+    openChat();
+  }
+}
+
 function openChat(){
   document.getElementById('chat-overlay').classList.add('open');
-  const badge=document.getElementById('chat-unread-inline');
-  if(badge){badge.style.display='none';badge.textContent='0';}
+  const badge=document.getElementById('chat-fab-badge');
+  if(badge){badge.classList.remove('show');badge.textContent='0';}
+  const badge2=document.getElementById('chat-unread-inline');
+  if(badge2){badge2.style.display='none';badge2.textContent='0';}
   scrollChat();
 }
 
@@ -656,6 +690,8 @@ async function loadChat(){
         if(!overlay.classList.contains('open')){
           const badge=document.getElementById('chat-unread-inline');
           if(badge){badge.style.display='inline-flex';badge.textContent=Number(badge.textContent||0)+1;}
+          const fab=document.getElementById('chat-fab-badge');
+          if(fab){fab.classList.add('show');fab.textContent=Number(fab.textContent||0)+1;}
         }
       }
     }).subscribe();
