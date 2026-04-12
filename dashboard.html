@@ -593,6 +593,7 @@ async function loadChat(){
     sb.channel('chat-dash-'+user.id)
       .on('postgres_changes',{event:'INSERT',schema:'public',table:'chats',filter:'member_id=eq.'+user.id},(payload)=>{
         const m=payload.new;
+        if(m.sender==='parent') return; // 본인 메시지는 이미 표시됨
         const el=document.getElementById('chat-messages');
         if(el.querySelector('.chat-empty')) el.innerHTML='';
         el.innerHTML+=renderMsg(m);
