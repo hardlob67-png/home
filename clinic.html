@@ -11,15 +11,15 @@
   --bg:#FAF6F0;--surface:#F0EBE3;--card:#FFFFFF;--border:#E0D8CE;
   --accent:#C96442;--accent2:#E89848;--accent-light:rgba(201,100,66,.08);
   --text:#2D2B28;--muted:#8B8178;
-  --green:#D4964A;--red:#ff6584;--yellow:#f0c040;--radius:14px;
+  --green:#8B7355;--red:#ff6584;--yellow:#f0c040;--radius:14px;
 }
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(201,100,66,.2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(201,100,66,.35)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,100,66,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(201,100,66,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(61,57,41,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(61,57,41,.25)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,180,150,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,180,150,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 
 .header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{display:flex;align-items:center;gap:12px}
-.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#C96442,#E89848);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.admin-badge{background:rgba(201,100,66,.1);color:#C96442;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#3D3929,#4A4538);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-badge{background:rgba(61,57,41,.08);color:#3D3929;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
 @keyframes pulse-noti{0%,100%{opacity:1}50%{opacity:.6}}
 .btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
@@ -28,16 +28,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
 input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none}
 input:focus,select:focus{border-color:var(--accent)}
-.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#C96442,#E89848);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#3D3929,#4A4538);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap}
 .btn-primary:hover{opacity:.9}
 .btn-red{padding:6px 12px;border:1px solid transparent;border-radius:7px;background:rgba(239,68,68,.06);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer}
 .btn-red:hover{background:rgba(239,68,68,.12)}
-.btn-green{padding:8px 16px;border:none;border-radius:8px;background:rgba(212,150,74,.1);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer}
-.btn-green:hover{background:rgba(212,150,74,.25)}
+.btn-green{padding:8px 16px;border:none;border-radius:8px;background:rgba(61,57,41,.08);color:#3D3929;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer}
+.btn-green:hover{background:rgba(61,57,41,.15)}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.ok{border-color:#8B7355;color:#8B7355}
 .toast.err{border-color:var(--red);color:var(--red)}
 
 /* 빠른 입력 */
@@ -58,7 +58,7 @@ input:focus,select:focus{border-color:var(--accent)}
 .clinic-phone{font-size:14px;color:var(--muted);font-family:monospace}
 .clinic-memo{font-size:14px;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .clinic-status{font-size:13px;padding:3px 8px;border-radius:6px;font-weight:600}
-.clinic-status.sent{background:rgba(212,150,74,.1);color:var(--green)}
+.clinic-status.sent{background:rgba(61,57,41,.08);color:#3D3929}
 .clinic-status.pending{background:rgba(240,192,64,.1);color:var(--yellow)}
 
 /* 시간 버튼 */
@@ -72,7 +72,7 @@ input:focus,select:focus{border-color:var(--accent)}
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
 .sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
 .sidebar-item:hover{background:var(--card);color:var(--text)}
-.sidebar-item.active{background:rgba(201,100,66,.1);color:#C96442;font-weight:700}
+.sidebar-item.active{background:rgba(61,57,41,.08);color:#3D3929;font-weight:700}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
 .sidebar-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
@@ -82,7 +82,7 @@ input:focus,select:focus{border-color:var(--accent)}
   .main{padding:16px 16px 40px}
   .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
   .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
-  .mobile-nav .active{color:#C96442}
+  .mobile-nav .active{color:#3D3929;font-weight:700}
   .mobile-nav .nav-icon{font-size:20px;line-height:1}
   .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.05)}
   .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -421,7 +421,7 @@ async function loadClinics(){
         <div class="clinic-name">${c.member_name}</div>
         <div class="clinic-phone">${c.member_phone||''}</div>
         ${c.memo?`<div class="clinic-memo" title="${c.memo}">${c.memo}</div>`:''}
-        ${c.location?(()=>{try{const l=JSON.parse(c.location);return `<div style="font-size:13px;color:var(--accent);background:rgba(201,100,66,.06);padding:2px 8px;border-radius:4px">📍${l.name||c.location}</div>`;}catch(e){return `<div style="font-size:13px;color:var(--accent)">📍${c.location}</div>`;}})():''}
+        ${c.location?(()=>{try{const l=JSON.parse(c.location);return `<div style="font-size:13px;color:var(--accent);background:rgba(200,180,150,.04);padding:2px 8px;border-radius:4px">📍${l.name||c.location}</div>`;}catch(e){return `<div style="font-size:13px;color:var(--accent)">📍${c.location}</div>`;}})():''}
         <div class="clinic-status ${c.reminder_sent?'sent':'pending'}">${c.reminder_sent?'발송됨':'대기'}</div>
         <button class="btn-red" onclick="deleteClinic('${c.id}')" style="font-size:13px;padding:3px 8px">×</button>
       </div>`;

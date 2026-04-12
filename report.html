@@ -11,7 +11,7 @@
   --bg:#f0f4ff;--surface:#ffffff;--card:#ffffff;--border:#e2e8f0;
   --accent:#C96442;--accent2:#D4764E;--accent-light:#FFF5EE;
   --text:#1e293b;--muted:#64748b;
-  --green:#D4964A;--green-bg:#FFF8F0;--green-border:#F0D8B8;
+  --green:#8B7355;--green-bg:#FFF8F0;--green-border:#F0D8B8;
   --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;
   --yellow:#d97706;
   --radius:16px;
@@ -101,7 +101,7 @@ body::after{
 /* ── Chat Overlay ── */
 .chat-btn{
   display:inline-flex;align-items:center;gap:6px;
-  padding:10px 20px;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);
+  padding:10px 20px;background:rgba(255,255,255,.25);backdrop-filter:blur(4px);
   border:1px solid rgba(255,255,255,.3);border-radius:20px;
   color:#fff;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;
   margin-top:10px;transition:all .2s;
@@ -558,12 +558,12 @@ async function renderScoreChart(classId, myMemberId, chartOpts){
     if(showMax) datasets.push({
       label:'반 최고',
       data:maxScores,
-      borderColor:'#D4964A',
+      borderColor:'#8B7355',
       borderDash:[6,3],
       tension:.3,
       borderWidth:2,
       pointRadius:3,
-      pointBackgroundColor:'#D4964A',
+      pointBackgroundColor:'#8B7355',
     });
     if(showAvg) datasets.push({
       label:'반 평균',

@@ -10,17 +10,17 @@
 :root{
   --bg:#FAF6F0;--surface:#F0EBE3;--card:#FFFFFF;--border:#E0D8CE;
   --accent:#C96442;--accent2:#E89848;--text:#2D2B28;--muted:#8B8178;
-  --green:#D4964A;--red:#ff6584;--yellow:#f0c040;--radius:14px;
+  --green:#8B7355;--red:#ff6584;--yellow:#f0c040;--radius:14px;
 }
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(201,100,66,.2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(201,100,66,.35)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,100,66,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(201,100,66,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(61,57,41,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(61,57,41,.25)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,180,150,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,180,150,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
 .orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(201,100,66,.1) 0%,transparent 70%);top:-50px;left:-50px}
 
 .header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{display:flex;align-items:center;gap:12px}
-.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#C96442,#E89848);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.admin-badge{background:rgba(201,100,66,.1);color:#C96442;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#3D3929,#4A4538);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.admin-badge{background:rgba(61,57,41,.08);color:#3D3929;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
 @keyframes pulse-noti{0%,100%{opacity:1}50%{opacity:.6}}
 .btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
@@ -35,30 +35,30 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 textarea{resize:vertical;min-height:60px}
 
-.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#C96442,#E89848);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#3D3929,#4A4538);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
 .btn-primary:hover{opacity:.9}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(212,150,74,.1);color:var(--green);font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.btn-green:hover{background:rgba(212,150,74,.25)}
+.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(61,57,41,.08);color:#3D3929;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-green:hover{background:rgba(61,57,41,.15)}
 .btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(239,68,68,.06);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;transition:all .2s}
 .btn-red:hover{background:rgba(239,68,68,.12)}
 .btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(201,100,66,.08)}
+.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(61,57,41,.06)}
 
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .divider{height:1px;background:var(--border);margin:24px 0}
 .empty{text-align:center;padding:40px;color:var(--muted);font-size:14px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:var(--green);color:var(--green)}
+.toast.ok{border-color:#8B7355;color:#8B7355}
 .toast.err{border-color:var(--red);color:var(--red)}
 
 /* 문항 목록 */
 .q-item{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface);border-radius:10px;margin-bottom:8px}
-.q-num{width:32px;height:32px;border-radius:8px;background:rgba(201,100,66,.1);color:#C96442;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.q-num{width:32px;height:32px;border-radius:8px;background:rgba(61,57,41,.08);color:#3D3929;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
 .q-type{font-size:13px;padding:2px 8px;border-radius:4px;font-weight:600}
-.q-type.mc{background:rgba(212,150,74,.1);color:var(--green)}
+.q-type.mc{background:rgba(61,57,41,.08);color:#3D3929}
 .q-type.sa{background:rgba(240,192,64,.1);color:var(--yellow)}
 .q-pts{font-size:14px;color:var(--muted)}
 .q-ans{font-size:15px;color:var(--text);font-weight:500}
@@ -71,9 +71,9 @@ textarea{resize:vertical;min-height:60px}
 .score-grid td.sticky-col{position:sticky;z-index:1;background:var(--card)}
 .score-grid .name-cell{text-align:left;padding:8px 10px;font-weight:500;font-size:15px;white-space:nowrap}
 .score-grid input{width:44px;background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 2px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;text-align:center;outline:none;transition:all .2s}
-.score-grid input:focus{background:rgba(201,100,66,.06);border-color:var(--accent)}
+.score-grid input:focus{background:rgba(200,180,150,.04);border-color:var(--accent)}
 .score-grid .correct{background:rgba(212,150,74,.12);color:var(--green);font-weight:700}
-.score-grid .wrong{background:rgba(232,152,72,.06);color:var(--red)}
+.score-grid .wrong{background:rgba(200,180,150,.03);color:var(--red)}
 .score-grid .total-cell{font-weight:700;font-size:14px;padding:8px 6px;white-space:nowrap}
 .score-grid select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;width:70px}
 
@@ -86,7 +86,7 @@ textarea{resize:vertical;min-height:60px}
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
 .sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
 .sidebar-item:hover{background:var(--card);color:var(--text)}
-.sidebar-item.active{background:rgba(201,100,66,.1);color:#C96442;font-weight:700}
+.sidebar-item.active{background:rgba(61,57,41,.08);color:#3D3929;font-weight:700}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
 .sidebar-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
@@ -96,7 +96,7 @@ textarea{resize:vertical;min-height:60px}
   .main{padding:16px 16px 40px}
   .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
   .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
-  .mobile-nav .active{color:#C96442}
+  .mobile-nav .active{color:#3D3929;font-weight:700}
   .mobile-nav .nav-icon{font-size:20px;line-height:1}
   .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.05)}
   .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -207,7 +207,7 @@ textarea{resize:vertical;min-height:60px}
             <option value="">-- 반 선택 --</option>
           </select>
           <button class="btn-green" onclick="saveAllScores()">전체 저장</button>
-          <button class="btn-green" onclick="generateAllWrongNotes()" style="background:rgba(201,100,66,.1);color:#C96442">📝 오답노트</button>
+          <button class="btn-green" onclick="generateAllWrongNotes()" style="background:rgba(61,57,41,.08);color:#3D3929">📝 오답노트</button>
         </div>
       </div>
       <div style="overflow-x:auto">
@@ -442,7 +442,7 @@ function showVersionDetail(){
               width:100%;padding:5px 4px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid;
               font-family:'Noto Sans KR',sans-serif;transition:all .15s;
               ${q.type==='mc'
-                ?'background:rgba(201,100,66,.1);color:#C96442;border-color:rgba(201,100,66,.15)'
+                ?'background:rgba(61,57,41,.08);color:#3D3929;border-color:rgba(201,100,66,.15)'
                 :'background:rgba(240,192,64,.12);color:#d97706;border-color:rgba(240,192,64,.3)'}
             ">${q.type==='mc'?'객관식':'주관식'}</button>
           </td>
@@ -617,7 +617,7 @@ function previewParsedExam(){
     <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px">
       <div style="font-size:16px;font-weight:700;margin-bottom:10px">📊 인식 결과: ${parsedQuestions.length}문항 · 총 ${parsedQuestions.reduce((s,q)=>s+q.points,0)}점</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:14px;padding:4px 10px;border-radius:6px;background:rgba(201,100,66,.08);color:#C96442">${c} ${n}문항</span>`).join('')}
+        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:14px;padding:4px 10px;border-radius:6px;background:rgba(61,57,41,.06);color:#C96442">${c} ${n}문항</span>`).join('')}
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         <thead><tr>
@@ -1325,7 +1325,7 @@ function getNotesCSS(){
   return `
     @page{size:A4;margin:12mm 12mm}
     *{box-sizing:border-box;margin:0;padding:0}
-    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(201,100,66,.2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(201,100,66,.35)}body{font-family:'Noto Sans KR',-apple-system,sans-serif;color:#1e293b;font-size:9px;line-height:1.4}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(61,57,41,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(61,57,41,.25)}body{font-family:'Noto Sans KR',-apple-system,sans-serif;color:#1e293b;font-size:9px;line-height:1.4}
     .wn-student{page-break-after:always}
     .wn-student:last-child{page-break-after:auto}
     .wn-header{text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #C96442}
