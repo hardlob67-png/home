@@ -22,6 +22,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .header-logo{display:flex;align-items:center;gap:12px}
 .logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .admin-badge{background:rgba(108,99,255,.15);color:#a0a7ff;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+@keyframes pulse-noti{0%,100%{opacity:1}50%{opacity:.6}}
 .btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
 
@@ -226,6 +227,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="header-logo">
     <div class="logo-text">META ENGLISH</div>
     <div class="admin-badge">성적 입력</div>
+    <a href="chat.html" id="chat-noti" style="display:none;position:relative;margin-left:8px;padding:5px 12px;background:rgba(239,68,68,.12);border-radius:20px;color:#ef4444;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer;animation:pulse-noti 2s infinite">💬 <span id="chat-noti-count">0</span></a>
   </div>
   <div style="display:flex;gap:10px;align-items:center">
     <span class="save-indicator idle" id="save-status">●  대기 중</span>
@@ -1922,6 +1924,22 @@ loadClassCards();
     setTimeout(()=>selectClassCard(gcId, gcName||''), 500);
   }
 })();
+
+// ===== 채팅 알림 =====
+async function checkUnreadChats(){
+  try{
+    const res=await fetch(`${SUPA_URL}/rest/v1/chats?sender=eq.parent&is_read=eq.false&select=id`,{headers:{...HDR,'Prefer':'count=exact'}});
+    const count=res.headers.get('content-range');
+    const total=count?parseInt(count.split('/')[1])||0:0;
+    const el=document.getElementById('chat-noti');
+    const cnt=document.getElementById('chat-noti-count');
+    if(total>0){el.style.display='inline-flex';cnt.textContent=total}
+    else{el.style.display='none'}
+  }catch(e){}
+}
+checkUnreadChats();
+setInterval(checkUnreadChats,300000);
+
 </script>
 </body>
 </html>
