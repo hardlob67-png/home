@@ -600,6 +600,7 @@ async function loadMembers(){
 
     // member_id → class name 매핑
     const classMap={};
+    window._allClasses = Array.isArray(classes)?classes:[];
     if(Array.isArray(classes)) classes.forEach(c=>{classMap[c.id]=c.name});
     const memberClassMap={};
     if(Array.isArray(cmData)) cmData.forEach(cm=>{
@@ -619,7 +620,9 @@ async function loadMembers(){
         <thead><tr><th>#</th><th>이름</th><th>보호자번호</th><th>학생번호</th><th>분반</th><th>구분</th><th></th></tr></thead>
         <tbody>${members.map((m,i)=>{
           const cls = memberClassMap[m.id]||[];
-          const clsHtml = cls.length ? cls.map(c=>`<a href="grade.html" onclick="sessionStorage.setItem('grade_class','${c.id}');sessionStorage.setItem('grade_class_name','${c.name}')" style="color:#C96442;text-decoration:none;font-size:14px;background:rgba(61,57,41,.06);padding:2px 8px;border-radius:6px;margin-right:4px">${c.name}</a>`).join('') : '<span style="color:var(--muted);font-size:14px">-</span>';
+          const currentClassId = cls.length?cls[0].id:'';
+          const classOpts = window._allClasses.map(c=>`<option value="${c.id}" ${c.id===currentClassId?'selected':''}>${c.name}</option>`).join('');
+          const clsHtml = `<select onchange="changeMemberClass('${m.id}',this.value)" style="font-size:13px;padding:4px 8px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer"><option value="">없음</option>${classOpts}</select>`;
           return `<tr>
             <td style="color:var(--muted)">${i+1}</td>
             <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
@@ -696,6 +699,22 @@ async function saveEditMember(){
   }catch(e){showToast('서버 오류','err')}
 }
 
+// ===== 분반 드롭다운 변경 =====
+async function changeMemberClass(memberId, classId){
+  try{
+    // 기존 분반 모두 삭제
+    await fetch(`${SUPA_URL}/rest/v1/class_members?member_id=eq.${memberId}`,{method:'DELETE',headers:HDR});
+    // 새 분반 추가
+    if(classId){
+      await fetch(`${SUPA_URL}/rest/v1/class_members`,{
+        method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+        body:JSON.stringify({member_id:memberId,class_id:classId})
+      });
+    }
+    showToast('분반 변경 완료 ✓','ok');
+  }catch(e){showToast('분반 변경 실패','err')}
+}
+
 // ===== 이름 클릭 팝업 =====
 let mpMemberId='',mpPhone='',mpStudentPhone='';
 function showMemberPopup(e,id,name,phone,sphone){
@@ -703,8 +722,13 @@ function showMemberPopup(e,id,name,phone,sphone){
   mpMemberId=id; mpPhone=phone; mpStudentPhone=sphone||'';
   const baseUrl=window.location.origin||'https://xn--oh5bnfltpyu64c.com';
   document.getElementById('mp-report').href=`${baseUrl}/report.html?member=${id}`;
-  // 학생번호 없으면 학생 버튼 숨김
-  document.getElementById('mp-sms-student').style.display=sphone?'block':'none';
+  // 학생번호 없으면 학생 버튼 비활성 표시
+  const stuBtn=document.getElementById('mp-sms-student');
+  if(sphone){
+    stuBtn.style.display='block';stuBtn.style.opacity='1';
+  } else {
+    stuBtn.style.display='block';stuBtn.style.opacity='.4';
+  }
   const popup=document.getElementById('member-popup');
   popup.style.left=Math.min(e.clientX,window.innerWidth-200)+'px';
   popup.style.top=e.clientY+'px';
@@ -712,6 +736,10 @@ function showMemberPopup(e,id,name,phone,sphone){
 }
 function mpSendSms(target){
   document.getElementById('member-popup').style.display='none';
+  if((target==='student'||target==='both')&&!mpStudentPhone){
+    showToast('학생번호가 등록되어 있지 않아요. 수정에서 추가해주세요.','err');
+    if(target==='student') return;
+  }
   const msg=prompt('보낼 메시지를 입력하세요:');
   if(!msg||!msg.trim()) return;
   const phones=[];
