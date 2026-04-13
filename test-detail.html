@@ -8,83 +8,80 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f0f4ff;--surface:#ffffff;--card:#ffffff;--border:#e2e8f0;
+  --bg:#FDFCFA;--surface:#ffffff;--card:#ffffff;--border:#EDE9E4;
   --accent:#C96442;--accent2:#D4764E;--accent-light:#FFF5EE;
-  --text:#1e293b;--muted:#64748b;
-  --green:#8B7355;--green-bg:#FFF8F0;--green-border:#F0D8B8;
-  --red:#dc2626;--red-bg:#fef2f2;--red-border:#fecaca;
-  --yellow:#B8976A;--yellow-bg:#FFF8F0;
-  --radius:16px;
+  --text:#3D3929;--muted:#A09888;
+  --green:#8B7355;--green-bg:#F7F5F2;--green-border:#EDE9E4;
+  --red:#B85C4A;--red-bg:#FDF6F4;--red-border:#F0DDD8;
+  --yellow:#B8976A;--yellow-bg:#F7F5F2;
+  --radius:14px;
 }
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;word-break:keep-all}
-body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(79,70,229,.08) 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:0}
+body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(200,180,150,.06) 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:0}
 .container{position:relative;z-index:1;width:100%;max-width:520px;padding:24px 20px 40px}
 .logo{text-align:center;margin-bottom:24px;padding-top:16px}
-.logo-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,#C9B09A,#B8976A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .logo-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
 
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.06);margin-bottom:16px}
-.card-header{padding:24px;background:linear-gradient(135deg,#C96442,#D4764E);color:#fff}
-.card-header .name{font-size:24px;font-weight:700}
-.card-header .sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px}
+.card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.03);margin-bottom:16px}
+.card-header{padding:24px;background:linear-gradient(135deg,#D4A088,#DEB89E);color:#fff}
+.card-header .name{font-size:22px;font-weight:700}
+.card-header .sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:4px}
 .card-body{padding:20px 24px}
 
 /* 점수 요약 */
-.score-summary{display:flex;gap:12px;margin-bottom:20px}
-.score-box{flex:1;text-align:center;padding:16px 12px;border-radius:12px;border:1px solid var(--border)}
-.score-box .num{font-size:28px;font-weight:700;line-height:1}
-.score-box .label{font-size:11px;color:var(--muted);margin-top:6px}
-.score-box.main{background:var(--accent-light);border-color:#E8C4A8}
-.score-box.main .num{color:var(--accent)}
-.score-box.good{background:var(--green-bg);border-color:var(--green-border)}
-.score-box.good .num{color:var(--green)}
-.score-box.bad{background:var(--red-bg);border-color:var(--red-border)}
-.score-box.bad .num{color:var(--red)}
+.score-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
+.score-box{text-align:center;padding:14px 10px;border-radius:10px;background:#F7F5F2;border:0.5px solid #EDE9E4}
+.score-box .num{font-size:20px;font-weight:700;line-height:1;color:#3D3929}
+.score-box .num span{font-size:13px;font-weight:500;color:#A09888}
+.score-box .label{font-size:11px;color:var(--muted);margin-top:4px}
+.score-box.bad{background:#FDF6F4;border-color:#F0DDD8}
+.score-box.bad .num{color:#B85C4A}
 
-/* 유형별 분석 */
+/* 유형별/카테고리 분석 */
 .type-analysis{margin-bottom:20px}
-.type-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.type-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #F0EBE6}
 .type-row:last-child{border-bottom:none}
-.type-name{font-size:14px;font-weight:600;width:60px;flex-shrink:0}
-.type-bar-wrap{flex:1;height:24px;background:#f1f5f9;border-radius:12px;overflow:hidden;position:relative}
-.type-bar{height:100%;border-radius:12px;transition:width .5s}
-.type-bar.green{background:linear-gradient(90deg,#8B7355,#B8976A)}
-.type-bar.red{background:linear-gradient(90deg,#f87171,#fca5a5)}
-.type-pct{font-size:13px;font-weight:700;width:50px;text-align:right;flex-shrink:0}
+.type-name{font-size:13px;font-weight:500;color:#3D3929;width:70px;flex-shrink:0}
+.type-bar-wrap{flex:1;height:12px;background:#F0EBE6;border-radius:6px;overflow:hidden;position:relative}
+.type-bar{height:100%;border-radius:6px;transition:width .5s}
+.type-bar.green{background:#C9B99A}
+.type-bar.red{background:#D4A8A0}
+.type-pct{font-size:12px;font-weight:600;width:50px;text-align:right;flex-shrink:0}
 
 /* 문항별 결과 */
-.q-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:8px;margin-bottom:20px}
+.q-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;margin-bottom:20px}
 .q-cell{
   aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-radius:10px;font-size:12px;font-weight:700;border:1px solid var(--border);transition:transform .1s;cursor:default;
+  border-radius:8px;font-size:12px;font-weight:600;border:0.5px solid #E4DED6;transition:transform .1s;cursor:default;
 }
-.q-cell:hover{transform:scale(1.08)}
-.q-cell .qnum{font-size:10px;color:var(--muted);margin-bottom:2px}
-.q-cell.correct{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
-.q-cell.wrong{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
-.q-cell.manual{background:var(--yellow-bg);border-color:#fde68a;color:var(--yellow)}
-.q-cell.empty{background:#f8fafc;color:var(--muted)}
+.q-cell:hover{transform:scale(1.05)}
+.q-cell .qnum{font-size:10px;color:#A09888;margin-bottom:2px}
+.q-cell.correct{background:#F2EDE7;border-color:#E4DED6;color:#6B6356}
+.q-cell.wrong{background:#FDF6F4;border-color:#F0DDD8;color:#B85C4A}
+.q-cell.manual{background:#F7F5F2;border-color:#EDE9E4;color:#8B7355}
+.q-cell.empty{background:#F8F6F3;color:#C4B8AA}
 
 /* 오답 목록 */
 .wrong-list{margin-bottom:16px}
-.wrong-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fef2f2;border:1px solid var(--red-border);border-radius:10px;margin-bottom:8px}
-.wrong-num{width:28px;height:28px;border-radius:8px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.wrong-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#FDF6F4;border:0.5px solid #F0DDD8;border-radius:10px;margin-bottom:8px}
+.wrong-num{width:28px;height:28px;border-radius:8px;background:#B85C4A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
 .wrong-detail{font-size:13px}
-.wrong-detail .your-ans{color:var(--red);font-weight:600}
-.wrong-detail .correct-ans{color:var(--green);font-weight:600}
+.wrong-detail .your-ans{color:#B85C4A;font-weight:600}
+.wrong-detail .correct-ans{color:#8B7355;font-weight:600}
 
 /* 추이 그래프 */
 .trend-section{padding:20px 24px}
-.trend-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.trend-chart{position:relative;height:160px;display:flex;align-items:flex-end;gap:8px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.trend-title{font-size:14px;font-weight:600;color:#6B6356;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.trend-chart{position:relative;height:160px;display:flex;align-items:flex-end;gap:8px;padding-bottom:24px;border-bottom:0.5px solid var(--border)}
 .trend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.trend-bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--accent),#D4764E);transition:height .5s;min-height:4px}
-.trend-bar.current{background:linear-gradient(180deg,#D4764E,#a78bfa)}
+.trend-bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#C9B99A,#B8976A);transition:height .5s;min-height:4px}
+.trend-bar.current{background:linear-gradient(180deg,#D4A088,#C9B99A)}
 .trend-label{font-size:10px;color:var(--muted);position:absolute;bottom:4px;text-align:center;width:100%}
-.trend-score{font-size:11px;font-weight:700;color:var(--accent)}
+.trend-score{font-size:11px;font-weight:700;color:#8B7355}
 
-.footer{text-align:center;padding:20px;font-size:12px;color:var(--muted)}
-.back-link{display:inline-block;margin-bottom:20px;font-size:13px;color:var(--accent);text-decoration:none}
+.footer{text-align:center;padding:20px;font-size:12px;color:#C4B8AA}
+.back-link{display:inline-block;margin-bottom:20px;font-size:13px;color:#8B7355;text-decoration:none}
 .back-link:hover{text-decoration:underline}
 
 .state-msg{text-align:center;padding:80px 20px}
@@ -200,31 +197,10 @@ async function load(){
       </div>
       <div class="card-body">
         <div class="score-summary">
-          <div class="score-box main"><div class="num">${resp.total_score}</div><div class="label">점수</div></div>
-          <div class="score-box" style="border-color:var(--border)"><div class="num">${resp.total_points}</div><div class="label">만점</div></div>
-          <div class="score-box bad"><div class="num">${wrongItems.length}</div><div class="label">오답</div></div>
+          <div class="score-box"><div class="num">${resp.total_score}<span>/${resp.total_points}</span></div><div class="label">점수</div></div>
+          <div class="score-box${mcMax>0&&mcScore>=mcMax?'':mcPct<50?' bad':''}"><div class="num">${mcScore}<span>/${mcMax}</span></div><div class="label">객관식</div></div>
+          <div class="score-box${saMax>0&&saScore>=saMax?'':saPct<50?' bad':''}"><div class="num">${saScore}<span>/${saMax}</span></div><div class="label">주관식</div></div>
         </div>`;
-
-    // 유형별 분석
-    if(mcTotal>0 || saTotal>0){
-      html += `<div class="type-analysis">
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px">📊 유형별 분석</div>`;
-      if(mcTotal>0){
-        html += `<div class="type-row">
-          <div class="type-name">객관식</div>
-          <div class="type-bar-wrap"><div class="type-bar green" style="width:${mcPct}%"></div></div>
-          <div class="type-pct" style="color:${mcPct>=70?'var(--green)':'var(--red)'}">${mcScore}/${mcMax}</div>
-        </div>`;
-      }
-      if(saTotal>0){
-        html += `<div class="type-row">
-          <div class="type-name">주관식</div>
-          <div class="type-bar-wrap"><div class="type-bar green" style="width:${saPct}%"></div></div>
-          <div class="type-pct" style="color:${saPct>=70?'var(--green)':'var(--red)'}">${saScore}/${saMax}</div>
-        </div>`;
-      }
-      html += `</div>`;
-    }
 
     // 카테고리별 분석
     const catStats = {};
@@ -240,21 +216,21 @@ async function load(){
     const catKeys = Object.keys(catStats).filter(k=>k!=='기타').concat(catStats['기타']?['기타']:[]);
     if(catKeys.length > 1 || (catKeys.length===1 && catKeys[0]!=='기타')){
       html += `<div class="type-analysis" style="margin-top:4px">
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px">📂 카테고리별 분석</div>`;
+        <div style="font-size:13px;font-weight:600;color:#6B6356;margin-bottom:12px">카테고리별 분석</div>`;
       catKeys.forEach(cat=>{
         const s = catStats[cat];
         const p = s.max>0 ? Math.round(s.score/s.max*100) : 0;
         html += `<div class="type-row">
           <div class="type-name">${cat}</div>
           <div class="type-bar-wrap"><div class="type-bar ${p>=70?'green':'red'}" style="width:${p}%"></div></div>
-          <div class="type-pct" style="color:${p>=70?'var(--green)':'var(--red)'}">${s.score}/${s.max}</div>
+          <div class="type-pct" style="color:${p>=70?'#6B6356':'#B85C4A'}">${s.score}/${s.max}</div>
         </div>`;
       });
       html += `</div>`;
     }
 
     // 문항별 결과 그리드
-    html += `<div style="font-size:14px;font-weight:700;margin-bottom:12px">📋 문항별 결과</div>
+    html += `<div style="font-size:13px;font-weight:600;color:#6B6356;margin-bottom:10px">문항별 결과</div>
       <div class="q-results">`;
     questions.forEach((q,i)=>{
       const qnum = String(i+1);
@@ -276,7 +252,7 @@ async function load(){
     // 오답 목록
     if(wrongItems.length){
       html += `<div class="card"><div class="card-body">
-        <div style="font-size:14px;font-weight:700;margin-bottom:12px">❌ 오답 문항</div>
+        <div style="font-size:13px;font-weight:600;color:#6B6356;margin-bottom:10px">오답 문항</div>
         <div class="wrong-list">`;
       wrongItems.forEach(w=>{
         html += `<div class="wrong-item">
@@ -343,14 +319,14 @@ async function load(){
 
       // 전체 추이 선 그래프
       html += `<div class="card"><div class="trend-section">
-        <div class="trend-title">📈 전체 점수 추이</div>
+        <div class="trend-title">전체 점수 추이</div>
         <canvas id="trend-total-chart" height="180"></canvas>`;
 
       // 카테고리별 추이 선 그래프
       const catList = [...allCats];
       const catColors = {'어휘':'#C96442','문법':'#D4764E','독해':'#6B8E7B','듣기':'#7B9EA8','쓰기':'#C96442'};
       if(catList.length > 0){
-        html += `<div style="margin-top:24px"><div class="trend-title">📂 카테고리별 추이</div>
+        html += `<div style="margin-top:24px"><div class="trend-title">카테고리별 추이</div>
           <canvas id="trend-cat-chart" height="180"></canvas></div>`;
       }
       html += `</div></div>`;
@@ -391,10 +367,10 @@ async function load(){
           data:{
             labels,
             datasets:[
-              {label:'내 점수',data:myScores,borderColor:'#C96442',backgroundColor:'rgba(201,100,66,.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#C96442'},
+              {label:'내 점수',data:myScores,borderColor:'#C9A088',backgroundColor:'rgba(201,160,136,.06)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#C9A088'},
               {label:'반 최고',data:maxLine,borderColor:'#8B7355',borderDash:[6,3],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#8B7355'},
               {label:'반 평균',data:avgLine,borderColor:'#B8976A',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#B8976A'},
-              {label:'상위 30%',data:pctLine,borderColor:'#ec4899',borderDash:[8,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#ec4899'}
+              {label:'상위 30%',data:pctLine,borderColor:'#C4978C',borderDash:[8,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#C4978C'}
             ]
           },
           options:{
