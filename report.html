@@ -557,12 +557,12 @@ async function renderScoreChart(classId, myMemberId, chartOpts){
     if(showMax) datasets.push({
       label:'반 최고',
       data:maxScores,
-      borderColor:'#8B7355',
+      borderColor:'#5B8A72',
       borderDash:[6,3],
       tension:.3,
       borderWidth:2,
       pointRadius:3,
-      pointBackgroundColor:'#8B7355',
+      pointBackgroundColor:'#5B8A72',
     });
     if(showAvg) datasets.push({
       label:'반 평균',
@@ -577,12 +577,12 @@ async function renderScoreChart(classId, myMemberId, chartOpts){
     if(showPct) datasets.push({
       label:`상위 ${pctValue}%`,
       data:pctScores,
-      borderColor:'#ec4899',
+      borderColor:'#8B7BA8',
       borderDash:[8,4],
       tension:.3,
       borderWidth:2,
       pointRadius:3,
-      pointBackgroundColor:'#ec4899',
+      pointBackgroundColor:'#8B7BA8',
     });
 
     new Chart(ctx,{
