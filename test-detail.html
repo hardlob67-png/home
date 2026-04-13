@@ -154,7 +154,7 @@ async function load(){
     const allResponses = await trendRes.json();
 
     // 분석
-    let correctCount=0, wrongCount=0, mcCorrect=0, mcTotal=0, saTotal=0, saScore=0, saMax=0;
+    let correctCount=0, wrongCount=0, mcCorrect=0, mcTotal=0, mcScore=0, mcMax=0, saTotal=0, saScore=0, saMax=0;
     const wrongItems = [];
 
     questions.forEach((q,i)=>{
@@ -164,6 +164,8 @@ async function load(){
 
       if(q.type==='mc'){
         mcTotal++;
+        mcMax += q.points;
+        mcScore += (sc||0);
         if(sc>0){ correctCount++; mcCorrect++; }
         else{
           wrongCount++;
@@ -180,7 +182,7 @@ async function load(){
     });
 
     const pct = resp.total_points>0 ? Math.round(resp.total_score/resp.total_points*100) : 0;
-    const mcPct = mcTotal>0 ? Math.round(mcCorrect/mcTotal*100) : 0;
+    const mcPct = mcMax>0 ? Math.round(mcScore/mcMax*100) : 0;
     const saPct = saMax>0 ? Math.round(saScore/saMax*100) : 0;
 
     let html = '';
@@ -198,8 +200,7 @@ async function load(){
       </div>
       <div class="card-body">
         <div class="score-summary">
-          <div class="score-box main"><div class="num">${pct}%</div><div class="label">정답률</div></div>
-          <div class="score-box good"><div class="num">${resp.total_score}</div><div class="label">득점</div></div>
+          <div class="score-box main"><div class="num">${resp.total_score}</div><div class="label">점수</div></div>
           <div class="score-box" style="border-color:var(--border)"><div class="num">${resp.total_points}</div><div class="label">만점</div></div>
           <div class="score-box bad"><div class="num">${wrongItems.length}</div><div class="label">오답</div></div>
         </div>`;
@@ -212,7 +213,7 @@ async function load(){
         html += `<div class="type-row">
           <div class="type-name">객관식</div>
           <div class="type-bar-wrap"><div class="type-bar green" style="width:${mcPct}%"></div></div>
-          <div class="type-pct" style="color:${mcPct>=70?'var(--green)':'var(--red)'}">${mcCorrect}/${mcTotal}</div>
+          <div class="type-pct" style="color:${mcPct>=70?'var(--green)':'var(--red)'}">${mcScore}/${mcMax}</div>
         </div>`;
       }
       if(saTotal>0){
@@ -399,7 +400,7 @@ async function load(){
           options:{
             responsive:true,
             plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Noto Sans KR'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
-            scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
+            scales:{y:{min:0,max:105,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
             interaction:{intersect:false,mode:'index'}
           }
         });
@@ -422,7 +423,7 @@ async function load(){
           options:{
             responsive:true,
             plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Noto Sans KR'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
-            scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
+            scales:{y:{min:0,max:105,ticks:{callback:v=>v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
             interaction:{intersect:false,mode:'index'}
           }
         });
