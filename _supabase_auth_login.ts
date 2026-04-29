@@ -7,14 +7,15 @@
 // 배포 후 환경변수 확인:
 //   - SUPABASE_URL (자동 주입)
 //   - SUPABASE_SERVICE_ROLE_KEY (자동 주입)
-//   - SUPABASE_JWT_SECRET (Project Settings → API → JWT Secret 값을 복사해서 추가)
+//   - JWT_SECRET (Project Settings → API → JWT Secret 값을 복사해서 추가)
+//     ※ SUPABASE_ 접두사는 예약어라 사용 불가 → 'JWT_SECRET' 으로
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { create as signJWT, getNumericDate } from "https://deno.land/x/djwt@v3.0.2/mod.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const JWT_SECRET = Deno.env.get("SUPABASE_JWT_SECRET")!;
+const JWT_SECRET = Deno.env.get("JWT_SECRET")!;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
