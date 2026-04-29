@@ -334,6 +334,28 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
     <div class="section-title">등록된 회원</div>
     <div class="member-count" id="member-count">불러오는 중...</div>
+
+    <!-- 일괄 작업 -->
+    <div id="bulk-toolbar" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:none">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <strong style="font-size:14px">분반 필터</strong>
+        <select id="member-filter-class" onchange="renderMembers()" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;font-size:14px">
+          <option value="">전체</option>
+          <option value="__none__">분반 없음</option>
+        </select>
+        <span id="member-filter-count" style="color:var(--muted);font-size:14px"></span>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed var(--border)">
+        <button onclick="bulkDeleteByFilter()" style="padding:8px 14px;border:1px solid var(--red);border-radius:8px;background:rgba(255,101,132,.08);color:var(--red);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🗑 필터된 회원 일괄 삭제</button>
+        <span style="color:var(--muted)">|</span>
+        <select id="bulk-target-class" style="padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;font-size:14px">
+          <option value="">분반 변경 → 대상 선택...</option>
+          <option value="__none__">분반 없음(해제)</option>
+        </select>
+        <button onclick="bulkChangeByFilter()" style="padding:8px 14px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">일괄 분반 변경</button>
+      </div>
+    </div>
+
     <div id="member-table-wrap"><div class="spinner">불러오는 중...</div></div>
   </div>
 
@@ -587,6 +609,10 @@ function switchTab(t){
 })();
 
 // ===== 회원 관리 =====
+let _membersCache = [];
+let _classMapCache = {};
+let _memberClassMapCache = {};
+
 async function loadMembers(){
   try{
     const [mRes, cmRes, cRes] = await Promise.all([
@@ -598,42 +624,33 @@ async function loadMembers(){
     const cmData = await cmRes.json();
     const classes = await cRes.json();
 
-    // member_id → class name 매핑
-    const classMap={};
+    _classMapCache = {};
     window._allClasses = Array.isArray(classes)?classes:[];
-    if(Array.isArray(classes)) classes.forEach(c=>{classMap[c.id]=c.name});
-    const memberClassMap={};
+    if(Array.isArray(classes)) classes.forEach(c=>{_classMapCache[c.id]=c.name});
+    _memberClassMapCache = {};
     if(Array.isArray(cmData)) cmData.forEach(cm=>{
-      if(!memberClassMap[cm.member_id]) memberClassMap[cm.member_id]=[];
-      if(classMap[cm.class_id]) memberClassMap[cm.member_id].push({id:cm.class_id,name:classMap[cm.class_id]});
+      if(!_memberClassMapCache[cm.member_id]) _memberClassMapCache[cm.member_id]=[];
+      if(_classMapCache[cm.class_id]) _memberClassMapCache[cm.member_id].push({id:cm.class_id,name:_classMapCache[cm.class_id]});
     });
+    _membersCache = Array.isArray(members) ? members : [];
 
-    const nonAdmin = members.filter(m=>m.role!=='admin');
-    document.getElementById('member-count').innerHTML=`총 <span>${nonAdmin.length}</span>명 등록됨`;
-    if(!members.length){
-      document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">등록된 회원이 없어요</div>';
-      return;
+    // 일괄 작업 박스 드롭다운 갱신 (현재 선택값 유지)
+    const filterSel = document.getElementById('member-filter-class');
+    const targetSel = document.getElementById('bulk-target-class');
+    const curFilter = filterSel ? filterSel.value : '';
+    const curTarget = targetSel ? targetSel.value : '';
+    if(filterSel){
+      filterSel.innerHTML = '<option value="">전체</option><option value="__none__">분반 없음</option>' +
+        window._allClasses.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+      filterSel.value = curFilter;
     }
-    const baseUrl = window.location.origin || 'https://xn--oh5bnfltpyu64c.com';
-    document.getElementById('member-table-wrap').innerHTML=`
-      <table class="member-table">
-        <thead><tr><th>#</th><th>이름</th><th>보호자번호</th><th>학생번호</th><th>분반</th><th>구분</th><th></th></tr></thead>
-        <tbody>${members.map((m,i)=>{
-          const cls = memberClassMap[m.id]||[];
-          const currentClassId = cls.length?cls[0].id:'';
-          const classOpts = window._allClasses.map(c=>`<option value="${c.id}" ${c.id===currentClassId?'selected':''}>${c.name}</option>`).join('');
-          const clsHtml = `<select onchange="changeMemberClass('${m.id}',this.value)" style="font-size:13px;padding:4px 8px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer"><option value="">없음</option>${classOpts}</select>`;
-          return `<tr>
-            <td style="color:var(--muted)">${i+1}</td>
-            <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
-            <td style="font-family:monospace;font-size:15px">${m.phone}</td>
-            <td style="font-family:monospace;font-size:15px;color:var(--muted)">${m.student_phone||'-'}</td>
-            <td>${clsHtml}</td>
-            <td>${m.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
-            <td style="white-space:nowrap">${m.role!=='admin'?`<button class="btn-del-sm" style="background:rgba(61,57,41,.06);color:#6B6356;margin-right:4px" onclick="openEditMember('${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')">수정</button><button class="btn-del-sm" onclick="deleteMember('${m.id}','${m.name}')">삭제</button>`:''}</td>
-          </tr>`}).join('')}
-        </tbody>
-      </table>`;
+    if(targetSel){
+      targetSel.innerHTML = '<option value="">분반 변경 → 대상 선택...</option><option value="__none__">분반 없음(해제)</option>' +
+        window._allClasses.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+      targetSel.value = curTarget;
+    }
+
+    renderMembers();
   }catch(e){ document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">불러오기 실패</div>' }
 
   // 엑셀 업로드용 분반 드롭다운 로드
@@ -643,6 +660,117 @@ async function loadMembers(){
     const sel = document.getElementById('excel-class');
     sel.innerHTML = '<option value="">분반 없음</option>' + (Array.isArray(classes)?classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join(''):'');
   }catch(e){}
+}
+
+function renderMembers(){
+  const members = _membersCache || [];
+  const memberClassMap = _memberClassMapCache;
+  const filterSel = document.getElementById('member-filter-class');
+  const filterVal = filterSel ? filterSel.value : '';
+
+  const nonAdmin = members.filter(m=>m.role!=='admin');
+  document.getElementById('member-count').innerHTML=`총 <span>${nonAdmin.length}</span>명 등록됨`;
+  if(!members.length){
+    document.getElementById('member-table-wrap').innerHTML='<div class="empty-state">등록된 회원이 없어요</div>';
+    document.getElementById('bulk-toolbar').style.display='none';
+    return;
+  }
+  document.getElementById('bulk-toolbar').style.display='block';
+
+  // 필터 적용 (관리자는 일괄 작업에서 항상 제외)
+  const filteredNonAdmin = nonAdmin.filter(m=>{
+    const cls = memberClassMap[m.id]||[];
+    if(filterVal==='') return true;
+    if(filterVal==='__none__') return cls.length===0;
+    return cls.some(c=>c.id===filterVal);
+  });
+  document.getElementById('member-filter-count').textContent = filterVal==='' ? '' : `· ${filteredNonAdmin.length}명 표시 / ${nonAdmin.length}명 중`;
+
+  // 테이블에 표시할 목록: 필터 '전체'면 admin 포함, 그 외엔 admin 제외
+  const displayList = filterVal==='' ? members : filteredNonAdmin;
+
+  document.getElementById('member-table-wrap').innerHTML=`
+    <table class="member-table">
+      <thead><tr><th>#</th><th>이름</th><th>보호자번호</th><th>학생번호</th><th>분반</th><th>구분</th><th></th></tr></thead>
+      <tbody>${displayList.map((m,i)=>{
+        const cls = memberClassMap[m.id]||[];
+        const currentClassId = cls.length?cls[0].id:'';
+        const classOpts = window._allClasses.map(c=>`<option value="${c.id}" ${c.id===currentClassId?'selected':''}>${c.name}</option>`).join('');
+        const clsHtml = `<select onchange="changeMemberClass('${m.id}',this.value)" style="font-size:13px;padding:4px 8px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer"><option value="">없음</option>${classOpts}</select>`;
+        return `<tr>
+          <td style="color:var(--muted)">${i+1}</td>
+          <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
+          <td style="font-family:monospace;font-size:15px">${m.phone}</td>
+          <td style="font-family:monospace;font-size:15px;color:var(--muted)">${m.student_phone||'-'}</td>
+          <td>${clsHtml}</td>
+          <td>${m.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
+          <td style="white-space:nowrap">${m.role!=='admin'?`<button class="btn-del-sm" style="background:rgba(61,57,41,.06);color:#6B6356;margin-right:4px" onclick="openEditMember('${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')">수정</button><button class="btn-del-sm" onclick="deleteMember('${m.id}','${m.name}')">삭제</button>`:''}</td>
+        </tr>`}).join('')}
+      </tbody>
+    </table>`;
+}
+
+function _filterLabelText(){
+  const v = document.getElementById('member-filter-class').value;
+  if(v==='') return '전체';
+  if(v==='__none__') return '분반 없음';
+  return (window._allClasses||[]).find(c=>c.id===v)?.name || '?';
+}
+
+function _getFilteredMemberIds(){
+  const v = document.getElementById('member-filter-class').value;
+  const memberClassMap = _memberClassMapCache;
+  return (_membersCache||[]).filter(m=>{
+    if(m.role==='admin') return false;
+    const cls = memberClassMap[m.id]||[];
+    if(v==='') return true;
+    if(v==='__none__') return cls.length===0;
+    return cls.some(c=>c.id===v);
+  }).map(m=>m.id);
+}
+
+async function bulkDeleteByFilter(){
+  const ids = _getFilteredMemberIds();
+  if(!ids.length){ showToast('대상 회원이 없어요','err'); return; }
+  const label = _filterLabelText();
+  if(!confirm(`[${label}] 회원 ${ids.length}명을 영구 삭제합니다.\n관리자는 자동 제외됩니다.\n되돌릴 수 없습니다. 진행할까요?`)) return;
+  if(!confirm(`정말 ${ids.length}명을 삭제할까요? 마지막 확인입니다.`)) return;
+  const inClause = ids.join(',');
+  try{
+    // 1) class_members 매핑 먼저 제거 (외래키 안전)
+    await fetch(`${SUPA_URL}/rest/v1/class_members?member_id=in.(${inClause})`,{method:'DELETE',headers:HDR});
+    // 2) members 삭제 (quiz_records, badges는 cascade로 자동 정리)
+    const res = await fetch(`${SUPA_URL}/rest/v1/members?id=in.(${inClause})`,{method:'DELETE',headers:HDR});
+    if(res.ok){ showToast(`${ids.length}명 삭제 완료 ✓`,'ok'); loadMembers(); }
+    else{ showToast('삭제 실패','err'); }
+  }catch(e){ showToast('서버 오류','err'); }
+}
+
+async function bulkChangeByFilter(){
+  const targetClassId = document.getElementById('bulk-target-class').value;
+  if(!targetClassId){ showToast('대상 분반을 선택하세요','err'); return; }
+  const ids = _getFilteredMemberIds();
+  if(!ids.length){ showToast('대상 회원이 없어요','err'); return; }
+  const targetName = targetClassId==='__none__' ? '분반 없음(해제)' : ((window._allClasses||[]).find(c=>c.id===targetClassId)?.name || '?');
+  const fromLabel = _filterLabelText();
+  if(!confirm(`[${fromLabel}] 의 ${ids.length}명을 [${targetName}] (으)로 일괄 변경합니다. 진행할까요?`)) return;
+  const inClause = ids.join(',');
+  try{
+    // 기존 분반 매핑 모두 제거
+    await fetch(`${SUPA_URL}/rest/v1/class_members?member_id=in.(${inClause})`,{method:'DELETE',headers:HDR});
+    // '분반 없음(해제)'이 아니면 새 매핑 일괄 INSERT
+    if(targetClassId !== '__none__'){
+      const inserts = ids.map(id=>({member_id:id, class_id:targetClassId}));
+      const res = await fetch(`${SUPA_URL}/rest/v1/class_members`,{
+        method:'POST',
+        headers:{...HDR,'Prefer':'return=minimal'},
+        body: JSON.stringify(inserts)
+      });
+      if(!res.ok){ showToast('일괄 변경 실패','err'); return; }
+    }
+    showToast(`${ids.length}명 분반 변경 완료 ✓`,'ok');
+    loadMembers();
+  }catch(e){ showToast('서버 오류','err'); }
 }
 
 async function addMember(){
