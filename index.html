@@ -104,13 +104,24 @@ async function doLogin(){
   const btn = document.getElementById('login-btn');
   btn.disabled=true; btn.textContent='확인 중...';
   try {
-    const res = await fetch(`${SUPA_URL}/rest/v1/members?name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&select=*`, {
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    // Edge Function으로 로그인 → JWT 발급 (RLS와 호환)
+    const res = await fetch(`${SUPA_URL}/functions/v1/auth_login`, {
+      method:'POST',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'},
+      body: JSON.stringify({name, phone})
     });
-    const data = await res.json();
-    if(!data||!data.length){ showMsg('등록된 정보와 일치하지 않아요. 선생님께 문의해주세요.'); btn.disabled=false; btn.textContent='입장하기'; return }
-    sessionStorage.setItem('qhub_user', JSON.stringify(data[0]));
-    location.href = data[0].role==='admin' ? 'admin.html' : 'dashboard.html';
+    if(res.status === 401){
+      showMsg('등록된 정보와 일치하지 않아요. 선생님께 문의해주세요.');
+      btn.disabled=false; btn.textContent='입장하기'; return;
+    }
+    if(!res.ok){
+      showMsg('서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.');
+      btn.disabled=false; btn.textContent='입장하기'; return;
+    }
+    const {token, user} = await res.json();
+    sessionStorage.setItem('qhub_token', token);
+    sessionStorage.setItem('qhub_user', JSON.stringify(user));
+    location.href = user.role==='admin' ? 'admin.html' : 'dashboard.html';
   } catch(e){ showMsg('서버 연결 오류가 발생했어요. 잠시 후 다시 시도해주세요.'); btn.disabled=false; btn.textContent='입장하기' }
 }
 </script>

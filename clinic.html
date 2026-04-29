@@ -240,6 +240,10 @@ input:focus,select:focus{border-color:var(--accent)}
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+const _token = sessionStorage.getItem('qhub_token');
+if(_token) HDR.Authorization = 'Bearer ' + _token;
+const _origFetch = window.fetch;
+window.fetch = function(...args){return _origFetch.apply(this,args).then(r=>{if(r.status===401){sessionStorage.clear();location.href='index.html';}return r;});};
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 function safeUrl(u){const s=String(u||'').trim();if(!s)return '';if(/^(https?:|\/|\.\/|\.\.\/)/i.test(s))return s;return ''}
 
