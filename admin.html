@@ -1423,8 +1423,8 @@ async function addStudentToClass(){
 }
 
 async function findOrCreateMember(name, phone){
-  // 전화번호로 기존 회원 검색
-  const res = await fetch(`${SUPA_URL}/rest/v1/members?phone=eq.${encodeURIComponent(phone)}&select=id,name`,{headers:HDR});
+  // 이름+전화 둘 다 일치해야 기존 회원으로 판정 (쌍둥이는 같은 phone 다른 name → 별도 회원)
+  const res = await fetch(`${SUPA_URL}/rest/v1/members?name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&select=id`,{headers:HDR});
   const existing = await res.json();
   if(existing.length) return existing[0].id;
 
