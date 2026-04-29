@@ -27,26 +27,32 @@ end $$;
 -- ============================================================
 --  헬퍼 함수: JWT claim 빠르게 꺼내기
 -- ============================================================
--- public 스키마에 만든다 (auth 스키마는 protected)
+-- public 스키마에 만들고 SECURITY DEFINER로 실행 (auth 스키마는 protected)
 create or replace function public.app_role() returns text
-  language sql stable as $$
-    select coalesce(auth.jwt()->>'app_role', '')::text
+  language sql stable security definer set search_path = public, auth as $$
+    select coalesce(current_setting('request.jwt.claims', true)::jsonb->>'app_role', '')::text
   $$;
 
 create or replace function public.user_id() returns uuid
-  language sql stable as $$
-    select nullif(auth.jwt()->>'sub', '')::uuid
+  language sql stable security definer set search_path = public, auth as $$
+    select nullif(current_setting('request.jwt.claims', true)::jsonb->>'sub', '')::uuid
   $$;
 
 create or replace function public.is_admin() returns boolean
-  language sql stable as $$
-    select auth.jwt()->>'app_role' = 'admin'
+  language sql stable security definer set search_path = public, auth as $$
+    select coalesce(current_setting('request.jwt.claims', true)::jsonb->>'app_role', '') = 'admin'
+  $$;
+
+create or replace function public.is_authenticated() returns boolean
+  language sql stable security definer set search_path = public, auth as $$
+    select coalesce(current_setting('request.jwt.claims', true), '') <> ''
   $$;
 
 -- anon, authenticated가 호출할 수 있도록 권한 부여
 grant execute on function public.app_role() to anon, authenticated;
 grant execute on function public.user_id() to anon, authenticated;
 grant execute on function public.is_admin() to anon, authenticated;
+grant execute on function public.is_authenticated() to anon, authenticated;
 
 -- ============================================================
 --  members
@@ -72,7 +78,7 @@ create policy "members_self_select" on members for select
 create policy "classes_admin_all" on classes for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "classes_authenticated_select" on classes for select
-  using (auth.role() = 'authenticated');
+  using (public.is_authenticated());
 
 create policy "class_members_admin_all" on class_members for all
   using (public.is_admin()) with check (public.is_admin());
@@ -88,7 +94,7 @@ create policy "class_members_self_select" on class_members for select
 create policy "quizzes_admin_all" on quizzes for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "quizzes_authenticated_select" on quizzes for select
-  using (auth.role() = 'authenticated');
+  using (public.is_authenticated());
 
 create policy "quiz_records_admin_all" on quiz_records for all
   using (public.is_admin()) with check (public.is_admin());
@@ -117,7 +123,7 @@ create policy "combo_records_self_insert" on combo_records for insert
 create policy "announcements_admin_all" on announcements for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "announcements_authenticated_select" on announcements for select
-  using (auth.role() = 'authenticated');
+  using (public.is_authenticated());
 
 -- ============================================================
 --  chats — admin은 모두, 학부모/학생은 본인 관련 메시지만
@@ -136,7 +142,7 @@ create policy "chats_self_rw" on chats for all
 create policy "clinic_locations_admin_all" on clinic_locations for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "clinic_locations_authenticated_select" on clinic_locations for select
-  using (auth.role() = 'authenticated');
+  using (public.is_authenticated());
 
 create policy "clinics_admin_all" on clinics for all
   using (public.is_admin() or public.app_role() = 'clinic_admin')
@@ -152,7 +158,7 @@ create policy "clinics_self_select" on clinics for select
 create policy "grade_sessions_admin_all" on grade_sessions for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "grade_sessions_authenticated_select" on grade_sessions for select
-  using (auth.role() = 'authenticated');
+  using (public.is_authenticated());
 
 create policy "grades_admin_all" on grades for all
   using (public.is_admin()) with check (public.is_admin());
@@ -167,12 +173,12 @@ create policy "grades_self_select" on grades for select
 create policy "test_sets_admin_all" on test_sets for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "test_sets_authenticated_select" on test_sets for select
-  using (auth.role() = 'authenticated');
+  using (public.is_authenticated());
 
 create policy "test_versions_admin_all" on test_versions for all
   using (public.is_admin()) with check (public.is_admin());
 create policy "test_versions_authenticated_select" on test_versions for select
-  using (auth.role() = 'authenticated');
+  using (public.is_authenticated());
 
 create policy "test_responses_admin_all" on test_responses for all
   using (public.is_admin()) with check (public.is_admin());
