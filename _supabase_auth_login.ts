@@ -63,14 +63,19 @@ Deno.serve(async (req) => {
       false, ["sign"]
     );
 
+    const now = getNumericDate(0);
     const token = await signJWT(
       { alg: "HS256", typ: "JWT" },
       {
+        iss: "supabase",                          // Supabase 표준
+        aud: "authenticated",                     // Supabase 표준 audience
         sub: user.id,
-        role: "authenticated", // Supabase 표준 role
-        app_role: user.role || "user", // 'admin', 'user', 'clinic_admin'
+        role: "authenticated",                    // Supabase 표준 role
+        app_role: user.role || "user",            // 'admin', 'user', 'clinic_admin'
         name: user.name,
-        exp: getNumericDate(60 * 60 * 8), // 8시간
+        email: `${user.id}@meta-english.local`,   // Supabase가 종종 요구
+        iat: now,
+        exp: getNumericDate(60 * 60 * 8),         // 8시간
       },
       key
     );
