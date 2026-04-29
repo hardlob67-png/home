@@ -110,12 +110,13 @@ create policy "badges_self_select" on badges for select
 create policy "badges_self_insert" on badges for insert
   with check (member_id = public.user_id());
 
+-- combo_records: 컬럼 구조 단순(quiz_id 기반). 인증된 사용자 모두 read+insert.
 create policy "combo_records_admin_all" on combo_records for all
   using (public.is_admin()) with check (public.is_admin());
-create policy "combo_records_self_select" on combo_records for select
-  using (member_id = public.user_id());
-create policy "combo_records_self_insert" on combo_records for insert
-  with check (member_id = public.user_id());
+create policy "combo_records_authenticated_select" on combo_records for select
+  using (public.is_authenticated());
+create policy "combo_records_authenticated_insert" on combo_records for insert
+  with check (public.is_authenticated());
 
 -- ============================================================
 --  announcements (공지) — admin만 작성, 모두 read
@@ -144,11 +145,12 @@ create policy "clinic_locations_admin_all" on clinic_locations for all
 create policy "clinic_locations_authenticated_select" on clinic_locations for select
   using (public.is_authenticated());
 
+-- clinics: member_phone 컬럼 사용 (member_id 없음)
 create policy "clinics_admin_all" on clinics for all
   using (public.is_admin() or public.app_role() = 'clinic_admin')
   with check (public.is_admin() or public.app_role() = 'clinic_admin');
 create policy "clinics_self_select" on clinics for select
-  using (member_id = public.user_id());
+  using (member_phone = (select phone from members where id = public.user_id() limit 1));
 
 -- ============================================================
 --  grades / grade_sessions
