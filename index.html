@@ -118,11 +118,7 @@ async function doLogin(){
       showMsg('서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.');
       btn.disabled=false; btn.textContent='입장하기'; return;
     }
-    const data = await res.json();
-    // ===== 임시 디버그 =====
-    alert('DEBUG\n\ntoken 길이: ' + (data.token||'').length + '\ntoken 앞 40자: ' + (data.token||'(null)').substring(0,40) + '\n\nuser: ' + JSON.stringify(data.user) + '\n\n전체 응답 키: ' + Object.keys(data).join(','));
-    // ====================
-    const {token, user} = data;
+    const {token, user} = await res.json();
     sessionStorage.setItem('qhub_token', token);
     sessionStorage.setItem('qhub_user', JSON.stringify(user));
     location.href = user.role==='admin' ? 'admin.html' : 'dashboard.html';

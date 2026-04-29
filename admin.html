@@ -526,24 +526,10 @@ const _token = sessionStorage.getItem('qhub_token');
 if(_token) HDR.Authorization = 'Bearer ' + _token;
 
 // 토큰 만료 등 401 응답 시 자동 로그아웃
-let _alertedOnce = false;
 const _origFetch = window.fetch;
 window.fetch = function(...args){
-  return _origFetch.apply(this, args).then(async r=>{
-    if(r.status===401){
-      // ===== 임시 디버그 =====
-      if(!_alertedOnce){
-        _alertedOnce = true;
-        try{
-          const clone = r.clone();
-          const body = await clone.text();
-          const url = typeof args[0]==='string' ? args[0] : (args[0]&&args[0].url) || '';
-          alert('DEBUG 401\nURL: ' + url + '\n\nBody: ' + body);
-        }catch(_){}
-      }
-      // ====================
-      sessionStorage.clear(); location.href='index.html';
-    }
+  return _origFetch.apply(this, args).then(r=>{
+    if(r.status===401){ sessionStorage.clear(); location.href='index.html'; }
     return r;
   });
 };
