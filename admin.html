@@ -448,7 +448,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
       <div class="section-title"><span id="class-detail-name"></span></div>
 
       <!-- 엑셀 업로드 -->
-      <p style="font-size:15px;color:var(--muted);margin-bottom:12px">엑셀 파일 1열: 이름 &nbsp;|&nbsp; 2열: 핸드폰 번호 &nbsp;(헤더 행 자동 건너뜀)<br>이미 등록된 번호는 기존 학생을 반에 추가하고, 새 번호는 회원 등록 후 추가합니다.</p>
+      <p style="font-size:15px;color:var(--muted);margin-bottom:12px">엑셀 파일 1열: 이름 &nbsp;|&nbsp; 2열: 보호자번호 &nbsp;|&nbsp; 3열: 학생번호(선택) &nbsp;(헤더 행 자동 건너뜀)<br>이미 등록된 회원(이름+보호자번호 일치)은 반에 추가하고 학생번호도 채웁니다. 같은 보호자번호에 다른 이름은 쌍둥이로 별도 등록됩니다.</p>
 
       <div class="excel-drop" id="class-excel-drop">
         <input type="file" id="class-excel-input" accept=".xlsx,.xls" onchange="handleClassExcel(this.files[0])">
@@ -467,8 +467,9 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
       <!-- 개별 추가 -->
       <div class="add-row" style="margin-top:12px">
-        <input type="text" id="class-add-name" placeholder="이름" autocomplete="off" style="flex:1;min-width:120px">
-        <input type="tel" id="class-add-phone" placeholder="01012345678" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')addStudentToClass()" style="flex:1;min-width:140px">
+        <input type="text" id="class-add-name" placeholder="이름" autocomplete="off" style="flex:1;min-width:100px">
+        <input type="tel" id="class-add-phone" placeholder="보호자번호" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" style="flex:1;min-width:120px">
+        <input type="tel" id="class-add-sphone" placeholder="학생번호(선택)" maxlength="11" oninput="this.value=this.value.replace(/[^0-9]/g,'')" onkeydown="if(event.key==='Enter')addStudentToClass()" style="flex:1;min-width:120px">
         <button class="btn-add" onclick="addStudentToClass()">+ 추가</button>
       </div>
 
@@ -1369,7 +1370,7 @@ async function selectClass(id, name){
 
 async function loadClassMembers(){
   if(!selectedClassId) return;
-  const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${selectedClassId}&select=id,member_id,members(id,name,phone)`,{headers:HDR});
+  const res = await fetch(`${SUPA_URL}/rest/v1/class_members?class_id=eq.${selectedClassId}&select=id,member_id,members(id,name,phone,student_phone)`,{headers:HDR});
   const data = await res.json();
   document.getElementById('class-member-count').innerHTML = `<span>${data.length}</span>명 등록됨`;
   if(!data.length){
@@ -1378,13 +1379,14 @@ async function loadClassMembers(){
   }
   document.getElementById('class-member-list').innerHTML = `
     <table class="member-table">
-      <thead><tr><th>#</th><th>이름</th><th>핸드폰 번호</th><th></th></tr></thead>
+      <thead><tr><th>#</th><th>이름</th><th>보호자번호</th><th>학생번호</th><th></th></tr></thead>
       <tbody>${data.map((cm,i)=>{
         const m = cm.members;
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
           <td style="font-weight:500">${m?m.name:'(삭제됨)'}</td>
           <td style="font-family:monospace;font-size:15px">${m?m.phone:'-'}</td>
+          <td style="font-family:monospace;font-size:15px;color:var(--muted)">${m&&m.student_phone?m.student_phone:'-'}</td>
           <td><button class="btn-del-sm" onclick="removeFromClass('${cm.id}')">제외</button></td>
         </tr>`;
       }).join('')}
@@ -1404,10 +1406,12 @@ async function addStudentToClass(){
   if(!selectedClassId){ showToast('반을 먼저 선택해주세요','err'); return }
   const name = document.getElementById('class-add-name').value.trim();
   const phone = document.getElementById('class-add-phone').value.trim().replace(/-/g,'');
-  if(!name||!phone){ showToast('이름과 번호를 모두 입력해주세요','err'); return }
+  const sphoneEl = document.getElementById('class-add-sphone');
+  const studentPhone = sphoneEl ? sphoneEl.value.trim().replace(/-/g,'') : '';
+  if(!name||!phone){ showToast('이름과 보호자번호를 모두 입력해주세요','err'); return }
 
-  // 기존 회원 찾기
-  let memberId = await findOrCreateMember(name, phone);
+  // 기존 회원 찾기 (학생번호 있으면 함께 저장/갱신)
+  let memberId = await findOrCreateMember(name, phone, studentPhone);
   if(!memberId){ showToast('등록 실패','err'); return }
 
   // 반에 추가
@@ -1415,6 +1419,7 @@ async function addStudentToClass(){
   if(added){
     document.getElementById('class-add-name').value='';
     document.getElementById('class-add-phone').value='';
+    if(sphoneEl) sphoneEl.value='';
     showToast(`${name} 추가 완료 ✓`,'ok');
     loadClassMembers();
     loadClasses();
@@ -1422,16 +1427,28 @@ async function addStudentToClass(){
   }
 }
 
-async function findOrCreateMember(name, phone){
+async function findOrCreateMember(name, phone, studentPhone){
   // 이름+전화 둘 다 일치해야 기존 회원으로 판정 (쌍둥이는 같은 phone 다른 name → 별도 회원)
-  const res = await fetch(`${SUPA_URL}/rest/v1/members?name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&select=id`,{headers:HDR});
+  const res = await fetch(`${SUPA_URL}/rest/v1/members?name=eq.${encodeURIComponent(name)}&phone=eq.${encodeURIComponent(phone)}&select=id,student_phone`,{headers:HDR});
   const existing = await res.json();
-  if(existing.length) return existing[0].id;
+  if(existing.length){
+    const ex = existing[0];
+    // 기존 회원의 학생번호 채움 (회원 명단 일괄 등록과 동일 동작)
+    if(studentPhone) {
+      await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${ex.id}`,{
+        method:'PATCH', headers:{...HDR,'Prefer':'return=minimal'},
+        body:JSON.stringify({student_phone:studentPhone})
+      }).catch(()=>{});
+    }
+    return ex.id;
+  }
 
-  // 새 회원 등록
+  // 새 회원 등록 (학생번호 함께)
+  const body = {name, phone, role:'user'};
+  if(studentPhone) body.student_phone = studentPhone;
   const createRes = await fetch(`${SUPA_URL}/rest/v1/members`,{
     method:'POST', headers:{...HDR,'Prefer':'return=representation'},
-    body:JSON.stringify({name, phone, role:'user'})
+    body:JSON.stringify(body)
   });
   if(!createRes.ok) return null;
   const created = await createRes.json();
@@ -1462,15 +1479,16 @@ function handleClassExcel(file){
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws,{header:1});
     const firstRow = rows[0];
-    const hasHeader = firstRow && (String(firstRow[0]||'').match(/이름|name|성명/i) || String(firstRow[1]||'').match(/전화|phone|번호/i));
+    const hasHeader = firstRow && (String(firstRow[0]||'').match(/이름|name|성명/i) || String(firstRow[1]||'').match(/전화|phone|번호|보호자/i));
     const dataRows = hasHeader ? rows.slice(1) : rows;
     classExcelData = dataRows.map(r=>({
       name: String(r[0]||'').trim(),
-      phone: String(r[1]||'').trim().replace(/-/g,'').replace(/\s/g,'')
+      phone: String(r[1]||'').trim().replace(/-/g,'').replace(/\s/g,''),
+      studentPhone: String(r[2]||'').trim().replace(/-/g,'').replace(/\s/g,'')
     })).filter(r=>r.name && r.phone && r.phone.length >= 10);
 
     document.getElementById('class-excel-preview-title').textContent=`${file.name} — ${classExcelData.length}명 확인됨`;
-    document.getElementById('class-excel-preview-list').innerHTML = classExcelData.slice(0,10).map(r=>`${r.name} · ${r.phone}`).join('<br>') + (classExcelData.length>10?`<br>... 외 ${classExcelData.length-10}명`:'');
+    document.getElementById('class-excel-preview-list').innerHTML = classExcelData.slice(0,10).map(r=>`${r.name} · ${r.phone}${r.studentPhone?' · 학생:'+r.studentPhone:''}`).join('<br>') + (classExcelData.length>10?`<br>... 외 ${classExcelData.length-10}명`:'');
     document.getElementById('class-excel-preview').style.display='block';
     document.getElementById('btn-class-excel-upload').disabled = classExcelData.length===0;
   };
@@ -1486,7 +1504,7 @@ async function uploadClassExcel(){
   for(const r of classExcelData){
     btn.textContent=`등록 중... (${added+existed+failed+1}/${classExcelData.length})`;
     try{
-      const memberId = await findOrCreateMember(r.name, r.phone);
+      const memberId = await findOrCreateMember(r.name, r.phone, r.studentPhone);
       if(!memberId){ failed++; continue }
       const res = await fetch(`${SUPA_URL}/rest/v1/class_members`,{
         method:'POST', headers:{...HDR,'Prefer':'return=minimal'},
