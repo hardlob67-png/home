@@ -282,9 +282,16 @@ const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
 
+const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
+if(!user){ location.href='index.html'; }
 const params = new URLSearchParams(location.search);
 const memberId = params.get('member');
 let sessionId = params.get('session');
+// 본인 또는 admin만 열람 가능
+if(user && user.role !== 'admin' && memberId && user.id !== memberId){
+  alert('본인 리포트만 열람 가능합니다');
+  location.href = 'dashboard.html';
+}
 
 const ICONS = {'리뷰테스트':'📝','과제':'📋','단어':'📖','암기':'🧠','리뷰 재시':'🔄','default':'📌'};
 

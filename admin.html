@@ -5,66 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>META ENGLISH - 관리자</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
-
-// ===== 리더보드 토글 =====
-async function toggleLeaderboard(id,enable){
-  await fetch(SUPA_URL+'/rest/v1/quizzes?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify({leaderboard:enable})});
-  showToast(enable?'🏆 리더보드 활성화':'리더보드 비활성화','ok');
-  loadQuizzes();
-}
-
-// ===== 공지사항 =====
-async function loadNotices(){
-  try{
-    const res=await fetch(SUPA_URL+'/rest/v1/announcements?select=*&order=created_at.desc',{headers:HDR});
-    const notices=await res.json();
-    const el=document.getElementById('notice-list');
-    if(!notices.length){el.innerHTML='<div class="empty-state">등록된 공지가 없어요</div>';return}
-    el.innerHTML=notices.map(n=>`
-      <div class="notice-item ${n.active?'':'inactive'}">
-        <div class="notice-title-row">
-          <span class="notice-title-text">${n.title}</span>
-          <span class="notice-badge ${n.active?'on':'off'}">${n.active?'활성':'비활성'}</span>
-        </div>
-        <div class="notice-body">${n.content}</div>
-        <div class="notice-date">${new Date(n.created_at).toLocaleString('ko-KR')}</div>
-        <div class="notice-actions">
-          <button class="btn-preview" onclick="toggleNotice('${n.id}',${!n.active})">${n.active?'비활성화':'활성화'}</button>
-          <button class="btn-del" onclick="deleteNotice('${n.id}')">삭제</button>
-        </div>
-      </div>`).join('');
-  }catch(e){document.getElementById('notice-list').innerHTML='<div class="empty-state">불러오기 실패</div>'}
-}
-async function postNotice(){
-  const title=document.getElementById('notice-title').value.trim();
-  const content=document.getElementById('notice-content').value.trim();
-  if(!title||!content){showToast('제목과 내용을 입력해주세요','err');return}
-  try{
-    await fetch(SUPA_URL+'/rest/v1/announcements',{method:'POST',headers:HDR,body:JSON.stringify({title,content,active:true})});
-    document.getElementById('notice-title').value='';
-    document.getElementById('notice-content').value='';
-    showToast('공지 등록 완료 ✓','ok');
-    loadNotices();
-  }catch(e){showToast('등록 실패','err')}
-}
-async function toggleNotice(id,active){
-  await fetch(SUPA_URL+'/rest/v1/announcements?id=eq.'+id,{method:'PATCH',headers:HDR,body:JSON.stringify({active})});
-  showToast(active?'활성화됨':'비활성화됨','ok');
-  loadNotices();
-}
-async function deleteNotice(id){
-  if(!confirm('이 공지를 삭제할까요?'))return;
-  await fetch(SUPA_URL+'/rest/v1/announcements?id=eq.'+id,{method:'DELETE',headers:HDR});
-  showToast('삭제했어요','ok');
-  loadNotices();
-}
-// Load notices when tab switches
-const origSwitch=window.switchTab||function(){};
-const _oldSwitchTab=switchTab;
-switchTab=function(t){_oldSwitchTab(t);if(t==='notices')loadNotices()};
-
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -580,6 +521,9 @@ const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 
+// XSS 방지: 사용자 입력을 innerHTML/HTML attribute에 삽입하기 전 escape
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
 if(user.role!=='admin'){ alert('관리자만 접근 가능합니다'); location.href='dashboard.html' }
@@ -696,16 +640,16 @@ function renderMembers(){
       <tbody>${displayList.map((m,i)=>{
         const cls = memberClassMap[m.id]||[];
         const currentClassId = cls.length?cls[0].id:'';
-        const classOpts = window._allClasses.map(c=>`<option value="${c.id}" ${c.id===currentClassId?'selected':''}>${c.name}</option>`).join('');
+        const classOpts = window._allClasses.map(c=>`<option value="${c.id}" ${c.id===currentClassId?'selected':''}>${esc(c.name)}</option>`).join('');
         const clsHtml = `<select onchange="changeMemberClass('${m.id}',this.value)" style="font-size:13px;padding:4px 8px;border:0.5px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer"><option value="">없음</option>${classOpts}</select>`;
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
-          <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${m.name}</a>`:m.name}</td>
-          <td style="font-family:monospace;font-size:15px">${m.phone}</td>
-          <td style="font-family:monospace;font-size:15px;color:var(--muted)">${m.student_phone||'-'}</td>
+          <td style="font-weight:500">${m.role!=='admin'?`<a href="#" onclick="showMemberPopup(event,'${m.id}')" style="color:var(--text);text-decoration:none;border-bottom:1px dotted var(--muted)">${esc(m.name)}</a>`:esc(m.name)}</td>
+          <td style="font-family:monospace;font-size:15px">${esc(m.phone)}</td>
+          <td style="font-family:monospace;font-size:15px;color:var(--muted)">${esc(m.student_phone||'-')}</td>
           <td>${clsHtml}</td>
           <td>${m.role==='admin'?'<span class="badge-admin">관리자</span>':'<span class="badge-user">회원</span>'}</td>
-          <td style="white-space:nowrap">${m.role!=='admin'?`<button class="btn-del-sm" style="background:rgba(61,57,41,.06);color:#6B6356;margin-right:4px" onclick="openEditMember('${m.id}','${m.name.replace(/'/g,"\\'")}','${m.phone}','${m.student_phone||''}')">수정</button><button class="btn-del-sm" onclick="deleteMember('${m.id}','${m.name}')">삭제</button>`:''}</td>
+          <td style="white-space:nowrap">${m.role!=='admin'?`<button class="btn-del-sm" style="background:rgba(61,57,41,.06);color:#6B6356;margin-right:4px" onclick="openEditMember('${m.id}')">수정</button><button class="btn-del-sm" onclick="deleteMember('${m.id}')">삭제</button>`:''}</td>
         </tr>`}).join('')}
       </tbody>
     </table>`;
@@ -793,7 +737,10 @@ async function addMember(){
   btn.disabled=false;
 }
 
-async function deleteMember(id, name){
+async function deleteMember(id){
+  // 캐시에서 이름 조회 (XSS 방지: onclick 인자에 사용자 입력 사용 안 함)
+  const m = (_membersCache||[]).find(x=>x.id===id);
+  const name = m ? m.name : '회원';
   if(!confirm(`${name} 님을 삭제할까요?`)) return;
   try{
     await fetch(`${SUPA_URL}/rest/v1/members?id=eq.${id}`,{method:'DELETE',headers:HDR});
@@ -801,11 +748,14 @@ async function deleteMember(id, name){
   }catch(e){ showToast('삭제 실패','err') }
 }
 
-function openEditMember(id,name,phone,sphone){
+function openEditMember(id){
+  // 캐시에서 회원 정보 조회
+  const m = (_membersCache||[]).find(x=>x.id===id);
+  if(!m){ showToast('회원을 찾을 수 없습니다','err'); return; }
   document.getElementById('edit-member-id').value=id;
-  document.getElementById('edit-member-name').value=name;
-  document.getElementById('edit-member-phone').value=phone;
-  document.getElementById('edit-member-sphone').value=sphone;
+  document.getElementById('edit-member-name').value=m.name||'';
+  document.getElementById('edit-member-phone').value=m.phone||'';
+  document.getElementById('edit-member-sphone').value=m.student_phone||'';
   document.getElementById('edit-member-modal').style.display='flex';
 }
 function closeEditMember(){
@@ -846,9 +796,12 @@ async function changeMemberClass(memberId, classId){
 
 // ===== 이름 클릭 팝업 =====
 let mpMemberId='',mpPhone='',mpStudentPhone='';
-function showMemberPopup(e,id,name,phone,sphone){
+function showMemberPopup(e,id){
   e.preventDefault();
-  mpMemberId=id; mpPhone=phone; mpStudentPhone=sphone||'';
+  // 캐시에서 회원 정보 조회 (XSS 방지: onclick 인자로 사용자 입력 받지 않음)
+  const m = (_membersCache||[]).find(x=>x.id===id);
+  if(!m) return;
+  mpMemberId=id; mpPhone=m.phone||''; mpStudentPhone=m.student_phone||'';
   const baseUrl=window.location.origin||'https://xn--oh5bnfltpyu64c.com';
   document.getElementById('mp-report').href=`${baseUrl}/report.html?member=${id}`;
   // 학생번호 없으면 학생 버튼 비활성 표시
@@ -1212,7 +1165,7 @@ async function fillMemberFilter(){
   memberOptions = data;
   const sel = document.getElementById('filter-member');
   const cur = sel.value;
-  sel.innerHTML = '<option value="">전체 회원</option>' + data.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+  sel.innerHTML = '<option value="">전체 회원</option>' + data.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('');
   sel.value = cur;
 }
 async function fillQuizFilter(){
@@ -1384,9 +1337,9 @@ async function loadClassMembers(){
         const m = cm.members;
         return `<tr>
           <td style="color:var(--muted)">${i+1}</td>
-          <td style="font-weight:500">${m?m.name:'(삭제됨)'}</td>
-          <td style="font-family:monospace;font-size:15px">${m?m.phone:'-'}</td>
-          <td style="font-family:monospace;font-size:15px;color:var(--muted)">${m&&m.student_phone?m.student_phone:'-'}</td>
+          <td style="font-weight:500">${m?esc(m.name):'(삭제됨)'}</td>
+          <td style="font-family:monospace;font-size:15px">${m?esc(m.phone):'-'}</td>
+          <td style="font-family:monospace;font-size:15px;color:var(--muted)">${m&&m.student_phone?esc(m.student_phone):'-'}</td>
           <td><button class="btn-del-sm" onclick="removeFromClass('${cm.id}')">제외</button></td>
         </tr>`;
       }).join('')}
@@ -1568,10 +1521,10 @@ async function loadNotices(){
     el.innerHTML=notices.map(n=>`
       <div class="notice-item ${n.active?'':'inactive'}">
         <div class="notice-title-row">
-          <span class="notice-title-text">${n.title}</span>
+          <span class="notice-title-text">${esc(n.title)}</span>
           <span class="notice-badge ${n.active?'on':'off'}">${n.active?'활성':'비활성'}</span>
         </div>
-        <div class="notice-body">${n.content}</div>
+        <div class="notice-body">${esc(n.content).replace(/\n/g,'<br>')}</div>
         <div class="notice-date">${new Date(n.created_at).toLocaleString('ko-KR')}</div>
         <div class="notice-actions">
           <button class="btn-preview" onclick="toggleNotice('${n.id}',${!n.active})">${n.active?'비활성화':'활성화'}</button>

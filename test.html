@@ -257,6 +257,7 @@ const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type'
 
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
+else if(user.role !== 'admin'){ alert('관리자 전용 페이지입니다'); location.href='dashboard.html'; }
 
 let currentTest = null;
 let currentVersions = [];
