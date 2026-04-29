@@ -10,14 +10,14 @@ drop policy if exists "allow all quizzes" on quizzes;
 drop policy if exists "allow all quiz_records" on quiz_records;
 drop policy if exists "allow all badges" on badges;
 
--- 누락된 14개 테이블도 RLS 켜고 기존 정책 삭제
+-- 누락된 테이블들도 RLS 켜고 기존 정책 삭제 (실제 존재하는 12개)
 do $$
 declare t text;
 begin
   for t in select unnest(array[
     'announcements','chats','class_files','class_members','classes',
-    'clinic_locations','clinics','combo_records','grade_sessions','grades',
-    'sms_logs','test_responses','test_sets','test_versions'
+    'clinics','combo_records','grade_sessions','grades',
+    'sms_logs','test_sets','test_versions'
   ]) loop
     execute format('alter table if exists %I enable row level security', t);
     execute format('drop policy if exists %I on %I', 'allow all '||t, t);
@@ -136,21 +136,16 @@ create policy "chats_self_rw" on chats for all
   with check (member_id = public.user_id());
 
 -- ============================================================
---  clinics / clinic_locations
+--  clinics
 --   - admin / clinic_admin: 모두
 --   - 본인: 본인 클리닉 일정만 read
+--   (clinic_locations 테이블은 현재 DB에 없어 정책 생략)
 -- ============================================================
-create policy "clinic_locations_admin_all" on clinic_locations for all
-  using (public.is_admin()) with check (public.is_admin());
-create policy "clinic_locations_authenticated_select" on clinic_locations for select
-  using (public.is_authenticated());
-
--- clinics: member_phone 컬럼 사용 (member_id 없음)
 create policy "clinics_admin_all" on clinics for all
   using (public.is_admin() or public.app_role() = 'clinic_admin')
   with check (public.is_admin() or public.app_role() = 'clinic_admin');
 create policy "clinics_self_select" on clinics for select
-  using (member_phone = (select phone from members where id = public.user_id() limit 1));
+  using (member_id = public.user_id());
 
 -- ============================================================
 --  grades / grade_sessions
@@ -182,11 +177,7 @@ create policy "test_versions_admin_all" on test_versions for all
 create policy "test_versions_authenticated_select" on test_versions for select
   using (public.is_authenticated());
 
-create policy "test_responses_admin_all" on test_responses for all
-  using (public.is_admin()) with check (public.is_admin());
-create policy "test_responses_self_rw" on test_responses for all
-  using (member_id = public.user_id())
-  with check (member_id = public.user_id());
+-- test_responses 테이블은 현재 DB에 없어 정책 생략
 
 -- ============================================================
 --  class_files — admin / clinic_admin: 모두, 본인 분반 회원: read
