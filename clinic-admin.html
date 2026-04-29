@@ -292,7 +292,7 @@ async function loadRes(){
       <div class="clinic-top">
         <div class="info" onclick="toggleClinicSms(${i})">
           <strong>${name}</strong> ${r.clinic_date} ${(r.clinic_time||'').slice(0,5)}
-          <br><span>${r.location||''} ${r.memo?'· '+esc(r.memo):''}</span>
+          <br><span>${esc(r.location||'')} ${r.memo?'· '+esc(r.memo):''}</span>
         </div>
         <button class="del-btn" onclick="delRes('${r.id}')">취소</button>
       </div>

@@ -108,6 +108,7 @@ body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;heigh
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 const params = new URLSearchParams(location.search);
 const testSetId = params.get('test');
@@ -192,8 +193,8 @@ async function load(){
     // 헤더 카드
     html += `<div class="card">
       <div class="card-header">
-        <div class="sub">${testSet.title} · ${version.name}</div>
-        <div class="name">${resp.member_name||'학생'}</div>
+        <div class="sub">${esc(testSet.title)} · ${esc(version.name)}</div>
+        <div class="name">${esc(resp.member_name||'학생')}</div>
       </div>
       <div class="card-body">
         <div class="score-summary">
@@ -221,7 +222,7 @@ async function load(){
         const s = catStats[cat];
         const p = s.max>0 ? Math.round(s.score/s.max*100) : 0;
         html += `<div class="type-row">
-          <div class="type-name">${cat}</div>
+          <div class="type-name">${esc(cat)}</div>
           <div class="type-bar-wrap"><div class="type-bar ${p>=70?'green':'red'}" style="width:${p}%"></div></div>
           <div class="type-pct" style="color:${p>=70?'#6B6356':'#B85C4A'}">${s.score}/${s.max}</div>
         </div>`;
@@ -256,10 +257,10 @@ async function load(){
         <div class="wrong-list">`;
       wrongItems.forEach(w=>{
         html += `<div class="wrong-item">
-          <div class="wrong-num">${w.num}</div>
+          <div class="wrong-num">${esc(w.num)}</div>
           <div class="wrong-detail">
-            <div>${w.type} · ${w.points}점</div>
-            <div>내 답: <span class="your-ans">${w.yourAns}</span> → 정답: <span class="correct-ans">${w.correctAns}</span></div>
+            <div>${esc(w.type)} · ${esc(w.points)}점</div>
+            <div>내 답: <span class="your-ans">${esc(w.yourAns)}</span> → 정답: <span class="correct-ans">${esc(w.correctAns)}</span></div>
           </div>
         </div>`;
       });

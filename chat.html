@@ -187,6 +187,7 @@
 const SUPA_URL='https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 const HDR={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 
 const user=JSON.parse(sessionStorage.getItem('qhub_user')||'null');
@@ -254,8 +255,8 @@ function renderConvList(){
     const isActive=currentConv&&currentConv.member_id===c.member_id&&String(currentConv.session_id||'none')===String(c.session_id||'none');
     return `<div class="conv-item${isActive?' active':''}" onclick="openConv('${c.member_id}',${c.session_id})">
       <div>
-        <div class="conv-name">${name}</div>
-        <div class="conv-preview">${c.last.sender==='admin'?'나: ':''}${preview}</div>
+        <div class="conv-name">${esc(name)}</div>
+        <div class="conv-preview">${c.last.sender==='admin'?'나: ':''}${esc(preview)}</div>
       </div>
       <div style="text-align:right">
         <div class="conv-time">${time}</div>
@@ -295,7 +296,7 @@ function renderChatArea(conv){
       <div style="display:flex;align-items:center">
         <button class="back-btn" onclick="goBack()">← 목록</button>
         <div>
-          <div class="chat-header-name">${name}</div>
+          <div class="chat-header-name">${esc(name)}</div>
           <div class="chat-header-session">세션 #${conv.session_id}</div>
         </div>
       </div>
@@ -305,7 +306,7 @@ function renderChatArea(conv){
         const t=new Date(m.created_at);
         const time=`${t.getMonth()+1}/${t.getDate()} ${t.getHours()}:${String(t.getMinutes()).padStart(2,'0')}`;
         const who=m.sender==='parent'?'parent':'admin';
-        return `<div class="chat-msg ${who}">${m.message.replace(/</g,'&lt;').replace(/\n/g,'<br>')}<div class="time">${time}</div></div>`;
+        return `<div class="chat-msg ${who}">${esc(m.message).replace(/\n/g,'<br>')}<div class="time">${time}</div></div>`;
       }).join('')}
     </div>
     <div class="sms-note">📱 답장 시 보호자에게 알림 문자가 발송됩니다</div>

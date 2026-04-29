@@ -306,6 +306,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 const SUPA_URL = 'https://cheuclwcrxuofiomhtuz.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNoZXVjbHdjcnh1b2Zpb21odHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMzM1NzEsImV4cCI6MjA5MDkwOTU3MX0.Pnmf1_DYGVXpDvEf-nWXG4WTAu-pNlu4xJyEzdHeUMw';
 const HDR = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 const user = JSON.parse(sessionStorage.getItem('qhub_user')||'null');
 if(!user) location.href='index.html';
@@ -350,10 +351,10 @@ async function loadGrades(){
       const chips=Object.entries(scores).map(([k,v])=>{
         if(!v||v==='-') return '';
         const cls=(v==='통과'||v==='완료'||Number(v)>=80)?'pass':'fail';
-        return `<span class="gs-chip ${cls}">${k}: ${v}</span>`;
+        return `<span class="gs-chip ${cls}">${esc(k)}: ${esc(v)}</span>`;
       }).join('');
       return `<div class="grade-session-card" onclick="location.href='report.html?member=${user.id}&session=${s.id}'">
-        <div class="gs-title">${s.title}</div>
+        <div class="gs-title">${esc(s.title)}</div>
         <div class="gs-date">${date}</div>
         <div class="gs-scores">${chips}</div>
       </div>`;
@@ -523,10 +524,10 @@ async function loadQuizzes(){
       const isNew = new Date(q.added).getTime()>weekAgo;
       const tag = isNew?'<span class="quiz-tag tag-new">NEW</span>':'<span class="quiz-tag tag-hot">🔥 HOT</span>';
       const date = new Date(q.added).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-      return `<div class="quiz-card" onclick="openQuiz('${q.id}','${q.title.replace(/'/g,"\\'")}')">
+      return `<div class="quiz-card" onclick="openQuiz('${q.id}')">
         ${tag}
-        <div class="quiz-title">${q.title}</div>
-        <div class="quiz-desc">${q.description||'클릭해서 퀴즈를 시작하세요'}</div>
+        <div class="quiz-title">${esc(q.title)}</div>
+        <div class="quiz-desc">${esc(q.description||'클릭해서 퀴즈를 시작하세요')}</div>
         <div class="quiz-meta"><span>${date} 추가</span><span class="quiz-arrow">→</span></div>
       </div>`;
     }).join('');
@@ -535,18 +536,18 @@ async function loadQuizzes(){
   }
 }
 
-async function openQuiz(id, title){
+async function openQuiz(id){
   document.getElementById('quiz-panel').classList.add('open');
-  document.getElementById('quiz-panel-title').textContent = title;
   document.getElementById('quiz-loading').style.display='flex';
   document.getElementById('quiz-iframe').style.display='none';
   document.body.style.overflow='hidden';
   sessionStorage.setItem('qhub_current_quiz_id', id);
-  sessionStorage.setItem('qhub_current_quiz_title', title);
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}&select=html_content`,{headers:HDR});
+    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}&select=title,html_content`,{headers:HDR});
     const data = await res.json();
     if(!data||!data.length){ closeQuiz(); alert('퀴즈를 불러오지 못했어요'); return; }
+    document.getElementById('quiz-panel-title').textContent = data[0].title || '';
+    sessionStorage.setItem('qhub_current_quiz_title', data[0].title || '');
     const iframe = document.getElementById('quiz-iframe');
     iframe.onload = onIframeLoad;
     iframe.srcdoc = data[0].html_content;
