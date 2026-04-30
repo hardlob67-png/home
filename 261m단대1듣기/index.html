@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>듣기 받아쓰기 퀴즈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --paper: #fefcf7;
+    --ink: #1f1d1a;
+    --muted: #7d756a;
+    --rule: #e2dccf;
+    --accent: #1a4d3a;
+    --accent-soft: #e7eee9;
+    --correct: #1a7a4c;
+    --correct-bg: #e3f2e9;
+    --wrong: #b53b2e;
+    --wrong-bg: #fae5e2;
+    --num: #b8a572;
+    --shadow: 0 1px 0 rgba(31,29,26,0.04), 0 8px 24px -12px rgba(31,29,26,0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(184,165,114,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(26,77,58,0.04) 0%, transparent 50%);
+  }
+
+  .wrap { max-width: 820px; margin: 0 auto; padding: 56px 24px 120px; }
+
+  /* ---------- header ---------- */
+  .site-head { text-align: center; margin-bottom: 56px; padding-bottom: 36px; border-bottom: 1px solid var(--rule); position: relative; }
+  .site-head::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); width: 60px; height: 3px; background: var(--accent); }
+  .eyebrow { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 700; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .lede { color: var(--muted); font-size: 15px; max-width: 520px; margin: 0 auto; }
+
+  /* ---------- score bar ---------- */
+  .scorebar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--paper); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 12px 16px 12px 20px;
+    margin-bottom: 32px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+  }
+  .scorebar-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+  .scorebar-label { font-size: 13px; color: var(--muted); letter-spacing: 0.04em; white-space: nowrap; }
+  .scorebar-num {
+    font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; color: var(--accent);
+    font-feature-settings: 'tnum'; white-space: nowrap;
+  }
+  .scorebar-num .of { color: var(--muted); font-size: 18px; font-weight: 400; }
+  .progress { flex: 1; height: 6px; background: var(--rule); border-radius: 999px; overflow: hidden; max-width: 200px; min-width: 60px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #2d6e54); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  .btn-shuffle-all {
+    font: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 14px; border-radius: 8px;
+    background: var(--accent); color: #fff; border: 1px solid var(--accent);
+    cursor: pointer; transition: all 0.15s; font-family: 'Pretendard', sans-serif;
+    white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-shuffle-all:hover { background: #143b2c; border-color: #143b2c; }
+  .btn-shuffle-all .ico { display: inline-block; transition: transform 0.4s; }
+  .btn-shuffle-all:active .ico { transform: rotate(180deg); }
+
+  /* ---------- passage card ---------- */
+  .passage { background: var(--paper); border: 1px solid var(--rule); border-radius: 16px; padding: 32px; margin-bottom: 24px; box-shadow: var(--shadow); transition: border-color 0.2s; }
+  .passage:focus-within { border-color: #c9c0ad; }
+  .p-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px dashed var(--rule); }
+  .p-num { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; color: var(--accent); letter-spacing: -0.01em; }
+  .p-meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); display: inline-flex; align-items: baseline; gap: 2px; }
+  .p-meta .filled { color: var(--ink); font-weight: 500; min-width: 1ch; text-align: right; }
+  .p-meta .lbl { margin-left: 6px; font-family: 'Pretendard', sans-serif; font-size: 12px; }
+
+  /* ---------- audio player ---------- */
+  .player { background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .player audio { flex: 1; min-width: 240px; height: 38px; }
+  .speeds { display: flex; gap: 4px; background: var(--paper); border-radius: 8px; padding: 3px; }
+  .speed { background: transparent; border: 0; padding: 5px 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); cursor: pointer; border-radius: 6px; transition: all 0.15s; }
+  .speed:hover { color: var(--ink); }
+  .speed.is-active { background: var(--accent); color: #fff; }
+
+  /* ---------- script body ---------- */
+  .script { font-family: 'Pretendard', sans-serif; font-size: 16.5px; line-height: 2.0; color: var(--ink); word-spacing: 0.02em; }
+
+  /* ---------- blank input ---------- */
+  .blank-wrap { display: inline-block; vertical-align: baseline; white-space: nowrap; margin: 0 2px; }
+  .blank-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--num);
+    font-weight: 600;
+    margin-right: 3px;
+    user-select: none;
+  }
+  .blank {
+    font: inherit; font-size: 16.5px; color: var(--ink); background: transparent;
+    border: 0; border-bottom: 2px solid var(--num);
+    padding: 1px 4px 2px; text-align: center; outline: none;
+    transition: all 0.15s; font-family: 'Pretendard', sans-serif; min-width: 50px;
+  }
+  .blank:focus { background: #fffce8; border-bottom-color: var(--accent); }
+  .blank.is-correct { background: var(--correct-bg); border-bottom-color: var(--correct); color: var(--correct); font-weight: 600; }
+  .blank.is-wrong { background: var(--wrong-bg); border-bottom-color: var(--wrong); color: var(--wrong); text-decoration: line-through; text-decoration-color: var(--wrong); }
+  .blank.is-revealed { background: #f5efe1; border-bottom-color: var(--num); color: var(--accent); font-weight: 600; font-style: italic; }
+
+  /* ---------- actions ---------- */
+  .actions { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--rule); display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { font: inherit; font-size: 14px; font-weight: 500; padding: 10px 20px; border-radius: 8px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; transition: all 0.15s; font-family: 'Pretendard', sans-serif; }
+  .btn:hover { border-color: var(--ink); }
+  .btn-check { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-check:hover { background: #143b2c; border-color: #143b2c; }
+  .btn-reveal { color: var(--muted); }
+  .btn-reset { color: var(--muted); }
+  .btn-shuffle { color: var(--muted); margin-left: auto; }
+
+  /* ---------- footer ---------- */
+  .site-foot { text-align: center; color: var(--muted); font-size: 13px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--rule); }
+  .site-foot .brand { font-family: 'Fraunces', serif; font-style: italic; color: var(--accent); }
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 600px) {
+    .wrap { padding: 32px 16px 80px; }
+    .passage { padding: 20px; border-radius: 12px; }
+    .script { font-size: 15.5px; line-height: 1.9; }
+    .p-num { font-size: 22px; }
+    .player { padding: 10px 12px; gap: 10px; }
+    .player audio { min-width: 100%; }
+    .scorebar { padding: 10px 12px; }
+    .scorebar-num { font-size: 22px; }
+    .progress { display: none; }
+    .btn-shuffle { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site-head">
+    <div class="eyebrow">Listening Dictation</div>
+    <h1>듣기 받아쓰기 퀴즈</h1>
+    <p class="lede">각 지문을 들으며 빈칸 10개를 채우세요. 대소문자·문장부호는 무시됩니다.</p>
+  </header>
+
+  <div class="scorebar">
+    <div class="scorebar-left">
+      <span class="scorebar-label">전체 정답</span>
+      <span class="scorebar-num"><span id="totalCorrect">0</span><span class="of"> / 100</span></span>
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <button type="button" class="btn-shuffle-all" id="shuffleAll">
+      <span class="ico">↻</span><span>전체 섞기</span>
+    </button>
+  </div>
+
+  <article class="passage" data-id="q01">
+  <header class="p-head">
+    <span class="p-num">1번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q01.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q04">
+  <header class="p-head">
+    <span class="p-num">4번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q04.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q05">
+  <header class="p-head">
+    <span class="p-num">5번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q05.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q06">
+  <header class="p-head">
+    <span class="p-num">6번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q06.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q07">
+  <header class="p-head">
+    <span class="p-num">7번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q07.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q08">
+  <header class="p-head">
+    <span class="p-num">8번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q08.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q09">
+  <header class="p-head">
+    <span class="p-num">9번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q09.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q10">
+  <header class="p-head">
+    <span class="p-num">10번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q10.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q14">
+  <header class="p-head">
+    <span class="p-num">14번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q14.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+<article class="passage" data-id="q16_17">
+  <header class="p-head">
+    <span class="p-num">16~17번</span>
+    <span class="p-meta"><span class="filled">0</span><span class="sep">/</span><span class="total">10</span><span class="lbl">정답</span></span>
+  </header>
+  <div class="player">
+    <audio controls preload="metadata" src="audio/q16_17.mp3"></audio>
+    <div class="speeds" role="group" aria-label="재생 속도">
+      <button type="button" class="speed" data-speed="0.75">0.75x</button>
+      <button type="button" class="speed is-active" data-speed="1">1x</button>
+      <button type="button" class="speed" data-speed="1.25">1.25x</button>
+      <button type="button" class="speed" data-speed="1.5">1.5x</button>
+    </div>
+  </div>
+  <div class="script"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-check">정답 확인</button>
+    <button type="button" class="btn btn-reveal" hidden>정답 보기</button>
+    <button type="button" class="btn btn-reset">다시 풀기</button>
+    <button type="button" class="btn btn-shuffle">빈칸 섞기</button>
+  </div>
+</article>
+
+  <footer class="site-foot">
+    <span class="brand">이현우영어</span> · 듣기 받아쓰기
+  </footer>
+
+</div>
+
+<script id="quiz-data" type="application/json">[{"id": "q01", "label": "1번", "audio": "audio/q01.mp3", "text": "Good afternoon. I'm James, the leader of our school band, Rockstars. For the school festival next month, all of our band members are practicing hard to put on a fantastic show. However, we want to have a concert that everyone can enjoy. So, we're asking you to recommend some specific songs you want to hear us play. If you have any songs in mind, please write them down on a piece of paper. Then, drop it into the request box in front of the music room by this Friday. We will select a few songs and perform them. Thank you for your participation.", "candidates": [{"start": 0, "end": 4, "word": "Good"}, {"start": 5, "end": 14, "word": "afternoon"}, {"start": 20, "end": 25, "word": "James"}, {"start": 31, "end": 37, "word": "leader"}, {"start": 45, "end": 51, "word": "school"}, {"start": 52, "end": 56, "word": "band"}, {"start": 58, "end": 67, "word": "Rockstars"}, {"start": 77, "end": 83, "word": "school"}, {"start": 84, "end": 92, "word": "festival"}, {"start": 93, "end": 97, "word": "next"}, {"start": 98, "end": 103, "word": "month"}, {"start": 116, "end": 120, "word": "band"}, {"start": 121, "end": 128, "word": "members"}, {"start": 133, "end": 143, "word": "practicing"}, {"start": 144, "end": 148, "word": "hard"}, {"start": 161, "end": 170, "word": "fantastic"}, {"start": 171, "end": 175, "word": "show"}, {"start": 177, "end": 184, "word": "However"}, {"start": 189, "end": 193, "word": "want"}, {"start": 204, "end": 211, "word": "concert"}, {"start": 217, "end": 225, "word": "everyone"}, {"start": 230, "end": 235, "word": "enjoy"}, {"start": 241, "end": 246, "word": "we're"}, {"start": 247, "end": 253, "word": "asking"}, {"start": 261, "end": 270, "word": "recommend"}, {"start": 271, "end": 275, "word": "some"}, {"start": 276, "end": 284, "word": "specific"}, {"start": 285, "end": 290, "word": "songs"}, {"start": 295, "end": 299, "word": "want"}, {"start": 303, "end": 307, "word": "hear"}, {"start": 311, "end": 315, "word": "play"}, {"start": 333, "end": 338, "word": "songs"}, {"start": 342, "end": 346, "word": "mind"}, {"start": 348, "end": 354, "word": "please"}, {"start": 355, "end": 360, "word": "write"}, {"start": 366, "end": 370, "word": "down"}, {"start": 376, "end": 381, "word": "piece"}, {"start": 385, "end": 390, "word": "paper"}, {"start": 398, "end": 402, "word": "drop"}, {"start": 415, "end": 422, "word": "request"}, {"start": 430, "end": 435, "word": "front"}, {"start": 443, "end": 448, "word": "music"}, {"start": 449, "end": 453, "word": "room"}, {"start": 462, "end": 468, "word": "Friday"}, {"start": 478, "end": 484, "word": "select"}, {"start": 491, "end": 496, "word": "songs"}, {"start": 501, "end": 508, "word": "perform"}, {"start": 515, "end": 520, "word": "Thank"}, {"start": 534, "end": 547, "word": "participation"}]}, {"id": "q04", "label": "4번", "audio": "audio/q04.mp3", "text": "Hi, Emma. What are you looking at?\nHi. My friend took a picture of me on Sports Day. Look at this.\nOh, I see the Blue Team banner between two poles. Were you on the Blue Team?\nYes. Our team did great this year.\nIs that your cap, the one on the chair?\nNo, it's not mine. I think someone left it there.\nI see. You said you were volunteering after the games, right?\nYes. When this picture was taken, I was picking up a can that was on the ground.\nThat's nice. I like the striped shirt you were wearing.\nThanks. All the volunteers wore the same striped shirts.\nOh, I also see three soccer balls beside the pole.\nYes. Those were the balls used for the soccer game. I also had to pick them up.\nWow, that sounds like a busy day. Thanks for sharing the picture with me!", "candidates": [{"start": 4, "end": 8, "word": "Emma"}, {"start": 10, "end": 14, "word": "What"}, {"start": 23, "end": 30, "word": "looking"}, {"start": 42, "end": 48, "word": "friend"}, {"start": 49, "end": 53, "word": "took"}, {"start": 56, "end": 63, "word": "picture"}, {"start": 73, "end": 79, "word": "Sports"}, {"start": 85, "end": 89, "word": "Look"}, {"start": 113, "end": 117, "word": "Blue"}, {"start": 118, "end": 122, "word": "Team"}, {"start": 123, "end": 129, "word": "banner"}, {"start": 130, "end": 137, "word": "between"}, {"start": 142, "end": 147, "word": "poles"}, {"start": 165, "end": 169, "word": "Blue"}, {"start": 170, "end": 174, "word": "Team"}, {"start": 185, "end": 189, "word": "team"}, {"start": 194, "end": 199, "word": "great"}, {"start": 205, "end": 209, "word": "year"}, {"start": 244, "end": 249, "word": "chair"}, {"start": 255, "end": 259, "word": "it's"}, {"start": 272, "end": 277, "word": "think"}, {"start": 278, "end": 285, "word": "someone"}, {"start": 286, "end": 290, "word": "left"}, {"start": 312, "end": 316, "word": "said"}, {"start": 326, "end": 338, "word": "volunteering"}, {"start": 339, "end": 344, "word": "after"}, {"start": 349, "end": 354, "word": "games"}, {"start": 356, "end": 361, "word": "right"}, {"start": 378, "end": 385, "word": "picture"}, {"start": 390, "end": 395, "word": "taken"}, {"start": 403, "end": 410, "word": "picking"}, {"start": 436, "end": 442, "word": "ground"}, {"start": 444, "end": 450, "word": "That's"}, {"start": 451, "end": 455, "word": "nice"}, {"start": 459, "end": 463, "word": "like"}, {"start": 468, "end": 475, "word": "striped"}, {"start": 476, "end": 481, "word": "shirt"}, {"start": 491, "end": 498, "word": "wearing"}, {"start": 500, "end": 506, "word": "Thanks"}, {"start": 516, "end": 526, "word": "volunteers"}, {"start": 527, "end": 531, "word": "wore"}, {"start": 536, "end": 540, "word": "same"}, {"start": 541, "end": 548, "word": "striped"}, {"start": 549, "end": 555, "word": "shirts"}, {"start": 578, "end": 584, "word": "soccer"}, {"start": 585, "end": 590, "word": "balls"}, {"start": 591, "end": 597, "word": "beside"}, {"start": 602, "end": 606, "word": "pole"}, {"start": 628, "end": 633, "word": "balls"}, {"start": 634, "end": 638, "word": "used"}, {"start": 647, "end": 653, "word": "soccer"}, {"start": 654, "end": 658, "word": "game"}, {"start": 674, "end": 678, "word": "pick"}, {"start": 698, "end": 704, "word": "sounds"}, {"start": 705, "end": 709, "word": "like"}, {"start": 712, "end": 716, "word": "busy"}, {"start": 722, "end": 728, "word": "Thanks"}, {"start": 733, "end": 740, "word": "sharing"}, {"start": 745, "end": 752, "word": "picture"}]}, {"id": "q05", "label": "5번", "audio": "audio/q05.mp3", "text": "Hey, Jack, are you ready for the online group discussion?\nYes. But, I'm a little worried since it's my first time hosting an online discussion!\nReally? Then, I can help you double check things before you start.\nThanks.\nDid you share the online link in the group chat?\nYes, I did. I also uploaded the materials to the shared folder.\nNice. Have you checked the camera angle?\nYes, it's all set.\nYou're doing pretty good so far.   Oh, don't forget to check the microphone.\nDon't worry. I've already tested it. It works well.\nPerfect. Okay, everything seems ready. You can start now.\nWait, I haven't started the recording yet. I'll start the recording soon. Thank you for your help.\nMy pleasure. Good luck!", "candidates": [{"start": 5, "end": 9, "word": "Jack"}, {"start": 19, "end": 24, "word": "ready"}, {"start": 33, "end": 39, "word": "online"}, {"start": 40, "end": 45, "word": "group"}, {"start": 46, "end": 56, "word": "discussion"}, {"start": 74, "end": 80, "word": "little"}, {"start": 81, "end": 88, "word": "worried"}, {"start": 89, "end": 94, "word": "since"}, {"start": 95, "end": 99, "word": "it's"}, {"start": 103, "end": 108, "word": "first"}, {"start": 109, "end": 113, "word": "time"}, {"start": 114, "end": 121, "word": "hosting"}, {"start": 125, "end": 131, "word": "online"}, {"start": 132, "end": 142, "word": "discussion"}, {"start": 164, "end": 168, "word": "help"}, {"start": 173, "end": 179, "word": "double"}, {"start": 180, "end": 185, "word": "check"}, {"start": 186, "end": 192, "word": "things"}, {"start": 193, "end": 199, "word": "before"}, {"start": 204, "end": 209, "word": "start"}, {"start": 211, "end": 217, "word": "Thanks"}, {"start": 227, "end": 232, "word": "share"}, {"start": 237, "end": 243, "word": "online"}, {"start": 244, "end": 248, "word": "link"}, {"start": 256, "end": 261, "word": "group"}, {"start": 262, "end": 266, "word": "chat"}, {"start": 287, "end": 295, "word": "uploaded"}, {"start": 300, "end": 309, "word": "materials"}, {"start": 317, "end": 323, "word": "shared"}, {"start": 324, "end": 330, "word": "folder"}, {"start": 332, "end": 336, "word": "Nice"}, {"start": 347, "end": 354, "word": "checked"}, {"start": 359, "end": 365, "word": "camera"}, {"start": 366, "end": 371, "word": "angle"}, {"start": 378, "end": 382, "word": "it's"}, {"start": 392, "end": 398, "word": "You're"}, {"start": 405, "end": 411, "word": "pretty"}, {"start": 412, "end": 416, "word": "good"}, {"start": 431, "end": 436, "word": "don't"}, {"start": 437, "end": 443, "word": "forget"}, {"start": 447, "end": 452, "word": "check"}, {"start": 457, "end": 467, "word": "microphone"}, {"start": 469, "end": 474, "word": "Don't"}, {"start": 475, "end": 480, "word": "worry"}, {"start": 482, "end": 486, "word": "I've"}, {"start": 495, "end": 501, "word": "tested"}, {"start": 509, "end": 514, "word": "works"}, {"start": 521, "end": 528, "word": "Perfect"}, {"start": 536, "end": 546, "word": "everything"}, {"start": 547, "end": 552, "word": "seems"}, {"start": 553, "end": 558, "word": "ready"}, {"start": 568, "end": 573, "word": "start"}, {"start": 579, "end": 583, "word": "Wait"}, {"start": 587, "end": 594, "word": "haven't"}, {"start": 595, "end": 602, "word": "started"}, {"start": 607, "end": 616, "word": "recording"}, {"start": 622, "end": 626, "word": "I'll"}, {"start": 627, "end": 632, "word": "start"}, {"start": 637, "end": 646, "word": "recording"}, {"start": 647, "end": 651, "word": "soon"}, {"start": 653, "end": 658, "word": "Thank"}, {"start": 672, "end": 676, "word": "help"}, {"start": 681, "end": 689, "word": "pleasure"}, {"start": 691, "end": 695, "word": "Good"}, {"start": 696, "end": 700, "word": "luck"}]}, {"id": "q06", "label": "6번", "audio": "audio/q06.mp3", "text": "How may I help you?\nHi. I'm looking for some pajamas.\nHow about these? They're our new cotton pajamas for spring.\nLet me see. Oh, I like the pattern. They look comfortable. How much are they?\nThey are 20 dollars.\nOh, sounds good. What sizes do you have?\nWe have three sizes, small, medium, and large.\nI'd like two pairs of pajamas, both medium size, please. One for me and one for my mom.\nThat's sweet! Your mother will love them. Do you also want these socks to go with them? They are 5 dollars for each pair.\nYes, I'll take two pairs.\nPerfect. So, you need two pairs of pajamas and two pairs of socks. Is that correct?\nYes, that's right. Can I use this coupon?\nSure. You can get 10 percent off of the total price.\nOkay. Here's my credit card.", "candidates": [{"start": 10, "end": 14, "word": "help"}, {"start": 28, "end": 35, "word": "looking"}, {"start": 40, "end": 44, "word": "some"}, {"start": 45, "end": 52, "word": "pajamas"}, {"start": 71, "end": 78, "word": "They're"}, {"start": 87, "end": 93, "word": "cotton"}, {"start": 94, "end": 101, "word": "pajamas"}, {"start": 106, "end": 112, "word": "spring"}, {"start": 132, "end": 136, "word": "like"}, {"start": 141, "end": 148, "word": "pattern"}, {"start": 155, "end": 159, "word": "look"}, {"start": 160, "end": 171, "word": "comfortable"}, {"start": 177, "end": 181, "word": "much"}, {"start": 204, "end": 211, "word": "dollars"}, {"start": 217, "end": 223, "word": "sounds"}, {"start": 224, "end": 228, "word": "good"}, {"start": 230, "end": 234, "word": "What"}, {"start": 235, "end": 240, "word": "sizes"}, {"start": 268, "end": 273, "word": "sizes"}, {"start": 275, "end": 280, "word": "small"}, {"start": 282, "end": 288, "word": "medium"}, {"start": 294, "end": 299, "word": "large"}, {"start": 305, "end": 309, "word": "like"}, {"start": 314, "end": 319, "word": "pairs"}, {"start": 323, "end": 330, "word": "pajamas"}, {"start": 332, "end": 336, "word": "both"}, {"start": 337, "end": 343, "word": "medium"}, {"start": 344, "end": 348, "word": "size"}, {"start": 350, "end": 356, "word": "please"}, {"start": 389, "end": 395, "word": "That's"}, {"start": 396, "end": 401, "word": "sweet"}, {"start": 408, "end": 414, "word": "mother"}, {"start": 420, "end": 424, "word": "love"}, {"start": 443, "end": 447, "word": "want"}, {"start": 454, "end": 459, "word": "socks"}, {"start": 488, "end": 495, "word": "dollars"}, {"start": 500, "end": 504, "word": "each"}, {"start": 505, "end": 509, "word": "pair"}, {"start": 516, "end": 520, "word": "I'll"}, {"start": 521, "end": 525, "word": "take"}, {"start": 530, "end": 535, "word": "pairs"}, {"start": 537, "end": 544, "word": "Perfect"}, {"start": 554, "end": 558, "word": "need"}, {"start": 563, "end": 568, "word": "pairs"}, {"start": 572, "end": 579, "word": "pajamas"}, {"start": 588, "end": 593, "word": "pairs"}, {"start": 597, "end": 602, "word": "socks"}, {"start": 612, "end": 619, "word": "correct"}, {"start": 626, "end": 632, "word": "that's"}, {"start": 633, "end": 638, "word": "right"}, {"start": 655, "end": 661, "word": "coupon"}, {"start": 684, "end": 691, "word": "percent"}, {"start": 703, "end": 708, "word": "total"}, {"start": 709, "end": 714, "word": "price"}, {"start": 722, "end": 728, "word": "Here's"}, {"start": 732, "end": 738, "word": "credit"}, {"start": 739, "end": 743, "word": "card"}]}, {"id": "q07", "label": "7번", "audio": "audio/q07.mp3", "text": "Hi, Jake. I was wondering if you made it to the library on time yesterday.\nYes, I did. But I couldn't borrow the history book for my assignment.\nReally? Why not? Did someone else check it out already?\nNo, it was still on the shelf.\nDid you forget your student card then?\nNo, I had it with me.\nWhat happened? Do you have any late books you haven't returned yet?\nNo. I always return books before the due date.\nThen why couldn't you borrow the history book?\nThere was a problem with the library network system, so no one could check out any books.\nOh, I see. That must've been frustrating.", "candidates": [{"start": 4, "end": 8, "word": "Jake"}, {"start": 16, "end": 25, "word": "wondering"}, {"start": 33, "end": 37, "word": "made"}, {"start": 48, "end": 55, "word": "library"}, {"start": 59, "end": 63, "word": "time"}, {"start": 64, "end": 73, "word": "yesterday"}, {"start": 93, "end": 101, "word": "couldn't"}, {"start": 102, "end": 108, "word": "borrow"}, {"start": 113, "end": 120, "word": "history"}, {"start": 121, "end": 125, "word": "book"}, {"start": 133, "end": 143, "word": "assignment"}, {"start": 166, "end": 173, "word": "someone"}, {"start": 174, "end": 178, "word": "else"}, {"start": 179, "end": 184, "word": "check"}, {"start": 225, "end": 230, "word": "shelf"}, {"start": 240, "end": 246, "word": "forget"}, {"start": 252, "end": 259, "word": "student"}, {"start": 260, "end": 264, "word": "card"}, {"start": 293, "end": 297, "word": "What"}, {"start": 298, "end": 306, "word": "happened"}, {"start": 324, "end": 328, "word": "late"}, {"start": 329, "end": 334, "word": "books"}, {"start": 339, "end": 346, "word": "haven't"}, {"start": 347, "end": 355, "word": "returned"}, {"start": 367, "end": 373, "word": "always"}, {"start": 374, "end": 380, "word": "return"}, {"start": 381, "end": 386, "word": "books"}, {"start": 387, "end": 393, "word": "before"}, {"start": 402, "end": 406, "word": "date"}, {"start": 417, "end": 425, "word": "couldn't"}, {"start": 430, "end": 436, "word": "borrow"}, {"start": 441, "end": 448, "word": "history"}, {"start": 449, "end": 453, "word": "book"}, {"start": 467, "end": 474, "word": "problem"}, {"start": 484, "end": 491, "word": "library"}, {"start": 492, "end": 499, "word": "network"}, {"start": 500, "end": 506, "word": "system"}, {"start": 524, "end": 529, "word": "check"}, {"start": 538, "end": 543, "word": "books"}, {"start": 561, "end": 568, "word": "must've"}, {"start": 574, "end": 585, "word": "frustrating"}]}, {"id": "q08", "label": "8번", "audio": "audio/q08.mp3", "text": "Hi, Kyle. Have you heard of the Race Against Hunger event?\nRace Against Hunger? What's that? What is it for?\nIt's for promoting the importance of food for the next generation.\nSounds interesting. When will it take place?\nIt'll be held from April 11th to April 29th.\nOkay. What do participants do in the event?\nThey record their running or walking distance, and share it on their social media.\nI see. Is there any prize for the participants?\nYeah. If they meet the requirements, they'll get a water bottle.\nWow, that's good. I'd like to join the event. How can I sign up for it?\nYou can scan this QR code and fill out the application form online.\nGreat. Thanks.", "candidates": [{"start": 4, "end": 8, "word": "Kyle"}, {"start": 19, "end": 24, "word": "heard"}, {"start": 32, "end": 36, "word": "Race"}, {"start": 37, "end": 44, "word": "Against"}, {"start": 45, "end": 51, "word": "Hunger"}, {"start": 52, "end": 57, "word": "event"}, {"start": 59, "end": 63, "word": "Race"}, {"start": 64, "end": 71, "word": "Against"}, {"start": 72, "end": 78, "word": "Hunger"}, {"start": 80, "end": 86, "word": "What's"}, {"start": 93, "end": 97, "word": "What"}, {"start": 109, "end": 113, "word": "It's"}, {"start": 118, "end": 127, "word": "promoting"}, {"start": 132, "end": 142, "word": "importance"}, {"start": 146, "end": 150, "word": "food"}, {"start": 159, "end": 163, "word": "next"}, {"start": 164, "end": 174, "word": "generation"}, {"start": 176, "end": 182, "word": "Sounds"}, {"start": 183, "end": 194, "word": "interesting"}, {"start": 209, "end": 213, "word": "take"}, {"start": 214, "end": 219, "word": "place"}, {"start": 221, "end": 226, "word": "It'll"}, {"start": 230, "end": 234, "word": "held"}, {"start": 240, "end": 245, "word": "April"}, {"start": 254, "end": 259, "word": "April"}, {"start": 272, "end": 276, "word": "What"}, {"start": 280, "end": 292, "word": "participants"}, {"start": 303, "end": 308, "word": "event"}, {"start": 315, "end": 321, "word": "record"}, {"start": 328, "end": 335, "word": "running"}, {"start": 339, "end": 346, "word": "walking"}, {"start": 347, "end": 355, "word": "distance"}, {"start": 361, "end": 366, "word": "share"}, {"start": 379, "end": 385, "word": "social"}, {"start": 386, "end": 391, "word": "media"}, {"start": 413, "end": 418, "word": "prize"}, {"start": 427, "end": 439, "word": "participants"}, {"start": 455, "end": 459, "word": "meet"}, {"start": 464, "end": 476, "word": "requirements"}, {"start": 478, "end": 485, "word": "they'll"}, {"start": 492, "end": 497, "word": "water"}, {"start": 498, "end": 504, "word": "bottle"}, {"start": 511, "end": 517, "word": "that's"}, {"start": 518, "end": 522, "word": "good"}, {"start": 528, "end": 532, "word": "like"}, {"start": 536, "end": 540, "word": "join"}, {"start": 545, "end": 550, "word": "event"}, {"start": 562, "end": 566, "word": "sign"}, {"start": 586, "end": 590, "word": "scan"}, {"start": 599, "end": 603, "word": "code"}, {"start": 608, "end": 612, "word": "fill"}, {"start": 621, "end": 632, "word": "application"}, {"start": 633, "end": 637, "word": "form"}, {"start": 638, "end": 644, "word": "online"}, {"start": 646, "end": 651, "word": "Great"}, {"start": 653, "end": 659, "word": "Thanks"}]}, {"id": "q09", "label": "9번", "audio": "audio/q09.mp3", "text": "Hello, students! This is Mike, your computer teacher. The AI Coding Afterschool Program is coming up soon. This afterschool program is for first graders who want to learn basic AI coding skills. It will be held on Friday, May 8th, at the school computer lab. It will last for three hours, starting at 4 p.m. and ending at 7 p.m. The program is composed of two parts. The first part introduces basic AI concepts, and the second one includes AI coding practices. Computers will be provided, so students do not need to bring their own computers. Students who complete the program will receive a small gift. We hope many of you will join us.", "candidates": [{"start": 7, "end": 15, "word": "students"}, {"start": 25, "end": 29, "word": "Mike"}, {"start": 36, "end": 44, "word": "computer"}, {"start": 45, "end": 52, "word": "teacher"}, {"start": 61, "end": 67, "word": "Coding"}, {"start": 68, "end": 79, "word": "Afterschool"}, {"start": 80, "end": 87, "word": "Program"}, {"start": 91, "end": 97, "word": "coming"}, {"start": 101, "end": 105, "word": "soon"}, {"start": 112, "end": 123, "word": "afterschool"}, {"start": 124, "end": 131, "word": "program"}, {"start": 139, "end": 144, "word": "first"}, {"start": 145, "end": 152, "word": "graders"}, {"start": 157, "end": 161, "word": "want"}, {"start": 165, "end": 170, "word": "learn"}, {"start": 171, "end": 176, "word": "basic"}, {"start": 180, "end": 186, "word": "coding"}, {"start": 187, "end": 193, "word": "skills"}, {"start": 206, "end": 210, "word": "held"}, {"start": 214, "end": 220, "word": "Friday"}, {"start": 238, "end": 244, "word": "school"}, {"start": 245, "end": 253, "word": "computer"}, {"start": 267, "end": 271, "word": "last"}, {"start": 282, "end": 287, "word": "hours"}, {"start": 289, "end": 297, "word": "starting"}, {"start": 312, "end": 318, "word": "ending"}, {"start": 333, "end": 340, "word": "program"}, {"start": 344, "end": 352, "word": "composed"}, {"start": 360, "end": 365, "word": "parts"}, {"start": 371, "end": 376, "word": "first"}, {"start": 377, "end": 381, "word": "part"}, {"start": 382, "end": 392, "word": "introduces"}, {"start": 393, "end": 398, "word": "basic"}, {"start": 402, "end": 410, "word": "concepts"}, {"start": 420, "end": 426, "word": "second"}, {"start": 431, "end": 439, "word": "includes"}, {"start": 443, "end": 449, "word": "coding"}, {"start": 450, "end": 459, "word": "practices"}, {"start": 461, "end": 470, "word": "Computers"}, {"start": 479, "end": 487, "word": "provided"}, {"start": 492, "end": 500, "word": "students"}, {"start": 508, "end": 512, "word": "need"}, {"start": 516, "end": 521, "word": "bring"}, {"start": 532, "end": 541, "word": "computers"}, {"start": 543, "end": 551, "word": "Students"}, {"start": 556, "end": 564, "word": "complete"}, {"start": 569, "end": 576, "word": "program"}, {"start": 582, "end": 589, "word": "receive"}, {"start": 592, "end": 597, "word": "small"}, {"start": 598, "end": 602, "word": "gift"}, {"start": 607, "end": 611, "word": "hope"}, {"start": 612, "end": 616, "word": "many"}, {"start": 629, "end": 633, "word": "join"}]}, {"id": "q10", "label": "10번", "audio": "audio/q10.mp3", "text": "Jessie, I heard your sister's birthday is next week. Do you have any plans?\nYeah, we're thinking about taking a one-day class together. I've been looking at a few options.\nMaybe I can help you choose. What kind of classes are you interested in?\nUmm... I want to try baking, so I'm trying to choose between Cake Baking and Cookie Baking.\nThen let's narrow it down. What level are you looking for?\nSince it'll be our first class together, I'll leave out the advanced level.\nOkay. You probably don't want a big class, right?\nYes. I'd prefer a small group ― fewer than eight people.\nGot it. Then you have two options left. How about the price?\nIt's her birthday, so I'll choose the more expensive one.\nThen this class looks perfect for you.\nYeah, I think she'll really enjoy it. I'll book it right away!", "candidates": [{"start": 0, "end": 6, "word": "Jessie"}, {"start": 10, "end": 15, "word": "heard"}, {"start": 21, "end": 29, "word": "sister's"}, {"start": 30, "end": 38, "word": "birthday"}, {"start": 42, "end": 46, "word": "next"}, {"start": 47, "end": 51, "word": "week"}, {"start": 69, "end": 74, "word": "plans"}, {"start": 82, "end": 87, "word": "we're"}, {"start": 88, "end": 96, "word": "thinking"}, {"start": 103, "end": 109, "word": "taking"}, {"start": 112, "end": 119, "word": "one-day"}, {"start": 120, "end": 125, "word": "class"}, {"start": 126, "end": 134, "word": "together"}, {"start": 136, "end": 140, "word": "I've"}, {"start": 146, "end": 153, "word": "looking"}, {"start": 163, "end": 170, "word": "options"}, {"start": 172, "end": 177, "word": "Maybe"}, {"start": 184, "end": 188, "word": "help"}, {"start": 193, "end": 199, "word": "choose"}, {"start": 201, "end": 205, "word": "What"}, {"start": 206, "end": 210, "word": "kind"}, {"start": 214, "end": 221, "word": "classes"}, {"start": 230, "end": 240, "word": "interested"}, {"start": 254, "end": 258, "word": "want"}, {"start": 266, "end": 272, "word": "baking"}, {"start": 281, "end": 287, "word": "trying"}, {"start": 291, "end": 297, "word": "choose"}, {"start": 298, "end": 305, "word": "between"}, {"start": 306, "end": 310, "word": "Cake"}, {"start": 311, "end": 317, "word": "Baking"}, {"start": 322, "end": 328, "word": "Cookie"}, {"start": 329, "end": 335, "word": "Baking"}, {"start": 342, "end": 347, "word": "let's"}, {"start": 348, "end": 354, "word": "narrow"}, {"start": 358, "end": 362, "word": "down"}, {"start": 364, "end": 368, "word": "What"}, {"start": 369, "end": 374, "word": "level"}, {"start": 383, "end": 390, "word": "looking"}, {"start": 396, "end": 401, "word": "Since"}, {"start": 402, "end": 407, "word": "it'll"}, {"start": 415, "end": 420, "word": "first"}, {"start": 421, "end": 426, "word": "class"}, {"start": 427, "end": 435, "word": "together"}, {"start": 437, "end": 441, "word": "I'll"}, {"start": 442, "end": 447, "word": "leave"}, {"start": 456, "end": 464, "word": "advanced"}, {"start": 465, "end": 470, "word": "level"}, {"start": 482, "end": 490, "word": "probably"}, {"start": 491, "end": 496, "word": "don't"}, {"start": 497, "end": 501, "word": "want"}, {"start": 508, "end": 513, "word": "class"}, {"start": 515, "end": 520, "word": "right"}, {"start": 531, "end": 537, "word": "prefer"}, {"start": 540, "end": 545, "word": "small"}, {"start": 546, "end": 551, "word": "group"}, {"start": 554, "end": 559, "word": "fewer"}, {"start": 571, "end": 577, "word": "people"}, {"start": 605, "end": 612, "word": "options"}, {"start": 613, "end": 617, "word": "left"}, {"start": 633, "end": 638, "word": "price"}, {"start": 640, "end": 644, "word": "It's"}, {"start": 649, "end": 657, "word": "birthday"}, {"start": 662, "end": 666, "word": "I'll"}, {"start": 667, "end": 673, "word": "choose"}, {"start": 678, "end": 682, "word": "more"}, {"start": 683, "end": 692, "word": "expensive"}, {"start": 708, "end": 713, "word": "class"}, {"start": 714, "end": 719, "word": "looks"}, {"start": 720, "end": 727, "word": "perfect"}, {"start": 745, "end": 750, "word": "think"}, {"start": 751, "end": 757, "word": "she'll"}, {"start": 765, "end": 770, "word": "enjoy"}, {"start": 775, "end": 779, "word": "I'll"}, {"start": 780, "end": 784, "word": "book"}, {"start": 788, "end": 793, "word": "right"}, {"start": 794, "end": 798, "word": "away"}]}, {"id": "q14", "label": "14번", "audio": "audio/q14.mp3", "text": "Hannah, are you volunteering at the animal protection center this year?\nYes, and the animal adoption event is next weekend.\nOh, right. Are you running the greeting booth again?\nYes, I'll welcome visitors and inform them about the center.\nThat sounds great. Do you expect a lot of people to come?\nI hope so. More visitors mean more chances for the animals to be adopted.\nThat's right. By the way, have you finished setting things up for the event?\nPretty much done for now. But I need good photos to upload on social media after the event.\nActually, I recently bought a new camera. I can take photos during the event.\nReally? That would be really helpful.\nWhat time should I be at the center on the day of the event?", "candidates": [{"start": 0, "end": 6, "word": "Hannah"}, {"start": 16, "end": 28, "word": "volunteering"}, {"start": 36, "end": 42, "word": "animal"}, {"start": 43, "end": 53, "word": "protection"}, {"start": 54, "end": 60, "word": "center"}, {"start": 66, "end": 70, "word": "year"}, {"start": 85, "end": 91, "word": "animal"}, {"start": 92, "end": 100, "word": "adoption"}, {"start": 101, "end": 106, "word": "event"}, {"start": 110, "end": 114, "word": "next"}, {"start": 115, "end": 122, "word": "weekend"}, {"start": 128, "end": 133, "word": "right"}, {"start": 143, "end": 150, "word": "running"}, {"start": 155, "end": 163, "word": "greeting"}, {"start": 164, "end": 169, "word": "booth"}, {"start": 170, "end": 175, "word": "again"}, {"start": 182, "end": 186, "word": "I'll"}, {"start": 187, "end": 194, "word": "welcome"}, {"start": 195, "end": 203, "word": "visitors"}, {"start": 208, "end": 214, "word": "inform"}, {"start": 230, "end": 236, "word": "center"}, {"start": 243, "end": 249, "word": "sounds"}, {"start": 250, "end": 255, "word": "great"}, {"start": 264, "end": 270, "word": "expect"}, {"start": 280, "end": 286, "word": "people"}, {"start": 290, "end": 294, "word": "come"}, {"start": 298, "end": 302, "word": "hope"}, {"start": 307, "end": 311, "word": "More"}, {"start": 312, "end": 320, "word": "visitors"}, {"start": 321, "end": 325, "word": "mean"}, {"start": 326, "end": 330, "word": "more"}, {"start": 331, "end": 338, "word": "chances"}, {"start": 347, "end": 354, "word": "animals"}, {"start": 361, "end": 368, "word": "adopted"}, {"start": 370, "end": 376, "word": "That's"}, {"start": 377, "end": 382, "word": "right"}, {"start": 405, "end": 413, "word": "finished"}, {"start": 414, "end": 421, "word": "setting"}, {"start": 422, "end": 428, "word": "things"}, {"start": 440, "end": 445, "word": "event"}, {"start": 447, "end": 453, "word": "Pretty"}, {"start": 454, "end": 458, "word": "much"}, {"start": 459, "end": 463, "word": "done"}, {"start": 479, "end": 483, "word": "need"}, {"start": 484, "end": 488, "word": "good"}, {"start": 489, "end": 495, "word": "photos"}, {"start": 499, "end": 505, "word": "upload"}, {"start": 509, "end": 515, "word": "social"}, {"start": 516, "end": 521, "word": "media"}, {"start": 522, "end": 527, "word": "after"}, {"start": 532, "end": 537, "word": "event"}, {"start": 539, "end": 547, "word": "Actually"}, {"start": 551, "end": 559, "word": "recently"}, {"start": 560, "end": 566, "word": "bought"}, {"start": 573, "end": 579, "word": "camera"}, {"start": 587, "end": 591, "word": "take"}, {"start": 592, "end": 598, "word": "photos"}, {"start": 599, "end": 605, "word": "during"}, {"start": 610, "end": 615, "word": "event"}, {"start": 646, "end": 653, "word": "helpful"}, {"start": 655, "end": 659, "word": "What"}, {"start": 660, "end": 664, "word": "time"}, {"start": 684, "end": 690, "word": "center"}, {"start": 709, "end": 714, "word": "event"}]}, {"id": "q16_17", "label": "16~17번", "audio": "audio/q16_17.mp3", "text": "Hello, listeners. Welcome to the Morning Fitness Guide. Do you want to exercise more effectively in the morning? Eating food before exercise can raise your energy level. So today, I'd like to share some foods that are good to eat before a workout. First, bananas are a popular choice because they provide quick energy and help you feel less tired. Next, yogurt is light on the stomach and gives your body some protein. Eggs are also a good option because they keep you full for longer and improve your strength. Finally, a small amount of nuts can help maintain your energy throughout exercise. Trying these foods before exercise can lead to better results. I hope these tips help you exercise effectively in the morning.", "candidates": [{"start": 7, "end": 16, "word": "listeners"}, {"start": 18, "end": 25, "word": "Welcome"}, {"start": 33, "end": 40, "word": "Morning"}, {"start": 41, "end": 48, "word": "Fitness"}, {"start": 49, "end": 54, "word": "Guide"}, {"start": 63, "end": 67, "word": "want"}, {"start": 71, "end": 79, "word": "exercise"}, {"start": 80, "end": 84, "word": "more"}, {"start": 85, "end": 96, "word": "effectively"}, {"start": 104, "end": 111, "word": "morning"}, {"start": 113, "end": 119, "word": "Eating"}, {"start": 120, "end": 124, "word": "food"}, {"start": 125, "end": 131, "word": "before"}, {"start": 132, "end": 140, "word": "exercise"}, {"start": 145, "end": 150, "word": "raise"}, {"start": 156, "end": 162, "word": "energy"}, {"start": 163, "end": 168, "word": "level"}, {"start": 173, "end": 178, "word": "today"}, {"start": 184, "end": 188, "word": "like"}, {"start": 192, "end": 197, "word": "share"}, {"start": 198, "end": 202, "word": "some"}, {"start": 203, "end": 208, "word": "foods"}, {"start": 218, "end": 222, "word": "good"}, {"start": 230, "end": 236, "word": "before"}, {"start": 239, "end": 246, "word": "workout"}, {"start": 248, "end": 253, "word": "First"}, {"start": 255, "end": 262, "word": "bananas"}, {"start": 269, "end": 276, "word": "popular"}, {"start": 277, "end": 283, "word": "choice"}, {"start": 297, "end": 304, "word": "provide"}, {"start": 305, "end": 310, "word": "quick"}, {"start": 311, "end": 317, "word": "energy"}, {"start": 322, "end": 326, "word": "help"}, {"start": 331, "end": 335, "word": "feel"}, {"start": 336, "end": 340, "word": "less"}, {"start": 341, "end": 346, "word": "tired"}, {"start": 348, "end": 352, "word": "Next"}, {"start": 354, "end": 360, "word": "yogurt"}, {"start": 364, "end": 369, "word": "light"}, {"start": 377, "end": 384, "word": "stomach"}, {"start": 389, "end": 394, "word": "gives"}, {"start": 400, "end": 404, "word": "body"}, {"start": 405, "end": 409, "word": "some"}, {"start": 410, "end": 417, "word": "protein"}, {"start": 419, "end": 423, "word": "Eggs"}, {"start": 435, "end": 439, "word": "good"}, {"start": 440, "end": 446, "word": "option"}, {"start": 460, "end": 464, "word": "keep"}, {"start": 469, "end": 473, "word": "full"}, {"start": 478, "end": 484, "word": "longer"}, {"start": 489, "end": 496, "word": "improve"}, {"start": 502, "end": 510, "word": "strength"}, {"start": 512, "end": 519, "word": "Finally"}, {"start": 523, "end": 528, "word": "small"}, {"start": 529, "end": 535, "word": "amount"}, {"start": 539, "end": 543, "word": "nuts"}, {"start": 548, "end": 552, "word": "help"}, {"start": 553, "end": 561, "word": "maintain"}, {"start": 567, "end": 573, "word": "energy"}, {"start": 574, "end": 584, "word": "throughout"}, {"start": 585, "end": 593, "word": "exercise"}, {"start": 595, "end": 601, "word": "Trying"}, {"start": 608, "end": 613, "word": "foods"}, {"start": 614, "end": 620, "word": "before"}, {"start": 621, "end": 629, "word": "exercise"}, {"start": 634, "end": 638, "word": "lead"}, {"start": 642, "end": 648, "word": "better"}, {"start": 649, "end": 656, "word": "results"}, {"start": 660, "end": 664, "word": "hope"}, {"start": 671, "end": 675, "word": "tips"}, {"start": 676, "end": 680, "word": "help"}, {"start": 685, "end": 693, "word": "exercise"}, {"start": 694, "end": 705, "word": "effectively"}, {"start": 713, "end": 720, "word": "morning"}]}]</script>
+<script>
+(function() {
+  const BLANKS_PER_PASSAGE = 10;
+  const TOTAL_BLANKS = 100;
+  const QUIZ_DATA = JSON.parse(document.getElementById('quiz-data').textContent);
+  const dataById = Object.fromEntries(QUIZ_DATA.map(p => [p.id, p]));
+
+  const norm = (s) => (s || '')
+    .toLowerCase()
+    .replace(/[\u2019\u2018\u201C\u201D]/g, "'")
+    .replace(/[^a-z0-9'\-]/g, '')
+    .trim();
+
+  const escapeHtml = (s) => s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  const escapeAttr = (s) => escapeHtml(s);
+
+  const passageScores = new Map();
+
+  function updateGlobalScore() {
+    let total = 0;
+    passageScores.forEach(v => total += v);
+    document.getElementById('totalCorrect').textContent = total;
+    document.getElementById('progressFill').style.width = (total / TOTAL_BLANKS * 100) + '%';
+  }
+
+  // Pick n random blank positions from candidates, preferring unique lowercase forms
+  function pickBlanks(candidates, n) {
+    const byForm = {};
+    candidates.forEach(c => {
+      const k = c.word.toLowerCase();
+      if (!byForm[k]) byForm[k] = [];
+      byForm[k].push(c);
+    });
+
+    const forms = Object.keys(byForm);
+    // Fisher-Yates shuffle
+    for (let i = forms.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [forms[i], forms[j]] = [forms[j], forms[i]];
+    }
+
+    const picks = [];
+    const usedSet = new Set();
+    for (const form of forms) {
+      const occs = byForm[form];
+      const choice = occs[Math.floor(Math.random() * occs.length)];
+      picks.push(choice);
+      usedSet.add(choice);
+      if (picks.length >= n) break;
+    }
+
+    // If not enough unique forms, top up with duplicates
+    if (picks.length < n) {
+      const remaining = candidates.filter(c => !usedSet.has(c));
+      for (let i = remaining.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+      }
+      picks.push(...remaining.slice(0, n - picks.length));
+    }
+
+    picks.sort((a, b) => a.start - b.start);
+    return picks;
+  }
+
+  // Render the script HTML for a passage given chosen blank picks
+  function renderScript(text, picks) {
+    const parts = [];
+    let cursor = 0;
+    picks.forEach((p, idx) => {
+      if (p.start > cursor) {
+        parts.push(escapeHtml(text.substring(cursor, p.start)).replace(/\n/g, '<br>'));
+      }
+      const size = Math.max(p.word.length, 4);
+      parts.push(
+        '<span class="blank-wrap">' +
+        '<span class="blank-num">' + (idx + 1) + ')</span>' +
+        '<input class="blank" type="text"' +
+        ' data-answer="' + escapeAttr(p.word) + '"' +
+        ' data-idx="' + idx + '"' +
+        ' size="' + size + '"' +
+        ' maxlength="' + (size + 4) + '"' +
+        ' autocomplete="off" autocapitalize="off" spellcheck="false"' +
+        ' aria-label="빈칸 ' + (idx + 1) + '">' +
+        '</span>'
+      );
+      cursor = p.end;
+    });
+    if (cursor < text.length) {
+      parts.push(escapeHtml(text.substring(cursor)).replace(/\n/g, '<br>'));
+    }
+    return parts.join('');
+  }
+
+  function buildPassage(passageEl) {
+    const id = passageEl.dataset.id;
+    const data = dataById[id];
+    const picks = pickBlanks(data.candidates, BLANKS_PER_PASSAGE);
+    const scriptEl = passageEl.querySelector('.script');
+    scriptEl.innerHTML = renderScript(data.text, picks);
+
+    const filled = passageEl.querySelector('.filled');
+    filled.textContent = '0';
+    passageScores.set(id, 0);
+    passageEl.querySelector('.btn-reveal').hidden = true;
+    bindInputHandlers(passageEl);
+  }
+
+  function bindInputHandlers(passageEl) {
+    const inputs = passageEl.querySelectorAll('.blank');
+    inputs.forEach((inp, i) => {
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (i < inputs.length - 1) inputs[i + 1].focus();
+          else passageEl.querySelector('.btn-check').click();
+        }
+      });
+    });
+  }
+
+  function checkPassage(passageEl) {
+    const id = passageEl.dataset.id;
+    const inputs = passageEl.querySelectorAll('.blank');
+    let correct = 0;
+    inputs.forEach(inp => {
+      inp.classList.remove('is-correct', 'is-wrong', 'is-revealed');
+      const ans = inp.dataset.answer;
+      if (norm(inp.value) === norm(ans)) {
+        inp.classList.add('is-correct');
+        correct++;
+      } else if (inp.value.trim() !== '') {
+        inp.classList.add('is-wrong');
+      }
+    });
+    passageEl.querySelector('.filled').textContent = correct;
+    passageScores.set(id, correct);
+    updateGlobalScore();
+    passageEl.querySelector('.btn-reveal').hidden = false;
+  }
+
+  function revealPassage(passageEl) {
+    passageEl.querySelectorAll('.blank').forEach(inp => {
+      if (!inp.classList.contains('is-correct')) {
+        inp.value = inp.dataset.answer;
+        inp.classList.remove('is-wrong');
+        inp.classList.add('is-revealed');
+      }
+    });
+  }
+
+  function resetPassage(passageEl) {
+    const id = passageEl.dataset.id;
+    passageEl.querySelectorAll('.blank').forEach(inp => {
+      inp.value = '';
+      inp.classList.remove('is-correct', 'is-wrong', 'is-revealed');
+    });
+    passageEl.querySelector('.filled').textContent = '0';
+    passageScores.set(id, 0);
+    updateGlobalScore();
+    passageEl.querySelector('.btn-reveal').hidden = true;
+    const first = passageEl.querySelector('.blank');
+    if (first) first.focus();
+  }
+
+  function shufflePassage(passageEl) {
+    buildPassage(passageEl);
+    updateGlobalScore();
+  }
+
+  // Init each passage
+  document.querySelectorAll('.passage').forEach(passageEl => {
+    buildPassage(passageEl);
+
+    passageEl.querySelector('.btn-check').addEventListener('click', () => checkPassage(passageEl));
+    passageEl.querySelector('.btn-reveal').addEventListener('click', () => revealPassage(passageEl));
+    passageEl.querySelector('.btn-reset').addEventListener('click', () => resetPassage(passageEl));
+    passageEl.querySelector('.btn-shuffle').addEventListener('click', () => shufflePassage(passageEl));
+
+    // Speed buttons
+    const audio = passageEl.querySelector('audio');
+    passageEl.querySelectorAll('.speed').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sp = parseFloat(btn.dataset.speed);
+        audio.playbackRate = sp;
+        passageEl.querySelectorAll('.speed').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+      });
+    });
+  });
+
+  // Global shuffle
+  document.getElementById('shuffleAll').addEventListener('click', () => {
+    document.querySelectorAll('.passage').forEach(buildPassage);
+    updateGlobalScore();
+    // tiny visual confirmation
+    const sb = document.querySelector('.scorebar');
+    sb.style.transition = 'background 0.3s';
+    sb.style.background = '#fff8e1';
+    setTimeout(() => { sb.style.background = ''; }, 300);
+  });
+
+  updateGlobalScore();
+})();
+</script>
+</body>
+</html>
