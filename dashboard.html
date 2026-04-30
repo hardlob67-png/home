@@ -494,6 +494,10 @@ async function saveQuizRecord(data){
 // ── Listen for quiz results from iframe ──
 window.addEventListener('message', function(e){
   if(!e.data) return;
+  if(e.data.type === 'wordquiz-close'){
+    closeQuiz();
+    return;
+  }
   if(e.data.type === 'combo-result'){
     saveComboRecord(e.data);
     return;
@@ -644,26 +648,6 @@ function closeQuiz(){
   iframe.style.display='none';
   document.body.style.overflow='';
 }
-
-// 단어장 iframe → 부모 메시지 처리 (close, combo-result, quiz-result)
-window.addEventListener('message', function(ev){
-  const d = ev && ev.data;
-  if(!d || typeof d !== 'object') return;
-  if(d.type === 'wordquiz-close'){ closeQuiz(); return; }
-  if(d.type === 'combo-result'){
-    saveComboRecord({
-      streak: d.streak,
-      quizTitle: d.quizTitle,
-      sourceId: d.sourceId,
-      sourceType: d.sourceType
-    });
-    return;
-  }
-  if(d.type === 'quiz-result'){
-    // 단어장 퀴즈도 일반 퀴즈처럼 결과 처리 (현재는 별도 저장 없음)
-    return;
-  }
-});
 
 window.addEventListener('popstate', ()=>{
   if(document.getElementById('quiz-panel').classList.contains('open')) closeQuiz();
