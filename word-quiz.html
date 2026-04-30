@@ -453,6 +453,14 @@ function showModeScreen(){
   document.getElementById('modeSub').textContent=quizWords.length+'개 단어';
   document.getElementById('modeAllDesc').textContent='전체 '+quizWords.length+'문제';
   document.getElementById('modeQuickDesc').textContent=Math.min(ORIG_QS,quizWords.length)+'문제';
+  // 무한 콤보 카드 안내 — 전체일 때만 리더보드 기록
+  var isFull = (currentLessonLabel === '전체');
+  var infDescEl = document.querySelector('.mode-card.inf .mc-desc');
+  if(infDescEl){
+    infDescEl.textContent = isFull
+      ? '콤보 끊기면 종료! 🏆 리더보드 기록됨'
+      : '콤보 끊기면 종료 (개인 기록만 저장)';
+  }
   showScreen('modeScreen');
 }
 
@@ -705,37 +713,49 @@ function retryWrong(){
 
 function showInfiniteResult(){
   cancelComboTimer();hideCombo();
-  var total=currentIndex,isNew=total>infBest;
+  var total=currentIndex;
+  var isFullRun = (currentLessonLabel === '전체');
+  // localStorage 개인 최고 기록은 단원/그룹/전체 분리 저장
+  var bestKey = 'infBest_'+wordlistId+'_'+currentLessonLabel;
+  var localBest = parseInt(localStorage.getItem(bestKey)||'0');
+  var isNew = total > localBest;
   if(isNew){
-    infBest=total;
-    try{localStorage.setItem('infBest_'+wordlistId,String(infBest))}catch(e){}
+    localBest = total;
+    try{localStorage.setItem(bestKey,String(localBest))}catch(e){}
   }
+  infBest = localBest;
   totalTime=Date.now()-quizStartTime;
   var msg=isNew?'NEW RECORD!':'GAME OVER';
   var ico=isNew?'🏆':'💥';
   var sub=isNew?'이전 기록을 갱신했어요!':'콤보가 끊겼습니다';
   var gc=isNew?'var(--combo-gold)':'var(--text)';
+  var lbInfo = isFullRun
+    ? '<div style="margin-top:14px;padding:8px 14px;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.3);border-radius:10px;color:var(--combo-gold);font-size:12px;font-weight:600">🏆 리더보드에 기록됩니다</div>'
+    : '<div style="margin-top:14px;padding:8px 14px;background:var(--surface);border-radius:10px;color:var(--text-muted);font-size:11px">리더보드는 <b style="color:var(--text-dim)">전체 테스트</b>일 때만 기록돼요</div>';
   var rb=document.getElementById('resultBody');
   rb.innerHTML='';
   var d=document.createElement('div');
   d.style.cssText='margin-top:30px;text-align:center;width:100%';
   d.innerHTML='<div style="font-size:60px;margin-bottom:12px">'+ico+'</div>'
     +'<div style="font-size:24px;font-weight:800;margin-bottom:4px">'+msg+'</div>'
-    +'<div style="color:var(--text-dim);font-size:14px;margin-bottom:28px">'+sub+'</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:280px;margin:0 auto 24px">'
+    +'<div style="color:var(--text-dim);font-size:14px;margin-bottom:8px">'+sub+'</div>'
+    +'<div style="color:var(--text-muted);font-size:12px;margin-bottom:20px">'+esc(currentLessonLabel)+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:280px;margin:0 auto 8px">'
     +'<div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center"><div style="font-size:36px;font-weight:900;background:linear-gradient(180deg,#FFD700,#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+total+'</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">연속 정답</div></div>'
-    +'<div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center"><div style="font-size:36px;font-weight:900;color:'+gc+'">'+infBest+'</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">🏆 최고 기록</div></div>'
-    +'</div>';
+    +'<div style="background:var(--surface);border-radius:12px;padding:16px;text-align:center"><div style="font-size:36px;font-weight:900;color:'+gc+'">'+localBest+'</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">🏆 최고 기록</div></div>'
+    +'</div>'
+    +lbInfo;
   rb.appendChild(d);
   var btns=document.createElement('div');
-  btns.style.cssText='display:flex;flex-direction:column;gap:10px;max-width:280px;margin:0 auto;width:100%';
+  btns.style.cssText='display:flex;flex-direction:column;gap:10px;max-width:280px;margin:24px auto 0;width:100%';
   var b1=document.createElement('button');b1.className='result-btn fire';b1.textContent='🔥 다시 도전';b1.setAttribute('data-action','retry-inf');
   var b2=document.createElement('button');b2.className='result-btn primary';b2.textContent='홈으로';b2.setAttribute('data-action','home');
   btns.appendChild(b1);btns.appendChild(b2);
   rb.appendChild(btns);
   showScreen('resultScreen');
 
-  // postMessage 무한 콤보 결과 → dashboard 가 combo_records 저장
+  // postMessage 무한 콤보 결과 → 전체 테스트일 때만 리더보드 저장
+  if(!isFullRun) return;
   try{
     if(window.parent && window.parent !== window){
       window.parent.postMessage({
@@ -743,7 +763,7 @@ function showInfiniteResult(){
         streak:total,
         sourceType:'wordlist',
         sourceId:wordlistId,
-        quizTitle:'[단어장] '+wordlistTitle+' · '+currentLessonLabel
+        quizTitle:'[단어장] '+wordlistTitle
       },'*');
     }
   }catch(e){}
