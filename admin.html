@@ -1645,6 +1645,15 @@ async function loadWordlists(){
     ]);
     const lists = await wRes.json();
     const allWords = await cntRes.json();
+    // combo_seconds는 컬럼이 없을 수도 있어 별도 fetch (없으면 무시)
+    let comboSecMap = {};
+    try{
+      const csRes = await fetch(`${SUPA_URL}/rest/v1/wordlists?select=id,combo_seconds`,{headers:HDR});
+      if(csRes.ok){
+        const csArr = await csRes.json();
+        if(Array.isArray(csArr)) csArr.forEach(r=>{ comboSecMap[r.id] = r.combo_seconds });
+      }
+    }catch(e){}
     const cntMap = {};
     const unitSetMap = {};
     if(Array.isArray(allWords)){
@@ -1669,13 +1678,19 @@ async function loadWordlists(){
       const lbBtnStyle = lbOn
         ? 'background:linear-gradient(135deg,#FF6B35,#FFD700);color:#000;font-weight:700'
         : 'background:#eee;color:#666';
+      const csVal = comboSecMap[w.id];
+      const cs = (typeof csVal==='number' && csVal>0) ? csVal : 5;
       return `<div style="border:1px solid ${isSelected?'var(--accent)':'var(--border)'};border-radius:10px;padding:14px;background:${isSelected?'var(--bg-soft, #f5f9ff)':'var(--card)'}">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
           <div style="flex:1;min-width:200px">
             <div style="font-weight:600;font-size:16px">📕 ${esc(w.title)} ${lbOn?'<span style="font-size:11px;color:#FF6B35;margin-left:4px">🏆 LB</span>':''}</div>
             <div style="font-size:13px;color:var(--muted);margin-top:4px">분반: ${esc(className)} · 단어 ${cnt}개 · 단원 ${unitCnt}개</div>
           </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            <label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px">⏱
+              <input type="number" min="1" max="30" value="${cs}" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:5px;font-size:13px;text-align:center" onchange="updateWordlistComboSec('${w.id}',this.value)" title="콤보 제한 시간(초)"/>
+              <span style="font-size:11px">초</span>
+            </label>
             <button style="${lbBtnStyle};border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer" onclick="toggleWordlistLeaderboard('${w.id}',${!lbOn})">${lbOn?'🏆 LB ON':'LB OFF'}</button>
             <button class="btn-add" style="padding:6px 12px;font-size:13px" onclick="selectWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">단어 보기/추가</button>
             <button class="btn-del-sm" onclick="deleteWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">🗑 삭제</button>
@@ -1727,6 +1742,19 @@ async function toggleWordlistLeaderboard(id, enable){
     if(!res.ok) throw new Error('컬럼이 없습니다. SQL 실행 필요: alter table wordlists add column leaderboard boolean default false;');
     showToast(enable?'🏆 무한콤보 리더보드 ON':'리더보드 OFF','ok');
     loadWordlists();
+  }catch(e){ showToast(e.message||'실패','err') }
+}
+
+async function updateWordlistComboSec(id, val){
+  let n = parseInt(val);
+  if(isNaN(n) || n<1) n=1;
+  if(n>30) n=30;
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/wordlists?id=eq.${id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({combo_seconds:n})
+    });
+    if(!res.ok) throw new Error('컬럼이 없습니다. SQL 실행 필요: alter table wordlists add column combo_seconds int default 5;');
+    showToast('⏱ 콤보 시간 '+n+'초로 저장','ok');
   }catch(e){ showToast(e.message||'실패','err') }
 }
 

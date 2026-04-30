@@ -774,42 +774,25 @@ loadChat();
 
 // ===== 무한콤보 리더보드 =====
 async function saveComboRecord(d){
-  console.log('[combo] saveComboRecord called:', d);
+  // 단어장이면 sourceId(wordlist UUID)를 quiz_id 자리에 재사용 (옵션 D)
   var qid = d.sourceId || sessionStorage.getItem('qhub_current_quiz_id') || '';
   var qtitle = d.quizTitle || sessionStorage.getItem('qhub_current_quiz_title') || '';
-  if(!qid || !d.streak){ console.warn('[combo] skip: no qid or streak', {qid,streak:d.streak}); return; }
+  if(!qid || !d.streak) return;
 
   if(d.sourceType === 'wordlist'){
     try{
       var chk = await fetch(SUPA_URL+'/rest/v1/wordlists?id=eq.'+qid+'&select=leaderboard',{headers:HDR});
-      var chkText = await chk.text();
-      var rows;
-      try{ rows = JSON.parse(chkText); }catch(_){ rows = null; }
-      console.log('[combo] wordlist LB check status:', chk.status, 'body:', chkText);
-      if(!chk.ok){
-        alert('리더보드 컬럼 확인 실패\n'+chk.status+': '+chkText.slice(0,200));
-        return;
-      }
-      if(!Array.isArray(rows) || !rows.length || !rows[0].leaderboard){
-        alert('리더보드 OFF 상태이거나 컬럼이 없어요\nrows: '+JSON.stringify(rows).slice(0,200));
-        return;
-      }
-    }catch(e){ console.error('[combo] check err', e); alert('LB 체크 에러: '+e.message); return; }
+      var rows = await chk.json();
+      if(!Array.isArray(rows) || !rows.length || !rows[0].leaderboard) return;
+    }catch(e){ return; }
   }
 
   try{
-    var res = await fetch(SUPA_URL+'/rest/v1/combo_records',{
+    await fetch(SUPA_URL+'/rest/v1/combo_records',{
       method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
       body:JSON.stringify({quiz_id:qid,quiz_title:qtitle,streak:d.streak})
     });
-    if(!res.ok){
-      var txt = await res.text();
-      console.error('[combo] INSERT failed', res.status, txt);
-      alert('리더보드 저장 실패\nstatus '+res.status+'\n'+txt.slice(0,300));
-    }else{
-      console.log('[combo] INSERT ok');
-    }
-  }catch(e){ console.error('[combo] insert err', e); alert('insert 네트워크 에러: '+e.message); }
+  }catch(e){}
   loadLeaderboard();
 }
 

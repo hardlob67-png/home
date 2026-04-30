@@ -325,6 +325,17 @@ async function init(){
     if(!Array.isArray(ws)||!ws.length){ showError('단어장을 찾을 수 없습니다.'); return }
     wordlistTitle=ws[0].title;
     var className=ws[0].classes?ws[0].classes.name:'';
+    // 단어장별 콤보 시간 (관리자 설정, 기본 5초). 컬럼 없으면 fallback.
+    try{
+      var csRes=await fetch(SUPA_URL+'/rest/v1/wordlists?id=eq.'+wordlistId+'&select=combo_seconds',{headers:HDR});
+      if(csRes.ok){
+        var csArr=await csRes.json();
+        if(Array.isArray(csArr)&&csArr.length){
+          var cs=csArr[0].combo_seconds;
+          if(typeof cs==='number'&&cs>0&&cs<=30) COMBO_TIME_LIMIT=cs*1000;
+        }
+      }
+    }catch(e){}
 
     var sRes=await fetch(SUPA_URL+'/rest/v1/words?wordlist_id=eq.'+wordlistId+'&select=id,unit,en,ko,idx&order=unit.asc,idx.asc',{headers:HDR});
     var rows=await sRes.json();
