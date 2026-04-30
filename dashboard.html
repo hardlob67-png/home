@@ -246,24 +246,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="menu-card" onclick="showView('quiz')">
         <div class="mc-icon">🧠</div>
         <div class="mc-title">학습 퀴즈</div>
-        <div class="mc-desc">퀴즈를 풀고 뱃지를 모아요</div>
-      </div>
-      <div class="menu-card" onclick="showView('wordlists')">
-        <div class="mc-icon">📚</div>
-        <div class="mc-title">단어장</div>
-        <div class="mc-desc">우리 반 단어장으로 학습해요</div>
+        <div class="mc-desc">퀴즈와 단어장으로 뱃지를 모아요</div>
       </div>
     </div>
-  </div>
-
-  <!-- Wordlists View -->
-  <div class="view" id="view-wordlists">
-    <div class="back-nav"><button class="back-btn" onclick="showView('landing')">← 돌아가기</button></div>
-    <div class="hero">
-      <h1 class="hero-title">📚 우리 반 <span>단어장</span></h1>
-      <p class="hero-sub">단어장을 선택해서 학습을 시작하세요.</p>
-    </div>
-    <div class="quiz-grid" id="wordlist-grid"><div class="spinner">불러오는 중...</div></div>
   </div>
 
   <!-- Grades View -->
@@ -340,67 +325,6 @@ function showView(v){
   document.getElementById('view-'+v).classList.add('active');
   if(v==='quiz'){ loadBadges(); loadQuizzes(); loadLeaderboard(); }
   if(v==='grades'){ loadGrades(); }
-  if(v==='wordlists'){ loadStudentWordlists(); }
-}
-
-// ── Load student wordlists (분반에 할당된 단어장) ──
-async function loadStudentWordlists(){
-  const grid = document.getElementById('wordlist-grid');
-  grid.innerHTML='<div class="spinner">불러오는 중...</div>';
-  try{
-    // 1) 본인 분반 조회
-    const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?member_id=eq.${user.id}&select=class_id,classes(id,name)`,{headers:HDR});
-    const cms = await cmRes.json();
-    if(!Array.isArray(cms) || !cms.length){
-      grid.innerHTML=`<div class="empty"><div class="empty-icon">🏫</div><div class="empty-text">아직 분반에 배정되지 않았어요.<br>선생님께 문의해주세요.</div></div>`;
-      return;
-    }
-    const classIds = cms.map(cm=>cm.class_id).filter(Boolean);
-    const classNameMap = {};
-    cms.forEach(cm=>{ if(cm.classes) classNameMap[cm.class_id]=cm.classes.name });
-
-    // 2) 해당 분반의 단어장
-    const wRes = await fetch(`${SUPA_URL}/rest/v1/wordlists?class_id=in.(${classIds.join(',')})&select=id,class_id,title,created_at&order=created_at.desc`,{headers:HDR});
-    const lists = await wRes.json();
-    if(!Array.isArray(lists) || !lists.length){
-      grid.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">아직 등록된 단어장이 없어요.<br>선생님이 등록하기를 기다리는 중...</div></div>`;
-      return;
-    }
-
-    // 3) 단어 개수·단원 수 집계
-    const wlIds = lists.map(w=>w.id);
-    const cntRes = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=in.(${wlIds.join(',')})&select=wordlist_id,unit`,{headers:HDR});
-    const allWords = await cntRes.json();
-    const cntMap = {};
-    const unitSetMap = {};
-    if(Array.isArray(allWords)){
-      allWords.forEach(w=>{
-        cntMap[w.wordlist_id] = (cntMap[w.wordlist_id]||0)+1;
-        if(!unitSetMap[w.wordlist_id]) unitSetMap[w.wordlist_id] = new Set();
-        unitSetMap[w.wordlist_id].add(w.unit);
-      });
-    }
-
-    grid.innerHTML = lists.map(w=>{
-      const cnt = cntMap[w.id]||0;
-      const unitCnt = unitSetMap[w.id]?unitSetMap[w.id].size:0;
-      const className = classNameMap[w.class_id]||'';
-      const disabled = cnt===0;
-      return `<div class="quiz-card" onclick="${disabled?'':`openWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')`}" style="${disabled?'opacity:0.5;cursor:not-allowed':''}">
-        <span class="quiz-tag tag-new">📚 단어</span>
-        <div class="quiz-title">${esc(w.title)}</div>
-        <div class="quiz-desc">${esc(className)} · 단어 ${cnt}개 · 단원 ${unitCnt}개</div>
-        <div class="quiz-meta"><span>${disabled?'단어 없음':'클릭해서 학습 시작'}</span><span class="quiz-arrow">${disabled?'':'→'}</span></div>
-      </div>`;
-    }).join('');
-  }catch(e){
-    console.error(e);
-    grid.innerHTML='<div class="empty"><div class="empty-text">단어장을 불러오지 못했어요</div></div>';
-  }
-}
-
-function openWordlist(id, title){
-  location.href = `word-quiz.html?wordlist=${encodeURIComponent(id)}`;
 }
 
 // ── Load Grades ──
@@ -589,47 +513,120 @@ window.addEventListener('message', function(e){
 
 // ── Load quizzes ──
 async function loadQuizzes(){
+  const grid = document.getElementById('quiz-grid');
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{headers:HDR});
-    const quizzes = await res.json();
-    const grid = document.getElementById('quiz-grid');
+    // 1) 일반 퀴즈 + 본인 분반의 단어장 + 단어 카운트 병렬 조회
+    const [qRes, cmRes] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/quizzes?select=id,title,description,added&order=added.desc`,{headers:HDR}),
+      fetch(`${SUPA_URL}/rest/v1/class_members?member_id=eq.${user.id}&select=class_id,classes(id,name)`,{headers:HDR}),
+    ]);
+    const quizzes = await qRes.json();
+    const cms = await cmRes.json();
+
+    // 본인 분반의 단어장
+    let wordlists = [];
+    let wordCntMap = {}, unitSetMap = {}, classNameMap = {};
+    const classIds = (Array.isArray(cms)?cms:[]).map(cm=>cm.class_id).filter(Boolean);
+    if(Array.isArray(cms)) cms.forEach(cm=>{ if(cm.classes) classNameMap[cm.class_id]=cm.classes.name });
+
+    if(classIds.length){
+      const wRes = await fetch(`${SUPA_URL}/rest/v1/wordlists?class_id=in.(${classIds.join(',')})&select=id,class_id,title,created_at&order=created_at.desc`,{headers:HDR});
+      wordlists = await wRes.json();
+      if(Array.isArray(wordlists) && wordlists.length){
+        const wlIds = wordlists.map(w=>w.id);
+        const cntRes = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=in.(${wlIds.join(',')})&select=wordlist_id,unit`,{headers:HDR});
+        const allWords = await cntRes.json();
+        if(Array.isArray(allWords)){
+          allWords.forEach(w=>{
+            wordCntMap[w.wordlist_id] = (wordCntMap[w.wordlist_id]||0)+1;
+            if(!unitSetMap[w.wordlist_id]) unitSetMap[w.wordlist_id] = new Set();
+            unitSetMap[w.wordlist_id].add(w.unit);
+          });
+        }
+      }else{
+        wordlists = [];
+      }
+    }
+
     const weekAgo = Date.now()-7*24*60*60*1000;
-    document.getElementById('stat-total').textContent = quizzes.length;
-    document.getElementById('stat-new').textContent = quizzes.filter(q=>new Date(q.added).getTime()>weekAgo).length;
-    if(!quizzes.length){
+    const totalCount = (quizzes?.length||0) + wordlists.length;
+    const newCount = (quizzes?.filter(q=>new Date(q.added).getTime()>weekAgo).length||0)
+                   + wordlists.filter(w=>new Date(w.created_at).getTime()>weekAgo).length;
+    document.getElementById('stat-total').textContent = totalCount;
+    document.getElementById('stat-new').textContent = newCount;
+
+    if(!totalCount){
       grid.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">아직 등록된 퀴즈가 없어요</div></div>`;
       return;
     }
-    grid.innerHTML = quizzes.map(q=>{
-      const isNew = new Date(q.added).getTime()>weekAgo;
-      const tag = isNew?'<span class="quiz-tag tag-new">NEW</span>':'<span class="quiz-tag tag-hot">🔥 HOT</span>';
-      const date = new Date(q.added).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
-      return `<div class="quiz-card" onclick="openQuiz('${q.id}')">
-        ${tag}
-        <div class="quiz-title">${esc(q.title)}</div>
-        <div class="quiz-desc">${esc(q.description||'클릭해서 퀴즈를 시작하세요')}</div>
-        <div class="quiz-meta"><span>${date} 추가</span><span class="quiz-arrow">→</span></div>
+
+    let html = '';
+
+    // 단어장 카드 (위쪽)
+    wordlists.forEach(w=>{
+      const cnt = wordCntMap[w.id]||0;
+      const unitCnt = unitSetMap[w.id]?unitSetMap[w.id].size:0;
+      const className = classNameMap[w.class_id]||'';
+      const disabled = cnt===0;
+      const date = new Date(w.created_at).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+      const titleEsc = esc(w.title).replace(/'/g,'&#39;');
+      const onClick = disabled ? '' : `openQuiz('${w.id}','wordlist','${titleEsc}')`;
+      html += `<div class="quiz-card" onclick="${onClick}" style="${disabled?'opacity:0.5;cursor:not-allowed':''}">
+        <span class="quiz-tag tag-new">📚 단어 · 콤보</span>
+        <div class="quiz-title">${esc(w.title)}</div>
+        <div class="quiz-desc">${esc(className)} · 단어 ${cnt}개 · ${unitCnt}단원</div>
+        <div class="quiz-meta"><span>${disabled?'단어 없음':date+' 추가'}</span><span class="quiz-arrow">${disabled?'':'→'}</span></div>
       </div>`;
-    }).join('');
+    });
+
+    // 일반 퀴즈
+    if(Array.isArray(quizzes)){
+      quizzes.forEach(q=>{
+        const isNew = new Date(q.added).getTime()>weekAgo;
+        const tag = isNew?'<span class="quiz-tag tag-new">NEW</span>':'<span class="quiz-tag tag-hot">🔥 HOT</span>';
+        const date = new Date(q.added).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+        html += `<div class="quiz-card" onclick="openQuiz('${q.id}','quiz')">
+          ${tag}
+          <div class="quiz-title">${esc(q.title)}</div>
+          <div class="quiz-desc">${esc(q.description||'클릭해서 퀴즈를 시작하세요')}</div>
+          <div class="quiz-meta"><span>${date} 추가</span><span class="quiz-arrow">→</span></div>
+        </div>`;
+      });
+    }
+
+    grid.innerHTML = html;
   }catch(e){
-    document.getElementById('quiz-grid').innerHTML='<div class="empty"><div class="empty-text">퀴즈를 불러오지 못했어요</div></div>';
+    console.error(e);
+    grid.innerHTML='<div class="empty"><div class="empty-text">퀴즈를 불러오지 못했어요</div></div>';
   }
 }
 
-async function openQuiz(id){
+async function openQuiz(id, type, titleHint){
+  type = type || 'quiz';
   document.getElementById('quiz-panel').classList.add('open');
   document.getElementById('quiz-loading').style.display='flex';
   document.getElementById('quiz-iframe').style.display='none';
   document.body.style.overflow='hidden';
   sessionStorage.setItem('qhub_current_quiz_id', id);
+  sessionStorage.setItem('qhub_current_quiz_type', type);
+  const iframe = document.getElementById('quiz-iframe');
+  iframe.onload = onIframeLoad;
+
+  if(type==='wordlist'){
+    document.getElementById('quiz-panel-title').textContent = titleHint || '단어장';
+    sessionStorage.setItem('qhub_current_quiz_title', titleHint || '단어장');
+    iframe.srcdoc = '';
+    iframe.src = 'word-quiz.html?wordlist='+encodeURIComponent(id);
+    return;
+  }
+
   try{
     const res = await fetch(`${SUPA_URL}/rest/v1/quizzes?id=eq.${id}&select=title,html_content`,{headers:HDR});
     const data = await res.json();
     if(!data||!data.length){ closeQuiz(); alert('퀴즈를 불러오지 못했어요'); return; }
     document.getElementById('quiz-panel-title').textContent = data[0].title || '';
     sessionStorage.setItem('qhub_current_quiz_title', data[0].title || '');
-    const iframe = document.getElementById('quiz-iframe');
-    iframe.onload = onIframeLoad;
+    iframe.removeAttribute('src');
     iframe.srcdoc = data[0].html_content;
   }catch(e){ closeQuiz(); alert('오류가 발생했어요') }
 }
@@ -641,10 +638,32 @@ function onIframeLoad(){
 
 function closeQuiz(){
   document.getElementById('quiz-panel').classList.remove('open');
-  document.getElementById('quiz-iframe').srcdoc='';
-  document.getElementById('quiz-iframe').style.display='none';
+  const iframe = document.getElementById('quiz-iframe');
+  iframe.srcdoc='';
+  iframe.removeAttribute('src');
+  iframe.style.display='none';
   document.body.style.overflow='';
 }
+
+// 단어장 iframe → 부모 메시지 처리 (close, combo-result, quiz-result)
+window.addEventListener('message', function(ev){
+  const d = ev && ev.data;
+  if(!d || typeof d !== 'object') return;
+  if(d.type === 'wordquiz-close'){ closeQuiz(); return; }
+  if(d.type === 'combo-result'){
+    saveComboRecord({
+      streak: d.streak,
+      quizTitle: d.quizTitle,
+      sourceId: d.sourceId,
+      sourceType: d.sourceType
+    });
+    return;
+  }
+  if(d.type === 'quiz-result'){
+    // 단어장 퀴즈도 일반 퀴즈처럼 결과 처리 (현재는 별도 저장 없음)
+    return;
+  }
+});
 
 window.addEventListener('popstate', ()=>{
   if(document.getElementById('quiz-panel').classList.contains('open')) closeQuiz();
@@ -755,9 +774,22 @@ loadChat();
 
 // ===== 무한콤보 리더보드 =====
 async function saveComboRecord(d){
-  var qid=sessionStorage.getItem('qhub_current_quiz_id')||'';
-  var qtitle=d.quizTitle||sessionStorage.getItem('qhub_current_quiz_title')||'';
-  if(!qid||!d.streak)return;
+  // 단어장이면 sourceId(wordlist UUID)를 quiz_id 자리에 재사용 (옵션 D)
+  var qid = d.sourceId || sessionStorage.getItem('qhub_current_quiz_id') || '';
+  var qtitle = d.quizTitle || sessionStorage.getItem('qhub_current_quiz_title') || '';
+  if(!qid || !d.streak) return;
+
+  // 단어장 무한콤보는 wordlists.leaderboard=true 일 때만 기록
+  if(d.sourceType === 'wordlist'){
+    try{
+      var chk = await fetch(SUPA_URL+'/rest/v1/wordlists?id=eq.'+qid+'&select=leaderboard',{headers:HDR});
+      var rows = await chk.json();
+      if(!Array.isArray(rows) || !rows.length || !rows[0].leaderboard){
+        return; // 토글 OFF면 저장 안 함
+      }
+    }catch(e){ return; }
+  }
+
   try{
     await fetch(SUPA_URL+'/rest/v1/combo_records',{
       method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
@@ -771,11 +803,18 @@ async function loadLeaderboard(){
   var el=document.getElementById('leaderboard-section');
   if(!el)return;
   try{
-    // Get quizzes with leaderboard enabled
-    var qRes=await fetch(SUPA_URL+'/rest/v1/quizzes?leaderboard=eq.true&select=id,title',{headers:HDR});
-    var lbQuizzes=await qRes.json();
-    if(!lbQuizzes||!lbQuizzes.length){el.style.display='none';return}
-    
+    // Get quizzes + wordlists with leaderboard enabled (단어장도 같이 표시)
+    var [qRes, wRes] = await Promise.all([
+      fetch(SUPA_URL+'/rest/v1/quizzes?leaderboard=eq.true&select=id,title',{headers:HDR}),
+      fetch(SUPA_URL+'/rest/v1/wordlists?leaderboard=eq.true&select=id,title',{headers:HDR}),
+    ]);
+    var quizLb = await qRes.json();
+    var wordLb = await wRes.json();
+    var lbQuizzes = (Array.isArray(quizLb)?quizLb:[]).concat(
+      (Array.isArray(wordLb)?wordLb:[]).map(function(w){return {id:w.id,title:'📚 '+w.title}})
+    );
+    if(!lbQuizzes.length){el.style.display='none';return}
+
     el.style.display='block';
     var ids=lbQuizzes.map(function(q){return q.id});
     

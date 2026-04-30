@@ -1638,9 +1638,9 @@ async function loadWordlists(){
     const classMap = {};
     if(Array.isArray(classes)) classes.forEach(c=>{classMap[c.id]=c.name});
 
-    // 단어장 + 단어 카운트
+    // 단어장 + 단어 카운트 (leaderboard 컬럼 포함)
     const [wRes, cntRes] = await Promise.all([
-      fetch(`${SUPA_URL}/rest/v1/wordlists?select=id,class_id,title,created_at&order=created_at.desc`,{headers:HDR}),
+      fetch(`${SUPA_URL}/rest/v1/wordlists?select=id,class_id,title,created_at,leaderboard&order=created_at.desc`,{headers:HDR}),
       fetch(`${SUPA_URL}/rest/v1/words?select=wordlist_id,unit`,{headers:HDR}),
     ]);
     const lists = await wRes.json();
@@ -1665,13 +1665,18 @@ async function loadWordlists(){
       const cnt = cntMap[w.id]||0;
       const unitCnt = unitSetMap[w.id]?unitSetMap[w.id].size:0;
       const isSelected = _selectedWordlistId===w.id;
+      const lbOn = !!w.leaderboard;
+      const lbBtnStyle = lbOn
+        ? 'background:linear-gradient(135deg,#FF6B35,#FFD700);color:#000;font-weight:700'
+        : 'background:#eee;color:#666';
       return `<div style="border:1px solid ${isSelected?'var(--accent)':'var(--border)'};border-radius:10px;padding:14px;background:${isSelected?'var(--bg-soft, #f5f9ff)':'var(--card)'}">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
           <div style="flex:1;min-width:200px">
-            <div style="font-weight:600;font-size:16px">📕 ${esc(w.title)}</div>
+            <div style="font-weight:600;font-size:16px">📕 ${esc(w.title)} ${lbOn?'<span style="font-size:11px;color:#FF6B35;margin-left:4px">🏆 LB</span>':''}</div>
             <div style="font-size:13px;color:var(--muted);margin-top:4px">분반: ${esc(className)} · 단어 ${cnt}개 · 단원 ${unitCnt}개</div>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button style="${lbBtnStyle};border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer" onclick="toggleWordlistLeaderboard('${w.id}',${!lbOn})">${lbOn?'🏆 LB ON':'LB OFF'}</button>
             <button class="btn-add" style="padding:6px 12px;font-size:13px" onclick="selectWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">단어 보기/추가</button>
             <button class="btn-del-sm" onclick="deleteWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">🗑 삭제</button>
           </div>
@@ -1712,6 +1717,17 @@ async function deleteWordlist(id, title){
     showToast('삭제했어요','ok');
     loadWordlists();
   }catch(e){ showToast('실패','err') }
+}
+
+async function toggleWordlistLeaderboard(id, enable){
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/wordlists?id=eq.${id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({leaderboard:enable})
+    });
+    if(!res.ok) throw new Error('컬럼이 없습니다. SQL 실행 필요: alter table wordlists add column leaderboard boolean default false;');
+    showToast(enable?'🏆 무한콤보 리더보드 ON':'리더보드 OFF','ok');
+    loadWordlists();
+  }catch(e){ showToast(e.message||'실패','err') }
 }
 
 async function selectWordlist(id, title){
