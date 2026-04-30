@@ -615,7 +615,7 @@ async function openQuiz(id, type, titleHint){
   if(type==='wordlist'){
     document.getElementById('quiz-panel-title').textContent = titleHint || '단어장';
     sessionStorage.setItem('qhub_current_quiz_title', titleHint || '단어장');
-    iframe.srcdoc = '';
+    iframe.removeAttribute('srcdoc');
     iframe.src = 'word-quiz.html?wordlist='+encodeURIComponent(id);
     return;
   }
@@ -639,7 +639,7 @@ function onIframeLoad(){
 function closeQuiz(){
   document.getElementById('quiz-panel').classList.remove('open');
   const iframe = document.getElementById('quiz-iframe');
-  iframe.srcdoc='';
+  iframe.removeAttribute('srcdoc');
   iframe.removeAttribute('src');
   iframe.style.display='none';
   document.body.style.overflow='';
