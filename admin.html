@@ -216,6 +216,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <button class="sidebar-item" data-tab="notices" onclick="switchTab('notices')"><span class="icon">📢</span>공지사항</button>
     <button class="sidebar-item" data-tab="history" onclick="switchTab('history')"><span class="icon">📊</span>풀이 기록</button>
     <button class="sidebar-item" data-tab="classes" onclick="switchTab('classes')"><span class="icon">🏫</span>분반 관리</button>
+    <button class="sidebar-item" data-tab="wordlists" onclick="switchTab('wordlists')"><span class="icon">📚</span>단어장</button>
     <div class="sidebar-divider"></div>
     <div class="sidebar-label">수업</div>
     <a class="sidebar-item" href="grade.html"><span class="icon">📝</span>성적 입력</a>
@@ -421,6 +422,54 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     </div>
   </div>
 
+  <!-- 단어장 탭 -->
+  <div class="tab-panel" id="tab-wordlists">
+    <div class="section-head">
+      <h2>단어장 관리</h2>
+      <p>분반별로 단어장을 만들고 엑셀로 단어를 일괄 업로드하세요. 학생은 자기 분반의 단어장만 볼 수 있어요.</p>
+    </div>
+
+    <div class="section-title">새 단어장 만들기</div>
+    <div class="add-row">
+      <input type="text" id="new-wordlist-title" placeholder="단어장 제목 (예: 수능 빈출 1000)" autocomplete="off" style="flex:1;min-width:200px">
+      <select id="new-wordlist-class" style="padding:10px;border-radius:8px;border:1px solid var(--border);font-size:15px;background:var(--card)"></select>
+      <button class="btn-add" onclick="addWordlist()">+ 단어장 추가</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-title">등록된 단어장</div>
+    <div id="wordlist-list"><div class="spinner">불러오는 중...</div></div>
+
+    <div class="divider"></div>
+
+    <!-- 단어장 상세 (선택 시 표시) -->
+    <div id="wordlist-detail" style="display:none">
+      <div class="section-title">📕 <span id="wordlist-detail-title"></span></div>
+
+      <p style="font-size:15px;color:var(--muted);margin-bottom:12px">
+        엑셀 컬럼 순서: <b>1열 단원</b> &nbsp;|&nbsp; <b>2열 영어</b> &nbsp;|&nbsp; <b>3열 한글</b> &nbsp;(헤더 행 자동 인식)<br>
+        업로드 시 기존 단어 뒤에 이어서 추가됩니다. 기존 단어를 모두 비우려면 아래 "전체 삭제" 사용.
+      </p>
+
+      <div class="excel-drop" id="wordlist-excel-drop">
+        <input type="file" id="wordlist-excel-input" accept=".xlsx,.xls" onchange="handleWordlistExcel(this.files[0])">
+        <div class="excel-drop-icon">📚</div>
+        <div class="excel-drop-title">엑셀 파일을 여기에 드래그하거나 클릭</div>
+        <div class="excel-drop-sub">.xlsx / .xls 파일</div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-add" style="background:#dc3545" onclick="deleteAllWordsInList()">⚠ 단어 전체 삭제</button>
+      </div>
+
+      <div style="margin-top:24px">
+        <div class="member-count" id="wordlist-detail-count"></div>
+        <div id="wordlist-detail-words"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- 설정 탭 -->
   <div class="tab-panel" id="tab-settings">
     <div class="section-head">
@@ -476,6 +525,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   <button onclick="switchTab('notices');toggleMore()"><span class="nav-icon">📢</span>공지사항</button>
   <button onclick="switchTab('history');toggleMore()"><span class="nav-icon">📊</span>풀이 기록</button>
   <button onclick="switchTab('classes');toggleMore()"><span class="nav-icon">🏫</span>분반 관리</button>
+  <button onclick="switchTab('wordlists');toggleMore()"><span class="nav-icon">📚</span>단어장</button>
   <a href="test.html"><span class="nav-icon">✏️</span>실전테스트</a>
   <button onclick="switchTab('settings');toggleMore()"><span class="nav-icon">⚙️</span>설정</button>
   <button onclick="switchTab('smslog');toggleMore()"><span class="nav-icon">📱</span>문자 내역</button>
@@ -547,7 +597,7 @@ function toggleMore(){
 }
 
 function switchTab(t){
-  const tabs=['members','quizzes','history','classes','settings','smslog','notices'];
+  const tabs=['members','quizzes','history','classes','wordlists','settings','smslog','notices'];
   document.querySelectorAll('.sidebar-item[data-tab]').forEach(b=>{
     b.classList.toggle('active', b.getAttribute('data-tab')===t);
   });
@@ -557,6 +607,7 @@ function switchTab(t){
   });
   if(t==='history') loadHistory();
   if(t==='classes') loadClasses();
+  if(t==='wordlists') loadWordlists();
   if(t==='smslog') loadSmsLogs();
 }
 
@@ -1573,6 +1624,216 @@ async function deleteNotice(id){
 const origSwitch=window.switchTab||function(){};
 const _oldSwitchTab=switchTab;
 switchTab=function(t){_oldSwitchTab(t);if(t==='notices')loadNotices()};
+
+// ===== 단어장 관리 =====
+let _selectedWordlistId = null;
+
+async function loadWordlists(){
+  try{
+    // 분반 목록을 채우고
+    const cRes = await fetch(`${SUPA_URL}/rest/v1/classes?select=id,name&order=name`,{headers:HDR});
+    const classes = await cRes.json();
+    const sel = document.getElementById('new-wordlist-class');
+    sel.innerHTML = '<option value="">분반 선택...</option>' + (Array.isArray(classes)?classes.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''):'');
+    const classMap = {};
+    if(Array.isArray(classes)) classes.forEach(c=>{classMap[c.id]=c.name});
+
+    // 단어장 + 단어 카운트
+    const [wRes, cntRes] = await Promise.all([
+      fetch(`${SUPA_URL}/rest/v1/wordlists?select=id,class_id,title,created_at&order=created_at.desc`,{headers:HDR}),
+      fetch(`${SUPA_URL}/rest/v1/words?select=wordlist_id,unit`,{headers:HDR}),
+    ]);
+    const lists = await wRes.json();
+    const allWords = await cntRes.json();
+    const cntMap = {};
+    const unitSetMap = {};
+    if(Array.isArray(allWords)){
+      allWords.forEach(w=>{
+        cntMap[w.wordlist_id] = (cntMap[w.wordlist_id]||0)+1;
+        if(!unitSetMap[w.wordlist_id]) unitSetMap[w.wordlist_id] = new Set();
+        unitSetMap[w.wordlist_id].add(w.unit);
+      });
+    }
+
+    const el = document.getElementById('wordlist-list');
+    if(!Array.isArray(lists) || !lists.length){
+      el.innerHTML = '<div class="empty-state">아직 등록된 단어장이 없어요</div>';
+      return;
+    }
+    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px">${lists.map(w=>{
+      const className = w.class_id ? (classMap[w.class_id]||'(삭제된 분반)') : '미배정';
+      const cnt = cntMap[w.id]||0;
+      const unitCnt = unitSetMap[w.id]?unitSetMap[w.id].size:0;
+      const isSelected = _selectedWordlistId===w.id;
+      return `<div style="border:1px solid ${isSelected?'var(--accent)':'var(--border)'};border-radius:10px;padding:14px;background:${isSelected?'var(--bg-soft, #f5f9ff)':'var(--card)'}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:200px">
+            <div style="font-weight:600;font-size:16px">📕 ${esc(w.title)}</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:4px">분반: ${esc(className)} · 단어 ${cnt}개 · 단원 ${unitCnt}개</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn-add" style="padding:6px 12px;font-size:13px" onclick="selectWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">단어 보기/추가</button>
+            <button class="btn-del-sm" onclick="deleteWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">🗑 삭제</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('')}</div>`;
+  }catch(e){
+    console.error(e);
+    document.getElementById('wordlist-list').innerHTML='<div class="empty-state">불러오기 실패: '+esc(e.message)+'</div>';
+  }
+}
+
+async function addWordlist(){
+  const title = document.getElementById('new-wordlist-title').value.trim();
+  const classId = document.getElementById('new-wordlist-class').value;
+  if(!title){ showToast('단어장 제목을 입력해주세요','err'); return }
+  if(!classId){ showToast('분반을 선택해주세요','err'); return }
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/wordlists`,{
+      method:'POST', headers:{...HDR,Prefer:'return=representation'},
+      body:JSON.stringify({title,class_id:classId}),
+    });
+    if(!res.ok) throw new Error('생성 실패');
+    document.getElementById('new-wordlist-title').value='';
+    showToast('단어장을 만들었어요','ok');
+    loadWordlists();
+  }catch(e){ showToast(e.message||'실패','err') }
+}
+
+async function deleteWordlist(id, title){
+  if(!confirm(`"${title}" 단어장을 삭제할까요? 포함된 모든 단어도 함께 삭제됩니다.`)) return;
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/wordlists?id=eq.${id}`,{method:'DELETE',headers:HDR});
+    if(_selectedWordlistId===id){
+      _selectedWordlistId=null;
+      document.getElementById('wordlist-detail').style.display='none';
+    }
+    showToast('삭제했어요','ok');
+    loadWordlists();
+  }catch(e){ showToast('실패','err') }
+}
+
+async function selectWordlist(id, title){
+  _selectedWordlistId = id;
+  document.getElementById('wordlist-detail').style.display='block';
+  document.getElementById('wordlist-detail-title').textContent = title;
+  loadWordlists(); // 선택 표시 갱신
+  loadWordlistDetail(id);
+}
+
+async function loadWordlistDetail(id){
+  try{
+    const res = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=eq.${id}&select=id,unit,idx,en,ko&order=unit.asc,idx.asc`,{headers:HDR});
+    const words = await res.json();
+    const el = document.getElementById('wordlist-detail-words');
+    const cntEl = document.getElementById('wordlist-detail-count');
+    if(!Array.isArray(words) || !words.length){
+      cntEl.textContent='';
+      el.innerHTML='<div class="empty-state" style="margin-top:12px">단어가 없어요. 위 영역에 엑셀을 업로드하세요.</div>';
+      return;
+    }
+    cntEl.textContent = `총 ${words.length}개`;
+    // 단원별 그룹핑
+    const byUnit = {};
+    words.forEach(w=>{
+      if(!byUnit[w.unit]) byUnit[w.unit]=[];
+      byUnit[w.unit].push(w);
+    });
+    const unitNums = Object.keys(byUnit).map(Number).sort((a,b)=>a-b);
+    el.innerHTML = unitNums.map(u=>{
+      const ws = byUnit[u];
+      return `<details style="margin-bottom:8px;border:1px solid var(--border);border-radius:8px;background:var(--card)">
+        <summary style="padding:10px 14px;cursor:pointer;font-weight:600">단원 ${u} <span style="color:var(--muted);font-weight:400">(${ws.length}개)</span></summary>
+        <div style="padding:6px 14px 14px">
+          <table style="width:100%;border-collapse:collapse;font-size:14px">
+            <thead><tr style="border-bottom:1px solid var(--border);text-align:left;color:var(--muted);font-size:12px"><th style="padding:6px 4px">#</th><th style="padding:6px 4px">영어</th><th style="padding:6px 4px">한글</th><th></th></tr></thead>
+            <tbody>${ws.map(w=>`<tr style="border-bottom:1px solid #f0f0f0">
+              <td style="padding:6px 4px;color:var(--muted);font-family:monospace">${w.idx}</td>
+              <td style="padding:6px 4px;font-weight:500">${esc(w.en)}</td>
+              <td style="padding:6px 4px">${esc(w.ko)}</td>
+              <td style="padding:6px 4px"><button class="btn-del-sm" onclick="deleteWord('${w.id}')">삭제</button></td>
+            </tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </details>`;
+    }).join('');
+  }catch(e){
+    console.error(e);
+    document.getElementById('wordlist-detail-words').innerHTML='<div class="empty-state">불러오기 실패</div>';
+  }
+}
+
+async function deleteWord(id){
+  if(!confirm('이 단어를 삭제할까요?')) return;
+  await fetch(`${SUPA_URL}/rest/v1/words?id=eq.${id}`,{method:'DELETE',headers:HDR});
+  if(_selectedWordlistId) loadWordlistDetail(_selectedWordlistId);
+  loadWordlists();
+}
+
+async function deleteAllWordsInList(){
+  if(!_selectedWordlistId) return;
+  if(!confirm('이 단어장의 모든 단어를 삭제할까요? 단어장 자체는 유지됩니다.')) return;
+  await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=eq.${_selectedWordlistId}`,{method:'DELETE',headers:HDR});
+  showToast('단어를 모두 삭제했어요','ok');
+  loadWordlistDetail(_selectedWordlistId);
+  loadWordlists();
+}
+
+function handleWordlistExcel(file){
+  if(!file) return;
+  if(!_selectedWordlistId){ showToast('단어장을 먼저 선택해주세요','err'); return }
+  const reader = new FileReader();
+  reader.onload = async function(e){
+    try{
+      const wb = XLSX.read(e.target.result,{type:'binary'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws,{header:1});
+      // 헤더 자동 감지: 첫 행 첫 셀이 숫자가 아니면 헤더로 보고 스킵
+      let start = 0;
+      if(rows.length && rows[0][0] != null){
+        const v = rows[0][0];
+        if(typeof v === 'string' && !/^\d+$/.test(String(v).trim())) start = 1;
+      }
+      // 기존 max idx 조회
+      const idxRes = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=eq.${_selectedWordlistId}&select=idx&order=idx.desc&limit=1`,{headers:HDR});
+      const idxArr = await idxRes.json();
+      let nextIdx = (Array.isArray(idxArr)&&idxArr[0])?(idxArr[0].idx+1):1;
+
+      const data = [];
+      for(let i=start;i<rows.length;i++){
+        const r = rows[i];
+        if(!r || r[0]==null || r[1]==null || r[2]==null) continue;
+        const unit = parseInt(r[0]);
+        const en = String(r[1]).trim();
+        const ko = String(r[2]).trim();
+        if(!en || !ko || isNaN(unit)) continue;
+        data.push({wordlist_id:_selectedWordlistId, unit, idx:nextIdx++, en, ko});
+      }
+      if(!data.length){ showToast('유효한 단어가 없어요','err'); return }
+
+      // 일괄 insert (배치 500개씩)
+      const batchSize = 500;
+      let inserted = 0;
+      for(let i=0;i<data.length;i+=batchSize){
+        const batch = data.slice(i,i+batchSize);
+        const res = await fetch(`${SUPA_URL}/rest/v1/words`,{
+          method:'POST', headers:HDR, body:JSON.stringify(batch),
+        });
+        if(!res.ok){ throw new Error('업로드 실패: '+res.status) }
+        inserted += batch.length;
+      }
+      showToast(`${inserted}개 단어를 추가했어요`,'ok');
+      document.getElementById('wordlist-excel-input').value='';
+      loadWordlistDetail(_selectedWordlistId);
+      loadWordlists();
+    }catch(err){
+      console.error(err);
+      showToast(err.message||'업로드 실패','err');
+    }
+  };
+  reader.readAsBinaryString(file);
+}
 
 </script>
 </body>

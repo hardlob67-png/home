@@ -248,7 +248,22 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <div class="mc-title">학습 퀴즈</div>
         <div class="mc-desc">퀴즈를 풀고 뱃지를 모아요</div>
       </div>
+      <div class="menu-card" onclick="showView('wordlists')">
+        <div class="mc-icon">📚</div>
+        <div class="mc-title">단어장</div>
+        <div class="mc-desc">우리 반 단어장으로 학습해요</div>
+      </div>
     </div>
+  </div>
+
+  <!-- Wordlists View -->
+  <div class="view" id="view-wordlists">
+    <div class="back-nav"><button class="back-btn" onclick="showView('landing')">← 돌아가기</button></div>
+    <div class="hero">
+      <h1 class="hero-title">📚 우리 반 <span>단어장</span></h1>
+      <p class="hero-sub">단어장을 선택해서 학습을 시작하세요.</p>
+    </div>
+    <div class="quiz-grid" id="wordlist-grid"><div class="spinner">불러오는 중...</div></div>
   </div>
 
   <!-- Grades View -->
@@ -325,6 +340,67 @@ function showView(v){
   document.getElementById('view-'+v).classList.add('active');
   if(v==='quiz'){ loadBadges(); loadQuizzes(); loadLeaderboard(); }
   if(v==='grades'){ loadGrades(); }
+  if(v==='wordlists'){ loadStudentWordlists(); }
+}
+
+// ── Load student wordlists (분반에 할당된 단어장) ──
+async function loadStudentWordlists(){
+  const grid = document.getElementById('wordlist-grid');
+  grid.innerHTML='<div class="spinner">불러오는 중...</div>';
+  try{
+    // 1) 본인 분반 조회
+    const cmRes = await fetch(`${SUPA_URL}/rest/v1/class_members?member_id=eq.${user.id}&select=class_id,classes(id,name)`,{headers:HDR});
+    const cms = await cmRes.json();
+    if(!Array.isArray(cms) || !cms.length){
+      grid.innerHTML=`<div class="empty"><div class="empty-icon">🏫</div><div class="empty-text">아직 분반에 배정되지 않았어요.<br>선생님께 문의해주세요.</div></div>`;
+      return;
+    }
+    const classIds = cms.map(cm=>cm.class_id).filter(Boolean);
+    const classNameMap = {};
+    cms.forEach(cm=>{ if(cm.classes) classNameMap[cm.class_id]=cm.classes.name });
+
+    // 2) 해당 분반의 단어장
+    const wRes = await fetch(`${SUPA_URL}/rest/v1/wordlists?class_id=in.(${classIds.join(',')})&select=id,class_id,title,created_at&order=created_at.desc`,{headers:HDR});
+    const lists = await wRes.json();
+    if(!Array.isArray(lists) || !lists.length){
+      grid.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">아직 등록된 단어장이 없어요.<br>선생님이 등록하기를 기다리는 중...</div></div>`;
+      return;
+    }
+
+    // 3) 단어 개수·단원 수 집계
+    const wlIds = lists.map(w=>w.id);
+    const cntRes = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=in.(${wlIds.join(',')})&select=wordlist_id,unit`,{headers:HDR});
+    const allWords = await cntRes.json();
+    const cntMap = {};
+    const unitSetMap = {};
+    if(Array.isArray(allWords)){
+      allWords.forEach(w=>{
+        cntMap[w.wordlist_id] = (cntMap[w.wordlist_id]||0)+1;
+        if(!unitSetMap[w.wordlist_id]) unitSetMap[w.wordlist_id] = new Set();
+        unitSetMap[w.wordlist_id].add(w.unit);
+      });
+    }
+
+    grid.innerHTML = lists.map(w=>{
+      const cnt = cntMap[w.id]||0;
+      const unitCnt = unitSetMap[w.id]?unitSetMap[w.id].size:0;
+      const className = classNameMap[w.class_id]||'';
+      const disabled = cnt===0;
+      return `<div class="quiz-card" onclick="${disabled?'':`openWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')`}" style="${disabled?'opacity:0.5;cursor:not-allowed':''}">
+        <span class="quiz-tag tag-new">📚 단어</span>
+        <div class="quiz-title">${esc(w.title)}</div>
+        <div class="quiz-desc">${esc(className)} · 단어 ${cnt}개 · 단원 ${unitCnt}개</div>
+        <div class="quiz-meta"><span>${disabled?'단어 없음':'클릭해서 학습 시작'}</span><span class="quiz-arrow">${disabled?'':'→'}</span></div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    console.error(e);
+    grid.innerHTML='<div class="empty"><div class="empty-text">단어장을 불러오지 못했어요</div></div>';
+  }
+}
+
+function openWordlist(id, title){
+  location.href = `word-quiz.html?wordlist=${encodeURIComponent(id)}`;
 }
 
 // ── Load Grades ──
