@@ -534,9 +534,34 @@ async function loadQuizzes(){
     if(Array.isArray(cms)) cms.forEach(cm=>{ if(cm.classes) classNameMap[cm.class_id]=cm.classes.name });
 
     if(classIds.length){
-      const wRes = await fetch(`${SUPA_URL}/rest/v1/wordlists?class_id=in.(${classIds.join(',')})&select=id,class_id,title,created_at&order=created_at.desc`,{headers:HDR});
-      wordlists = await wRes.json();
-      if(Array.isArray(wordlists) && wordlists.length){
+      // junction (wordlist_classes) 기반 조회. 단어장이 여러 분반에 속해도 학생 분반 중 하나만 매칭되면 노출.
+      const wlcRes = await fetch(`${SUPA_URL}/rest/v1/wordlist_classes?class_id=in.(${classIds.join(',')})&select=wordlist_id,class_id,wordlists(id,class_id,title,created_at)`,{headers:HDR});
+      const wlcRows = await wlcRes.json();
+      // 중복 제거 (학생이 양쪽 분반에 속해 동일 단어장이 두 번 나오는 경우)
+      const seen = new Set();
+      wordlists = [];
+      const wlClassMap = {}; // wordlist_id -> [class_id, ...]
+      if(Array.isArray(wlcRows)){
+        wlcRows.forEach(r=>{
+          if(!r.wordlists) return;
+          if(!wlClassMap[r.wordlist_id]) wlClassMap[r.wordlist_id] = [];
+          wlClassMap[r.wordlist_id].push(r.class_id);
+          if(seen.has(r.wordlist_id)) return;
+          seen.add(r.wordlist_id);
+          wordlists.push(r.wordlists);
+        });
+      }
+      // 단어장의 표시용 class_id를 학생 분반 중 매핑된 것으로 덮어쓰기 (분반명 표시용)
+      wordlists.forEach(w=>{
+        const mapped = wlClassMap[w.id] || [];
+        // 학생이 속한 분반과 교집합 중 첫 번째
+        const ownClass = mapped.find(cid=>classIds.includes(cid));
+        if(ownClass) w.class_id = ownClass;
+      });
+      // created_at desc 정렬
+      wordlists.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+      if(wordlists.length){
         const wlIds = wordlists.map(w=>w.id);
         const cntRes = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=in.(${wlIds.join(',')})&select=wordlist_id,unit`,{headers:HDR});
         const allWords = await cntRes.json();
@@ -547,8 +572,6 @@ async function loadQuizzes(){
             unitSetMap[w.wordlist_id].add(w.unit);
           });
         }
-      }else{
-        wordlists = [];
       }
     }
 

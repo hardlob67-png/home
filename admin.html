@@ -430,10 +430,13 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     </div>
 
     <div class="section-title">새 단어장 만들기</div>
-    <div class="add-row">
-      <input type="text" id="new-wordlist-title" placeholder="단어장 제목 (예: 수능 빈출 1000)" autocomplete="off" style="flex:1;min-width:200px">
-      <select id="new-wordlist-class" style="padding:10px;border-radius:8px;border:1px solid var(--border);font-size:15px;background:var(--card)"></select>
-      <button class="btn-add" onclick="addWordlist()">+ 단어장 추가</button>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input type="text" id="new-wordlist-title" placeholder="단어장 제목 (예: 수능 빈출 1000)" autocomplete="off" style="padding:10px;border-radius:8px;border:1px solid var(--border);font-size:15px;background:var(--card)">
+      <div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:6px">분반 선택 (여러 분반에 동시 등록 가능)</div>
+        <div id="new-wordlist-class-list" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--card);min-height:46px"></div>
+      </div>
+      <div><button class="btn-add" onclick="addWordlist()">+ 단어장 추가</button></div>
     </div>
 
     <div class="divider"></div>
@@ -560,6 +563,25 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <button class="btn-sm" onclick="closeEditMember()">취소</button>
       <button class="btn-add" onclick="saveEditMember()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div id="edit-wordlist-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.3);align-items:center;justify-content:center">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;width:90%;max-width:480px;max-height:90vh;overflow-y:auto">
+    <h3 style="font-size:17px;font-weight:700;margin-bottom:18px">단어장 수정</h3>
+    <input type="hidden" id="edit-wordlist-id">
+    <div style="margin-bottom:14px">
+      <label style="font-size:14px;color:var(--muted);display:block;margin-bottom:4px">단어장 제목</label>
+      <input type="text" id="edit-wordlist-title" style="width:100%">
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="font-size:14px;color:var(--muted);display:block;margin-bottom:6px">분반 (여러 개 선택 가능)</label>
+      <div id="edit-wordlist-class-list" style="display:flex;flex-wrap:wrap;gap:8px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg-soft,#f7f8fa);min-height:46px"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn-sm" onclick="closeEditWordlist()">취소</button>
+      <button class="btn-add" onclick="saveEditWordlist()">저장</button>
     </div>
   </div>
 </div>
@@ -1627,24 +1649,57 @@ switchTab=function(t){_oldSwitchTab(t);if(t==='notices')loadNotices()};
 
 // ===== 단어장 관리 =====
 let _selectedWordlistId = null;
+let _allClasses = []; // {id, name} 분반 목록 캐시
+let _wlClassMap = {}; // wordlist_id -> [class_id, ...]
+
+function _renderClassCheckboxes(container, selectedIds){
+  const sel = new Set(selectedIds||[]);
+  if(!_allClasses.length){
+    container.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:4px 6px">먼저 분반을 만들어주세요</div>';
+    return;
+  }
+  container.innerHTML = _allClasses.map(c=>{
+    const checked = sel.has(c.id) ? 'checked' : '';
+    return `<label style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:20px;background:var(--card);cursor:pointer;font-size:14px">
+      <input type="checkbox" value="${c.id}" ${checked} style="margin:0;cursor:pointer">
+      <span>${esc(c.name)}</span>
+    </label>`;
+  }).join('');
+}
+
+function _getCheckedClassIds(container){
+  return [...container.querySelectorAll('input[type=checkbox]:checked')].map(i=>i.value);
+}
 
 async function loadWordlists(){
   try{
-    // 분반 목록을 채우고
+    // 분반 목록
     const cRes = await fetch(`${SUPA_URL}/rest/v1/classes?select=id,name&order=name`,{headers:HDR});
     const classes = await cRes.json();
-    const sel = document.getElementById('new-wordlist-class');
-    sel.innerHTML = '<option value="">분반 선택...</option>' + (Array.isArray(classes)?classes.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(''):'');
+    _allClasses = Array.isArray(classes) ? classes : [];
     const classMap = {};
-    if(Array.isArray(classes)) classes.forEach(c=>{classMap[c.id]=c.name});
+    _allClasses.forEach(c=>{classMap[c.id]=c.name});
+    _renderClassCheckboxes(document.getElementById('new-wordlist-class-list'), []);
 
-    // 단어장 + 단어 카운트 (leaderboard 컬럼 포함)
-    const [wRes, cntRes] = await Promise.all([
+    // 단어장 + 단어 카운트 + junction
+    const [wRes, cntRes, wlcRes] = await Promise.all([
       fetch(`${SUPA_URL}/rest/v1/wordlists?select=id,class_id,title,created_at,leaderboard&order=created_at.desc`,{headers:HDR}),
       fetch(`${SUPA_URL}/rest/v1/words?select=wordlist_id,unit`,{headers:HDR}),
+      fetch(`${SUPA_URL}/rest/v1/wordlist_classes?select=wordlist_id,class_id`,{headers:HDR}),
     ]);
     const lists = await wRes.json();
     const allWords = await cntRes.json();
+    const wlcRows = wlcRes.ok ? await wlcRes.json() : [];
+
+    // junction map 구성
+    _wlClassMap = {};
+    if(Array.isArray(wlcRows)){
+      wlcRows.forEach(r=>{
+        if(!_wlClassMap[r.wordlist_id]) _wlClassMap[r.wordlist_id] = [];
+        _wlClassMap[r.wordlist_id].push(r.class_id);
+      });
+    }
+
     // combo_seconds는 컬럼이 없을 수도 있어 별도 fetch (없으면 무시)
     let comboSecMap = {};
     try{
@@ -1670,7 +1725,12 @@ async function loadWordlists(){
       return;
     }
     el.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px">${lists.map(w=>{
-      const className = w.class_id ? (classMap[w.class_id]||'(삭제된 분반)') : '미배정';
+      // junction 기반 분반 목록. junction이 비어 있으면 legacy class_id로 폴백
+      let cids = _wlClassMap[w.id] || [];
+      if(!cids.length && w.class_id) cids = [w.class_id];
+      const classNames = cids.length
+        ? cids.map(cid=>classMap[cid]||'(삭제된 분반)').join(', ')
+        : '미배정';
       const cnt = cntMap[w.id]||0;
       const unitCnt = unitSetMap[w.id]?unitSetMap[w.id].size:0;
       const isSelected = _selectedWordlistId===w.id;
@@ -1684,7 +1744,7 @@ async function loadWordlists(){
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
           <div style="flex:1;min-width:200px">
             <div style="font-weight:600;font-size:16px">📕 ${esc(w.title)} ${lbOn?'<span style="font-size:11px;color:#FF6B35;margin-left:4px">🏆 LB</span>':''}</div>
-            <div style="font-size:13px;color:var(--muted);margin-top:4px">분반: ${esc(className)} · 단어 ${cnt}개 · 단원 ${unitCnt}개</div>
+            <div style="font-size:13px;color:var(--muted);margin-top:4px">분반: ${esc(classNames)} · 단어 ${cnt}개 · 단원 ${unitCnt}개</div>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
             <label style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px">⏱
@@ -1692,6 +1752,7 @@ async function loadWordlists(){
               <span style="font-size:11px">초</span>
             </label>
             <button style="${lbBtnStyle};border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer" onclick="toggleWordlistLeaderboard('${w.id}',${!lbOn})">${lbOn?'🏆 LB ON':'LB OFF'}</button>
+            <button class="btn-sm" style="padding:6px 12px;font-size:13px" onclick="openEditWordlist('${w.id}')">✏️ 수정</button>
             <button class="btn-add" style="padding:6px 12px;font-size:13px" onclick="selectWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">단어 보기/추가</button>
             <button class="btn-del-sm" onclick="deleteWordlist('${w.id}','${esc(w.title).replace(/'/g,'&#39;')}')">🗑 삭제</button>
           </div>
@@ -1706,17 +1767,86 @@ async function loadWordlists(){
 
 async function addWordlist(){
   const title = document.getElementById('new-wordlist-title').value.trim();
-  const classId = document.getElementById('new-wordlist-class').value;
+  const classIds = _getCheckedClassIds(document.getElementById('new-wordlist-class-list'));
   if(!title){ showToast('단어장 제목을 입력해주세요','err'); return }
-  if(!classId){ showToast('분반을 선택해주세요','err'); return }
+  if(!classIds.length){ showToast('분반을 1개 이상 선택해주세요','err'); return }
   try{
-    const res = await fetch(`${SUPA_URL}/rest/v1/wordlists`,{
+    // 1) 단어장 row 생성 (legacy class_id에는 첫 번째 분반 기록 - 호환성)
+    const wRes = await fetch(`${SUPA_URL}/rest/v1/wordlists`,{
       method:'POST', headers:{...HDR,Prefer:'return=representation'},
-      body:JSON.stringify({title,class_id:classId}),
+      body:JSON.stringify({title, class_id: classIds[0]}),
     });
-    if(!res.ok) throw new Error('생성 실패');
+    if(!wRes.ok) throw new Error('생성 실패');
+    const created = await wRes.json();
+    const newId = Array.isArray(created) ? created[0].id : created.id;
+    // 2) junction에 매핑 등록
+    const junctionRows = classIds.map(cid=>({wordlist_id:newId, class_id:cid}));
+    const jRes = await fetch(`${SUPA_URL}/rest/v1/wordlist_classes`,{
+      method:'POST', headers:HDR, body:JSON.stringify(junctionRows),
+    });
+    if(!jRes.ok){
+      // junction 실패 시 단어장 삭제로 롤백
+      await fetch(`${SUPA_URL}/rest/v1/wordlists?id=eq.${newId}`,{method:'DELETE',headers:HDR});
+      throw new Error('분반 매핑 실패 (wordlist_classes 테이블이 있나요?)');
+    }
     document.getElementById('new-wordlist-title').value='';
+    _renderClassCheckboxes(document.getElementById('new-wordlist-class-list'), []);
     showToast('단어장을 만들었어요','ok');
+    loadWordlists();
+  }catch(e){ showToast(e.message||'실패','err') }
+}
+
+async function openEditWordlist(id){
+  // 단어장 정보 조회
+  try{
+    const wRes = await fetch(`${SUPA_URL}/rest/v1/wordlists?id=eq.${id}&select=id,title`,{headers:HDR});
+    const arr = await wRes.json();
+    if(!Array.isArray(arr) || !arr.length){ showToast('단어장을 찾을 수 없어요','err'); return }
+    const wl = arr[0];
+    // 현재 매핑된 분반: junction 우선, 비어 있으면 캐시된 _wlClassMap 사용
+    let cids = _wlClassMap[id] || [];
+    if(!cids.length){
+      // junction에 없으면 다시 조회
+      const jRes = await fetch(`${SUPA_URL}/rest/v1/wordlist_classes?wordlist_id=eq.${id}&select=class_id`,{headers:HDR});
+      if(jRes.ok){
+        const j = await jRes.json();
+        if(Array.isArray(j)) cids = j.map(r=>r.class_id);
+      }
+    }
+    document.getElementById('edit-wordlist-id').value = id;
+    document.getElementById('edit-wordlist-title').value = wl.title || '';
+    _renderClassCheckboxes(document.getElementById('edit-wordlist-class-list'), cids);
+    document.getElementById('edit-wordlist-modal').style.display = 'flex';
+  }catch(e){ showToast('불러오기 실패','err') }
+}
+
+function closeEditWordlist(){
+  document.getElementById('edit-wordlist-modal').style.display = 'none';
+}
+
+async function saveEditWordlist(){
+  const id = document.getElementById('edit-wordlist-id').value;
+  const title = document.getElementById('edit-wordlist-title').value.trim();
+  const classIds = _getCheckedClassIds(document.getElementById('edit-wordlist-class-list'));
+  if(!id){ return }
+  if(!title){ showToast('단어장 제목을 입력해주세요','err'); return }
+  if(!classIds.length){ showToast('분반을 1개 이상 선택해주세요','err'); return }
+  try{
+    // 1) 제목 + legacy class_id 갱신 (legacy는 첫 번째 분반)
+    const pRes = await fetch(`${SUPA_URL}/rest/v1/wordlists?id=eq.${id}`,{
+      method:'PATCH', headers:HDR, body:JSON.stringify({title, class_id: classIds[0]})
+    });
+    if(!pRes.ok) throw new Error('단어장 수정 실패');
+    // 2) junction 재구성: delete then insert
+    const dRes = await fetch(`${SUPA_URL}/rest/v1/wordlist_classes?wordlist_id=eq.${id}`,{method:'DELETE',headers:HDR});
+    if(!dRes.ok) throw new Error('분반 매핑 갱신 실패');
+    const junctionRows = classIds.map(cid=>({wordlist_id:id, class_id:cid}));
+    const iRes = await fetch(`${SUPA_URL}/rest/v1/wordlist_classes`,{
+      method:'POST', headers:HDR, body:JSON.stringify(junctionRows),
+    });
+    if(!iRes.ok) throw new Error('분반 매핑 갱신 실패');
+    closeEditWordlist();
+    showToast('수정했어요','ok');
     loadWordlists();
   }catch(e){ showToast(e.message||'실패','err') }
 }
