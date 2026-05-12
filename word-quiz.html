@@ -320,7 +320,7 @@ function goBackToParent(){
 async function init(){
   if(!wordlistId){ showError('잘못된 접근입니다.'); return }
   try{
-    var wRes=await fetch(SUPA_URL+'/rest/v1/wordlists?id=eq.'+wordlistId+'&select=id,title,class_id,classes(name)',{headers:HDR});
+    var wRes=await fetch(SUPA_URL+'/rest/v1/wordlists?id=eq.'+wordlistId+'&select=id,title,class_id,classes!class_id(name)',{headers:HDR});
     var ws=await wRes.json();
     if(!Array.isArray(ws)||!ws.length){ showError('단어장을 찾을 수 없습니다.'); return }
     wordlistTitle=ws[0].title;
