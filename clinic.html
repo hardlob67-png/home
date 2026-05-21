@@ -579,6 +579,19 @@ function formatPhone(p){
   return p;
 }
 
+function formatSentAt(iso){
+  if(!iso) return '';
+  try{
+    const d = new Date(iso);
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    if(sameDay) return `${hh}:${mm}`;
+    return `${d.getMonth()+1}/${d.getDate()} ${hh}:${mm}`;
+  }catch(e){ return ''; }
+}
+
 function loadBulkFile(e){
   const file = e.target.files[0];
   if(!file) return;
@@ -670,25 +683,34 @@ function renderBulkList(){
   bulkList.forEach((b, idx)=>{
     const isDone = b.status === 'success';
     const isFail = b.status === 'failed';
-    const rowBg = isDone ? 'background:rgba(139,115,85,.06);opacity:.75' : isFail ? 'background:rgba(255,101,132,.06)' : '';
+    const rowBg = isDone ? 'background:rgba(139,115,85,.04)' : isFail ? 'background:rgba(255,101,132,.06)' : '';
     const statusHtml = isDone ? '<span style="color:#8B7355;font-weight:700;font-size:13px">✓ 발송</span>'
                      : isFail ? `<span style="color:var(--red);font-weight:700;font-size:13px" title="${esc(b.error||'')}">✗ 실패</span>`
                      : '<span style="color:var(--muted);font-size:13px">대기</span>';
-    const btnHtml = isDone ? '' : `<button class="btn-sm" onclick="sendOne(${idx})" style="padding:5px 9px;font-size:13px">전송</button>`;
+    const btnHtml = isDone
+      ? `<button class="btn-sm" onclick="sendOne(${idx})" style="padding:5px 9px;font-size:13px;background:transparent;border:1px solid var(--border);color:var(--muted)" title="같은 번호로 다시 보내기">재전송</button>`
+      : `<button class="btn-sm" onclick="sendOne(${idx})" style="padding:5px 9px;font-size:13px">전송</button>`;
     const len = (b.message||'').length;
+    const sentInfoHtml = b.last_sent_at
+      ? `<div style="font-size:12px;color:var(--muted);margin-top:6px;padding:6px 10px;background:rgba(139,115,85,.06);border-left:2px solid #8B7355;border-radius:4px;white-space:pre-wrap;word-break:break-word">
+          <span style="color:#8B7355;font-weight:600">📤 ${esc(formatSentAt(b.last_sent_at))} 발송</span>
+          <span style="display:block;margin-top:2px;color:var(--text,#333)">${esc(b.last_sent_message||'')}</span>
+        </div>`
+      : '';
 
-    html += `<div style="display:grid;grid-template-columns:${cols};gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--border);${rowBg}">
-      <div style="font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(b.name||'(이름없음)')}</div>
-      <div style="font-size:13px;color:var(--muted);font-family:monospace">${esc(formatPhone(b.phone))}</div>
+    html += `<div style="display:grid;grid-template-columns:${cols};gap:8px;align-items:start;padding:10px 12px;border-bottom:1px solid var(--border);${rowBg}">
+      <div style="font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-top:6px">${esc(b.name||'(이름없음)')}</div>
+      <div style="font-size:13px;color:var(--muted);font-family:monospace;padding-top:6px">${esc(formatPhone(b.phone))}</div>
       <div>
         <textarea rows="2" oninput="updateBulkMsg(${idx}, this.value)"
           style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:inherit;font-size:13px;resize:vertical">${esc(b.message||'')}</textarea>
         <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:2px">
           <span id="bulk-msg-cnt-${idx}">${len}</span>자 <span>${len>90?'(LMS)':''}</span>
         </div>
+        ${sentInfoHtml}
       </div>
-      <div>${statusHtml}</div>
-      <div>${btnHtml}</div>
+      <div style="padding-top:6px">${statusHtml}</div>
+      <div style="padding-top:6px">${btnHtml}</div>
     </div>`;
   });
 
@@ -702,7 +724,6 @@ async function sendOne(idx){
     showToast(`${b.name||'#'+(idx+1)}: 메시지가 비었어요`,'err');
     return false;
   }
-  if(b.status === 'success'){ return true; }
 
   try{
     const smsRes = await fetch(`${SUPA_URL}/functions/v1/send-sms`,{
@@ -715,6 +736,8 @@ async function sendOne(idx){
     if(smsRes.ok && data.success){
       b.status = 'success';
       b.error = '';
+      b.last_sent_message = b.message;
+      b.last_sent_at = new Date().toISOString();
     }else{
       b.status = 'failed';
       b.error = (data && (data.error || data.message)) || ('HTTP '+smsRes.status);
