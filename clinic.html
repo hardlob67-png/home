@@ -242,7 +242,7 @@ input:focus,select:focus{border-color:var(--accent)}
 
     <div style="margin-top:14px;display:flex;gap:10px;justify-content:flex-end;align-items:center" id="bulk-actions" hidden>
       <span id="bulk-progress" style="font-size:14px;color:var(--muted)"></span>
-      <button class="btn-primary" onclick="sendAllBulk()" id="bulk-send-all">✉️ 전체 발송</button>
+      <button class="btn-primary" onclick="sendAllBulk()" id="bulk-send-all">✉️ 선택 항목 발송</button>
     </div>
   </div>
 </div>
@@ -556,6 +556,7 @@ try{
   const cached = sessionStorage.getItem(BULK_STORAGE_KEY);
   if(cached){
     bulkList = JSON.parse(cached) || [];
+    bulkList.forEach(b => { if(typeof b.checked === 'undefined') b.checked = (b.status !== 'success'); });
     setTimeout(renderBulkList, 0);
   }
 }catch(e){}
@@ -613,7 +614,7 @@ function loadBulkFile(e){
         const name = String(row[0]||'').trim();
         const phone = normPhone(row[1]);
         if(!phone) continue;
-        newList.push({name:name||'(이름없음)', phone, message:'', status:'', error:''});
+        newList.push({name:name||'(이름없음)', phone, message:'', status:'', error:'', checked:true});
       }
       if(!newList.length){
         showToast('유효한 명단이 없어요 (1열=이름, 2열=번호)','err');
@@ -652,6 +653,8 @@ function applyCommonMsg(){
 
 function updateBulkMsg(idx, val){
   if(!bulkList[idx]) return;
+  const wasEmpty = !(bulkList[idx].message||'').trim();
+  const isEmpty = !val.trim();
   bulkList[idx].message = val;
   saveBulkCache();
   const cntEl = document.getElementById('bulk-msg-cnt-' + idx);
@@ -659,6 +662,7 @@ function updateBulkMsg(idx, val){
     cntEl.textContent = String(val.length);
     cntEl.nextElementSibling && (cntEl.nextElementSibling.textContent = val.length>90?'(LMS)':'');
   }
+  if(wasEmpty !== isEmpty) updateBulkSendBtnLabel();
 }
 
 function renderBulkList(){
@@ -675,8 +679,12 @@ function renderBulkList(){
   if(cnt) cnt.textContent = `총 ${bulkList.length}명`;
   if(actions) actions.hidden = false;
 
-  const cols = '80px 130px 1fr 80px 70px';
-  let html = `<div style="display:grid;grid-template-columns:${cols};gap:8px;padding:8px 12px;font-size:13px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border)">
+  const cols = '40px 80px 130px 1fr 80px 70px';
+  const checkedCount = bulkList.filter(b=>b.checked).length;
+  const allChecked = checkedCount === bulkList.length;
+  const noneChecked = checkedCount === 0;
+  let html = `<div style="display:grid;grid-template-columns:${cols};gap:8px;padding:8px 12px;font-size:13px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);align-items:center">
+    <div><input type="checkbox" id="bulk-check-all" ${allChecked?'checked':''} onchange="toggleBulkCheckAll(this.checked)" style="width:18px;height:18px;cursor:pointer" title="전체 선택/해제"></div>
     <div>이름</div><div>번호</div><div>메시지</div><div>상태</div><div>발송</div>
   </div>`;
 
@@ -699,6 +707,7 @@ function renderBulkList(){
       : '';
 
     html += `<div style="display:grid;grid-template-columns:${cols};gap:8px;align-items:start;padding:10px 12px;border-bottom:1px solid var(--border);${rowBg}">
+      <div style="padding-top:6px"><input type="checkbox" ${b.checked?'checked':''} onchange="toggleBulkCheck(${idx}, this.checked)" style="width:18px;height:18px;cursor:pointer"></div>
       <div style="font-size:14px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-top:6px">${esc(b.name||'(이름없음)')}</div>
       <div style="font-size:13px;color:var(--muted);font-family:monospace;padding-top:6px">${esc(formatPhone(b.phone))}</div>
       <div>
@@ -715,6 +724,39 @@ function renderBulkList(){
   });
 
   list.innerHTML = html;
+
+  const masterCb = document.getElementById('bulk-check-all');
+  if(masterCb) masterCb.indeterminate = !allChecked && !noneChecked;
+  updateBulkSendBtnLabel();
+}
+
+function updateBulkSendBtnLabel(){
+  const btn = document.getElementById('bulk-send-all');
+  if(!btn) return;
+  const n = bulkList.filter(b=>b.checked && (b.message||'').trim()).length;
+  btn.textContent = `✉️ 선택 항목 발송 (${n}명)`;
+  btn.disabled = n === 0;
+  btn.style.opacity = n === 0 ? '0.5' : '1';
+  btn.style.cursor = n === 0 ? 'not-allowed' : 'pointer';
+}
+
+function toggleBulkCheck(idx, val){
+  if(!bulkList[idx]) return;
+  bulkList[idx].checked = !!val;
+  saveBulkCache();
+  const checkedCount = bulkList.filter(b=>b.checked).length;
+  const masterCb = document.getElementById('bulk-check-all');
+  if(masterCb){
+    masterCb.checked = checkedCount === bulkList.length;
+    masterCb.indeterminate = checkedCount > 0 && checkedCount < bulkList.length;
+  }
+  updateBulkSendBtnLabel();
+}
+
+function toggleBulkCheckAll(val){
+  bulkList.forEach(b => b.checked = !!val);
+  saveBulkCache();
+  renderBulkList();
 }
 
 async function sendOne(idx){
@@ -738,6 +780,7 @@ async function sendOne(idx){
       b.error = '';
       b.last_sent_message = b.message;
       b.last_sent_at = new Date().toISOString();
+      b.checked = false;
     }else{
       b.status = 'failed';
       b.error = (data && (data.error || data.message)) || ('HTTP '+smsRes.status);
@@ -768,12 +811,12 @@ async function sendOne(idx){
 async function sendAllBulk(){
   const pending = bulkList
     .map((b,i)=>({b,i}))
-    .filter(x => x.b.status !== 'success' && (x.b.message||'').trim());
+    .filter(x => x.b.checked && (x.b.message||'').trim());
   if(!pending.length){
-    showToast('보낼 항목이 없어요 (메시지가 비었거나 이미 발송됨)','err');
+    showToast('체크된 항목이 없거나 메시지가 비어있어요','err');
     return;
   }
-  if(!confirm(`${pending.length}명에게 발송할까요?`)) return;
+  if(!confirm(`체크된 ${pending.length}명에게 발송할까요?`)) return;
 
   const btn = document.getElementById('bulk-send-all');
   const prog = document.getElementById('bulk-progress');
