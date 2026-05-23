@@ -25,7 +25,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
 
 .main{position:relative;z-index:1;flex:1;min-width:0;padding:24px 32px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.card-head{margin-bottom:18px}
+.card-head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.card-head-row > .card-head-text{flex:1;min-width:0}
+.card-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.card-desc{font-size:15px;color:var(--muted);line-height:1.5}
 input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none}
 input:focus,select:focus{border-color:var(--accent)}
 .btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#3D3929,#4A4538);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;white-space:nowrap}
@@ -130,8 +135,10 @@ input:focus,select:focus{border-color:var(--accent)}
 <div class="main">
   <!-- 빠른 등록 -->
   <div class="card">
-    <h2 style="font-size:18px;margin-bottom:4px">🏥 클리닉 일정 등록</h2>
-    <p style="font-size:15px;color:var(--muted);margin-bottom:16px">학생과 날짜/시간을 선택하면 전날 밤 10시에 리마인드 문자가 자동 발송됩니다.</p>
+    <div class="card-head">
+      <h2 class="card-title">🏥 클리닉 일정 등록</h2>
+      <p class="card-desc">학생과 날짜/시간을 선택하면 전날 밤 10시에 리마인드 문자가 자동 발송됩니다.</p>
+    </div>
 
     <div class="quick-add">
       <div class="field">
@@ -192,8 +199,10 @@ input:focus,select:focus{border-color:var(--accent)}
 
   <!-- 장소 관리 -->
   <div class="card">
-    <h2 style="font-size:16px;margin-bottom:4px">📍 장소 관리</h2>
-    <p style="font-size:15px;color:var(--muted);margin-bottom:16px">클리닉 장소를 등록하면 예약 시 선택할 수 있고, 리마인드 문자에 주소와 네이버 링크가 포함됩니다.</p>
+    <div class="card-head">
+      <h2 class="card-title">📍 장소 관리</h2>
+      <p class="card-desc">클리닉 장소를 등록하면 예약 시 선택할 수 있고, 리마인드 문자에 주소와 네이버 링크가 포함됩니다.</p>
+    </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       <input type="text" id="loc-name" placeholder="장소 이름" style="min-width:120px;flex:1">
@@ -205,22 +214,24 @@ input:focus,select:focus{border-color:var(--accent)}
     <div id="location-list"></div>
   </div>
 
-  <!-- 발송 -->
-  <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px">
-    <div>
-      <span style="font-size:16px;font-weight:700">📱 수동 리마인드 발송</span>
-      <span style="font-size:14px;color:var(--muted);margin-left:8px">자동은 전날 밤 10시</span>
-    </div>
-    <button class="btn-green" onclick="sendRemindersNow()">지금 내일 일정 발송</button>
-  </div>
-
   <!-- 일정 목록 -->
-  <div id="clinic-list"><div style="text-align:center;padding:40px;color:var(--muted)">불러오는 중...</div></div>
+  <div class="card">
+    <div class="card-head card-head-row">
+      <div class="card-head-text">
+        <h2 class="card-title">📅 다가오는 일정</h2>
+        <p class="card-desc">전날 밤 10시에 자동으로 리마인드 문자가 발송됩니다.</p>
+      </div>
+      <button class="btn-green" onclick="sendRemindersNow()">📱 지금 내일 일정 발송</button>
+    </div>
+    <div id="clinic-list"><div style="text-align:center;padding:40px;color:var(--muted)">불러오는 중...</div></div>
+  </div>
 
   <!-- 명단 일괄 문자 발송 -->
   <div class="card">
-    <h2 style="font-size:18px;margin-bottom:4px">📤 명단 일괄 문자 발송</h2>
-    <p style="font-size:15px;color:var(--muted);margin-bottom:16px">엑셀(.xlsx/.xls/.csv) 업로드 — 1열 이름, 2열 번호. 헤더 행/유효하지 않은 번호는 자동으로 무시돼요.</p>
+    <div class="card-head">
+      <h2 class="card-title">📤 명단 일괄 문자 발송</h2>
+      <p class="card-desc">엑셀(.xlsx/.xls/.csv) 업로드 — 1열 이름, 2열 번호, 3열 개별 메시지(선택). 헤더 행/유효하지 않은 번호는 자동으로 무시돼요.</p>
+    </div>
 
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
       <input type="file" id="bulk-file" accept=".xlsx,.xls,.csv" onchange="loadBulkFile(event)" style="font-size:14px">
@@ -614,7 +625,8 @@ function loadBulkFile(e){
         const name = String(row[0]||'').trim();
         const phone = normPhone(row[1]);
         if(!phone) continue;
-        newList.push({name:name||'(이름없음)', phone, message:'', status:'', error:'', checked:true});
+        const message = String(row[2]||'').trim();
+        newList.push({name:name||'(이름없음)', phone, message, status:'', error:'', checked:true});
       }
       if(!newList.length){
         showToast('유효한 명단이 없어요 (1열=이름, 2열=번호)','err');
