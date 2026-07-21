@@ -4,60 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>META ENGLISH</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#FAF6F0;--surface:#F0EBE3;--card:#FFFFFF;--border:#E0D8CE;
-  --accent:#C96442;--accent2:#E89848;--text:#2D2B28;--muted:#8B8178;--radius:14px;
+  --navy:#0D132B;--indigo:#6776D3;
+  --bg:#0D132B;--surface:#F2F4F7;--card:#FFFFFF;--border:#DDE2EC;
+  --accent:#6776D3;--text:#191F28;--muted:#5A6474;--radius:8px;
 }
-body{word-break:keep-all;
-  font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);
+body{word-break:keep-all;letter-spacing:-0.02em;-webkit-font-smoothing:antialiased;
+  font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  background:var(--bg);color:var(--text);
   min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 0;
   overflow:auto;position:relative;
 }
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:linear-gradient(rgba(200,180,150,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,180,150,.03) 1px,transparent 1px);
-  background-size:40px 40px;pointer-events:none;z-index:0;
-}
-.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
-.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(200,180,150,.04) 0%,transparent 70%);top:-100px;left:-100px}
-.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(200,180,150,.03) 0%,transparent 70%);bottom:-50px;right:-50px}
-.container{position:relative;z-index:1;width:100%;max-width:420px;padding:20px}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
+.orb1{width:520px;height:520px;background:radial-gradient(circle,rgba(103,118,211,.14) 0%,transparent 70%);top:-120px;left:-120px}
+.orb2{width:420px;height:420px;background:radial-gradient(circle,rgba(103,118,211,.10) 0%,transparent 70%);bottom:-60px;right:-60px}
+.container{position:relative;z-index:1;width:100%;max-width:420px;padding:20px;
+  animation:rise .7s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.container{animation:none}}
 .logo{text-align:center;margin-bottom:40px}
-.logo-title{
-  font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;line-height:1;
-  background:linear-gradient(135deg,#3D3929,#4A4538);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.logo-sub{font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;box-shadow:0 20px 60px rgba(0,0,0,.08)}
-.card-title{font-size:18px;font-weight:700;margin-bottom:6px}
-.card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+.logo-title{font-size:42px;font-weight:800;letter-spacing:-0.03em;line-height:1.1;color:#fff}
+.logo-title .hl{color:var(--indigo)}
+.logo-sub{font-size:12px;color:rgba(168,177,201,.9);letter-spacing:3px;text-transform:uppercase;margin-top:10px;font-weight:600}
+.card{background:var(--card);border-radius:12px;padding:36px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.card-title{font-size:19px;font-weight:800;margin-bottom:6px;letter-spacing:-0.02em}
+.card-sub{font-size:13.5px;color:var(--muted);margin-bottom:28px;line-height:1.6}
 .form{display:flex;flex-direction:column;gap:16px}
 .field{display:flex;flex-direction:column;gap:8px}
-label{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.5px}
+label{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:0}
 input{
-  background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:14px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;
-  font-size:15px;outline:none;transition:border-color .2s;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;color:var(--text);font-family:inherit;letter-spacing:-0.02em;
+  font-size:15px;outline:none;transition:border-color .2s,background .2s;
 }
-input:focus{border-color:var(--accent)}
-input::placeholder{color:var(--muted)}
+input:focus{border-color:var(--accent);background:#fff}
+input::placeholder{color:#9AA1B0}
 .btn{
-  padding:15px;border:none;border-radius:10px;
-  background:linear-gradient(135deg,#3D3929,#4A4538);
-  color:#fff;font-family:'Noto Sans KR',sans-serif;
+  padding:15px;border:none;border-radius:var(--radius);
+  background:var(--navy);
+  color:#fff;font-family:inherit;letter-spacing:-0.01em;
   font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;
-  transition:opacity .2s,transform .1s;letter-spacing:.5px;
+  transition:background .18s ease,transform .06s ease;
 }
-.btn:hover{opacity:.9}
-.btn:active{transform:scale(.98)}
+.btn:hover{background:#1B2340}
+.btn:active{transform:scale(.97)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.msg{text-align:center;font-size:13px;padding:10px;border-radius:8px;display:none}
-.msg.error{background:rgba(255,101,132,.1);color:var(--accent2);display:block}
-.hint{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;line-height:1.6}
+.msg{text-align:center;font-size:13px;padding:10px;border-radius:var(--radius);display:none}
+.msg.error{background:rgba(229,72,77,.08);color:#D13438;display:block}
+.hint{text-align:center;font-size:12.5px;color:rgba(168,177,201,.65);margin-top:20px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -65,7 +62,7 @@ input::placeholder{color:var(--muted)}
 <div class="orb orb2"></div>
 <div class="container">
   <div class="logo">
-    <div class="logo-title">META ENGLISH</div>
+    <div class="logo-title">META ENGLISH<span class="hl">.</span></div>
     <div class="logo-sub">Members Only</div>
   </div>
   <div class="card">

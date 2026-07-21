@@ -4,25 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>META ENGLISH - 실전테스트</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#FAF6F0;--surface:#F0EBE3;--card:#FFFFFF;--border:#E0D8CE;
-  --accent:#C96442;--accent2:#E89848;--text:#2D2B28;--muted:#8B8178;
-  --green:#8B7355;--red:#ff6584;--yellow:#B8976A;--radius:14px;
+  --navy:#0D132B;--indigo:#6776D3;
+  --bg:#F2F4F7;--surface:#EAEDF3;--card:#FFFFFF;--border:#DDE2EC;
+  --accent:#6776D3;--accent2:#4C5BC4;--text:#191F28;--muted:#5A6474;
+  --green:#22A06B;--red:#E5484D;--yellow:#A7842D;--radius:8px;
 }
-::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(61,57,41,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(61,57,41,.25)}body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;word-break:keep-all}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(200,180,150,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(200,180,150,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(13,19,43,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(13,19,43,.25)}body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;word-break:keep-all;letter-spacing:-0.02em;-webkit-font-smoothing:antialiased}
 .orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
-.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(201,100,66,.1) 0%,transparent 70%);top:-50px;left:-50px}
+.orb1{width:400px;height:400px;background:radial-gradient(circle,rgba(103,118,211,.08) 0%,transparent 70%);top:-50px;left:-50px}
 
 .header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
 .header-logo{display:flex;align-items:center;gap:12px}
-.logo-text{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#3D3929,#4A4538);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.admin-badge{background:rgba(61,57,41,.08);color:#3D3929;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.logo-text{font-size:19px;font-weight:800;letter-spacing:-0.01em;color:var(--navy)}
+.admin-badge{background:rgba(103,118,211,.12);color:#4C5BC4;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
 @keyframes pulse-noti{0%,100%{opacity:1}50%{opacity:.6}}
-.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
+.btn-sm{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:inherit;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
 
 .main{position:relative;z-index:1;flex:1;min-width:0;padding:24px 32px}
@@ -30,36 +30,36 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .card h2{font-size:18px;font-weight:700;margin-bottom:4px}
 .card p{font-size:15px;color:var(--muted);margin-bottom:20px}
 
-input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+input,select,textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border-color .2s}
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 input::placeholder,textarea::placeholder{color:var(--muted)}
 textarea{resize:vertical;min-height:60px}
 
-.btn-primary{padding:11px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,#3D3929,#4A4538);color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
+.btn-primary{padding:11px 20px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s;white-space:nowrap}
 .btn-primary:hover{opacity:.9}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.btn-green{padding:11px 20px;border:none;border-radius:10px;background:rgba(61,57,41,.08);color:#3D3929;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
-.btn-green:hover{background:rgba(61,57,41,.15)}
-.btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(239,68,68,.06);color:var(--red);font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-green{padding:11px 20px;border:none;border-radius:8px;background:rgba(13,19,43,.06);color:var(--navy);font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-green:hover{background:rgba(13,19,43,.12)}
+.btn-red{padding:8px 14px;border:1px solid transparent;border-radius:8px;background:rgba(239,68,68,.06);color:var(--red);font-family:inherit;font-size:14px;cursor:pointer;transition:all .2s}
 .btn-red:hover{background:rgba(239,68,68,.12)}
-.btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif;font-size:15px;cursor:pointer;transition:all .2s}
+.btn-outline{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-family:inherit;font-size:15px;cursor:pointer;transition:all .2s}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(61,57,41,.06)}
+.btn-outline.active{border-color:var(--accent);color:var(--accent);background:rgba(103,118,211,.08)}
 
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .divider{height:1px;background:var(--border);margin:24px 0}
 .empty{text-align:center;padding:40px;color:var(--muted);font-size:14px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 24px;font-size:14px;z-index:999;transition:transform .3s;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
-.toast.ok{border-color:#8B7355;color:#8B7355}
+.toast.ok{border-color:var(--green);color:var(--green)}
 .toast.err{border-color:var(--red);color:var(--red)}
 
 /* 문항 목록 */
 .q-item{display:flex;gap:10px;align-items:center;padding:10px 14px;background:var(--surface);border-radius:10px;margin-bottom:8px}
-.q-num{width:32px;height:32px;border-radius:8px;background:rgba(61,57,41,.08);color:#3D3929;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.q-num{width:32px;height:32px;border-radius:8px;background:rgba(103,118,211,.12);color:#4C5BC4;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
 .q-type{font-size:13px;padding:2px 8px;border-radius:4px;font-weight:600}
-.q-type.mc{background:rgba(61,57,41,.08);color:#3D3929}
-.q-type.sa{background:rgba(184,151,106,.08);color:var(--yellow)}
+.q-type.mc{background:rgba(103,118,211,.12);color:#4C5BC4}
+.q-type.sa{background:rgba(194,154,59,.1);color:var(--yellow)}
 .q-pts{font-size:14px;color:var(--muted)}
 .q-ans{font-size:15px;color:var(--text);font-weight:500}
 
@@ -70,12 +70,12 @@ textarea{resize:vertical;min-height:60px}
 .score-grid td{padding:2px;border-bottom:1px solid rgba(60,60,88,.4);text-align:center;vertical-align:middle}
 .score-grid td.sticky-col{position:sticky;z-index:1;background:var(--card)}
 .score-grid .name-cell{text-align:left;padding:8px 10px;font-weight:500;font-size:15px;white-space:nowrap}
-.score-grid input{width:44px;background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 2px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:15px;text-align:center;outline:none;transition:all .2s}
-.score-grid input:focus{background:rgba(200,180,150,.04);border-color:var(--accent)}
-.score-grid .correct{background:rgba(212,150,74,.12);color:var(--green);font-weight:700}
-.score-grid .wrong{background:rgba(200,180,150,.03);color:var(--red)}
+.score-grid input{width:44px;background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 2px;color:var(--text);font-family:inherit;font-size:15px;text-align:center;outline:none;transition:all .2s}
+.score-grid input:focus{background:rgba(103,118,211,.06);border-color:var(--accent)}
+.score-grid .correct{background:rgba(34,160,107,.1);color:var(--green);font-weight:700}
+.score-grid .wrong{background:rgba(229,72,77,.06);color:var(--red)}
 .score-grid .total-cell{font-weight:700;font-size:14px;padding:8px 6px;white-space:nowrap}
-.score-grid select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;width:70px}
+.score-grid select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 6px;color:var(--text);font-family:inherit;font-size:13px;outline:none;width:70px}
 
 /* 화면 전환 */
 .screen{display:none}
@@ -86,7 +86,7 @@ textarea{resize:vertical;min-height:60px}
 .sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 10px;flex:1}
 .sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;color:var(--muted);font-size:15px;font-weight:500;cursor:pointer;text-decoration:none;border:none;background:none;font-family:inherit;transition:all .15s;white-space:nowrap;width:100%;text-align:left}
 .sidebar-item:hover{background:var(--card);color:var(--text)}
-.sidebar-item.active{background:rgba(61,57,41,.08);color:#3D3929;font-weight:700}
+.sidebar-item.active{background:rgba(103,118,211,.12);color:#4C5BC4;font-weight:700}
 .sidebar-item .icon{font-size:15px;width:22px;text-align:center;flex-shrink:0}
 .sidebar-divider{height:1px;background:var(--border);margin:10px 14px}
 .sidebar-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:8px 24px 4px;font-weight:700}
@@ -96,7 +96,7 @@ textarea{resize:vertical;min-height:60px}
   .main{padding:16px 16px 40px}
   .mobile-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--surface);border-top:1px solid var(--border);padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom));justify-content:space-around}
   .mobile-nav a,.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;text-decoration:none;padding:4px 8px;transition:color .15s;min-width:52px}
-  .mobile-nav .active{color:#3D3929;font-weight:700}
+  .mobile-nav .active{color:var(--navy);font-weight:700}
   .mobile-nav .nav-icon{font-size:20px;line-height:1}
   .mobile-more-menu{display:none;position:fixed;bottom:64px;left:0;right:0;z-index:99;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;box-shadow:0 -8px 30px rgba(0,0,0,.05)}
   .mobile-more-menu.show{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -207,7 +207,7 @@ textarea{resize:vertical;min-height:60px}
             <option value="">-- 반 선택 --</option>
           </select>
           <button class="btn-green" onclick="saveAllScores()">전체 저장</button>
-          <button class="btn-green" onclick="generateAllWrongNotes()" style="background:rgba(61,57,41,.08);color:#3D3929">📝 오답노트</button>
+          <button class="btn-green" onclick="generateAllWrongNotes()" style="background:rgba(103,118,211,.12);color:#4C5BC4">📝 오답노트</button>
         </div>
       </div>
       <div style="overflow-x:auto">
@@ -445,10 +445,10 @@ function showVersionDetail(){
           <td style="padding:4px;text-align:center">
             <button onclick="toggleQType(${i})" style="
               width:100%;padding:5px 4px;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid;
-              font-family:'Noto Sans KR',sans-serif;transition:all .15s;
+              font-family:inherit;transition:all .15s;
               ${q.type==='mc'
-                ?'background:rgba(61,57,41,.08);color:#3D3929;border-color:rgba(201,100,66,.15)'
-                :'background:rgba(184,151,106,.1);color:#8B7355;border-color:rgba(184,151,106,.2)'}
+                ?'background:rgba(103,118,211,.12);color:#4C5BC4;border-color:rgba(103,118,211,.25)'
+                :'background:rgba(194,154,59,.1);color:#A7842D;border-color:rgba(194,154,59,.25)'}
             ">${q.type==='mc'?'객관식':'주관식'}</button>
           </td>
           <td style="padding:4px">
@@ -622,7 +622,7 @@ function previewParsedExam(){
     <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px">
       <div style="font-size:16px;font-weight:700;margin-bottom:10px">📊 인식 결과: ${parsedQuestions.length}문항 · 총 ${parsedQuestions.reduce((s,q)=>s+q.points,0)}점</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:14px;padding:4px 10px;border-radius:6px;background:rgba(61,57,41,.06);color:#C96442">${c} ${n}문항</span>`).join('')}
+        ${Object.entries(catCount).map(([c,n])=>`<span style="font-size:14px;padding:4px 10px;border-radius:6px;background:rgba(103,118,211,.08);color:#4C5BC4">${c} ${n}문항</span>`).join('')}
       </div>
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         <thead><tr>
@@ -634,7 +634,7 @@ function previewParsedExam(){
         </tr></thead>
         <tbody>${parsedQuestions.map(q=>`<tr>
           <td style="padding:4px;text-align:center">${q.num}</td>
-          <td style="padding:4px;text-align:center;color:${q.type==='mc'?'#6c63ff':'#8B7355'}">${q.type==='mc'?'객관식':'주관식'}</td>
+          <td style="padding:4px;text-align:center;color:${q.type==='mc'?'#6776D3':'#A7842D'}">${q.type==='mc'?'객관식':'주관식'}</td>
           <td style="padding:4px;text-align:center;color:var(--muted)">${q.category||'-'}</td>
           <td style="padding:4px;text-align:center">${q.points}</td>
           <td style="padding:4px;text-align:center;font-weight:700">${q.answer||'-'}</td>
@@ -1167,7 +1167,7 @@ function renderStats(){
     <div style="font-size:15px;font-weight:700;margin-bottom:10px">문항별 정답률</div>
     <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px">
       ${qStats.map(s=>{
-        const color=s.rate>=80?'#D4964A':s.rate>=50?'#B8976A':'#ef4444';
+        const color=s.rate>=80?'#22A06B':s.rate>=50?'#C29A3B':'#E5484D';
         return `<div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:13px;font-weight:700;min-width:32px;color:var(--muted)">${s.num}번</span>
           <span style="font-size:12px;min-width:60px;color:var(--muted)">${s.category||''}</span>
@@ -1199,7 +1199,7 @@ function renderStats(){
       <div style="display:flex;flex-direction:column;gap:6px">
         ${cats.map(([cat,d])=>{
           const avg=Math.round(d.sum/d.count);
-          const color=avg>=80?'#D4964A':avg>=50?'#B8976A':'#ef4444';
+          const color=avg>=80?'#22A06B':avg>=50?'#C29A3B':'#E5484D';
           return `<div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:14px;font-weight:600;min-width:80px">${cat}</span>
             <div style="flex:1;height:18px;background:var(--surface);border-radius:4px;overflow:hidden">
@@ -1330,25 +1330,25 @@ function getNotesCSS(){
   return `
     @page{size:A4;margin:12mm 12mm}
     *{box-sizing:border-box;margin:0;padding:0}
-    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(61,57,41,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(61,57,41,.25)}body{font-family:'Noto Sans KR',-apple-system,sans-serif;color:#1e293b;font-size:9px;line-height:1.4}
+    ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(13,19,43,.15);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:rgba(13,19,43,.25)}body{font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#1e293b;font-size:9px;line-height:1.4;letter-spacing:-0.01em}
     .wn-student{page-break-after:always}
     .wn-student:last-child{page-break-after:auto}
-    .wn-header{text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #C96442}
-    .wn-logo{font-size:18px;font-weight:800;color:#C96442;letter-spacing:2px;margin-bottom:1px}
+    .wn-header{text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #0D132B}
+    .wn-logo{font-size:18px;font-weight:800;color:#0D132B;letter-spacing:-0.01em;margin-bottom:1px}
     .wn-title{font-size:16px;font-weight:700;margin-bottom:6px}
     .wn-info{display:flex;justify-content:center;gap:16px;font-size:12px;color:#64748b}
     .wn-name{font-weight:700;color:#1e293b;font-size:14px}
     .wn-item{border:1px solid #e2e8f0;border-radius:8px;padding:10px;margin-bottom:8px;overflow:visible}
     .wn-item-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-    .wn-qnum{font-size:13px;font-weight:800;color:#C96442}
-    .wn-cat{font-size:8px;background:#FFF5EE;color:#C96442;padding:1px 6px;border-radius:4px}
+    .wn-qnum{font-size:13px;font-weight:800;color:#6776D3}
+    .wn-cat{font-size:8px;background:#EEF0FB;color:#4C5BC4;padding:1px 6px;border-radius:4px}
     .wn-pts{margin-left:auto;font-size:9px;color:#ef4444;font-weight:700}
     .wn-body{font-size:9px;line-height:1.5;color:#334155;white-space:pre-line;margin-bottom:8px;padding:8px;background:#f8fafc;border-radius:6px}
     .wn-answer-row{display:flex;gap:16px;margin-bottom:8px;font-size:12px}
     .wn-wrong{color:#ef4444}
     .wn-wrong strong{background:#fef2f2;padding:1px 6px;border-radius:4px}
-    .wn-correct{color:#D4964A}
-    .wn-correct strong{background:#FFF8F0;padding:1px 6px;border-radius:4px}
+    .wn-correct{color:#22A06B}
+    .wn-correct strong{background:#EDF9F3;padding:1px 6px;border-radius:4px}
     .wn-memo-label{font-size:8px;color:#94a3b8;margin-bottom:4px}
     .wn-memo-lines{height:40px;background:repeating-linear-gradient(transparent,transparent 13px,#e2e8f0 13px,#e2e8f0 14px)}
     @media print{.no-print{display:none!important}}
@@ -1361,12 +1361,12 @@ function openPrintableNotes(studentNotes){
   win.document.write(`<!DOCTYPE html><html><head>
     <meta charset="UTF-8">
     <title>오답노트 - ${testTitle}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
     <style>${getNotesCSS()}</style>
   </head><body>
-    <div class="no-print" style="text-align:center;padding:16px;background:#C96442;color:#fff;font-size:14px;font-weight:600">
+    <div class="no-print" style="text-align:center;padding:16px;background:#0D132B;color:#fff;font-size:14px;font-weight:600">
       ${studentNotes.length}명의 오답노트 · Ctrl+P로 인쇄하세요 (프린터 설정에서 스테이플 선택)
-      <button onclick="window.print()" style="margin-left:16px;padding:8px 20px;background:#fff;color:#C96442;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🖨 인쇄</button>
+      <button onclick="window.print()" style="margin-left:16px;padding:8px 20px;background:#fff;color:#0D132B;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit">🖨 인쇄</button>
     </div>
     ${studentNotes.map(n=>buildNoteHTML(n, testTitle)).join('')}
   </body></html>`);
@@ -1389,7 +1389,7 @@ async function downloadZipNotes(studentNotes){
   statusEl.innerHTML=`<div style="font-size:15px;font-weight:700;margin-bottom:8px">📝 PDF 생성 중...</div>
     <div id="zip-progress" style="font-size:15px;color:var(--muted)">0 / ${studentNotes.length}</div>
     <div style="margin-top:12px;height:6px;background:var(--surface);border-radius:3px;overflow:hidden">
-      <div id="zip-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#C96442,#D4764E);border-radius:3px;transition:width .3s"></div>
+      <div id="zip-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#6776D3,#8B97E0);border-radius:3px;transition:width .3s"></div>
     </div>`;
   document.body.appendChild(statusEl);
 
@@ -1399,7 +1399,7 @@ async function downloadZipNotes(studentNotes){
     document.getElementById('zip-bar').style.width=`${(i+1)/studentNotes.length*100}%`;
 
     // HTML 렌더링
-    container.innerHTML=`<div style="padding:20px;font-family:'Noto Sans KR',sans-serif;color:#1e293b;font-size:15px;line-height:1.6">
+    container.innerHTML=`<div style="padding:20px;font-family:inherit;color:#1e293b;font-size:15px;line-height:1.6">
       <style>${css.replace(/@page\{[^}]+\}/,'').replace(/@media print\{[^}]+\}/,'')}</style>
       ${buildNoteHTML(note, testTitle)}
     </div>`;

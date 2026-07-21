@@ -4,84 +4,85 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>META ENGLISH - 시험 분석</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#FDFCFA;--surface:#ffffff;--card:#ffffff;--border:#EDE9E4;
-  --accent:#C96442;--accent2:#D4764E;--accent-light:#FFF5EE;
-  --text:#3D3929;--muted:#A09888;
-  --green:#8B7355;--green-bg:#F7F5F2;--green-border:#EDE9E4;
-  --red:#B85C4A;--red-bg:#FDF6F4;--red-border:#F0DDD8;
-  --yellow:#B8976A;--yellow-bg:#F7F5F2;
-  --radius:14px;
+  --navy:#0D132B;--indigo:#6776D3;
+  --bg:#F2F4F7;--surface:#ffffff;--card:#ffffff;--border:#DDE2EC;
+  --accent:#6776D3;--accent2:#4C5BC4;--accent-light:#EEF0FB;
+  --text:#191F28;--muted:#5A6474;
+  --green:#22A06B;--green-bg:#EDF9F3;--green-border:#CBEBDC;
+  --red:#D14343;--red-bg:#FDF2F2;--red-border:#F3D6D6;
+  --yellow:#A7842D;--yellow-bg:#F8F3E6;
+  --radius:8px;
 }
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;word-break:keep-all}
-body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(200,180,150,.06) 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:0}
+body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;word-break:keep-all;letter-spacing:-0.02em;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;top:-200px;right:-200px;width:500px;height:500px;background:radial-gradient(circle,rgba(103,118,211,.08) 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:0}
 .container{position:relative;z-index:1;width:100%;max-width:520px;padding:24px 20px 40px}
 .logo{text-align:center;margin-bottom:24px;padding-top:16px}
-.logo-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,#C9B09A,#B8976A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-title{font-size:26px;font-weight:800;letter-spacing:-0.02em;color:var(--navy)}
 .logo-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
 
 .card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.03);margin-bottom:16px}
-.card-header{padding:24px;background:linear-gradient(135deg,#D4A088,#DEB89E);color:#fff}
+.card-header{padding:24px;background:linear-gradient(135deg,#0D132B,#232C50);color:#fff}
 .card-header .name{font-size:22px;font-weight:700}
 .card-header .sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:4px}
 .card-body{padding:20px 24px}
 
 /* 점수 요약 */
 .score-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px}
-.score-box{text-align:center;padding:14px 10px;border-radius:10px;background:#F7F5F2;border:0.5px solid #EDE9E4}
-.score-box .num{font-size:20px;font-weight:700;line-height:1;color:#3D3929}
-.score-box .num span{font-size:13px;font-weight:500;color:#A09888}
+.score-box{text-align:center;padding:14px 10px;border-radius:8px;background:#F2F4F7;border:0.5px solid #DDE2EC}
+.score-box .num{font-size:20px;font-weight:800;line-height:1;color:#191F28}
+.score-box .num span{font-size:13px;font-weight:500;color:#8791A5}
 .score-box .label{font-size:11px;color:var(--muted);margin-top:4px}
-.score-box.bad{background:#FDF6F4;border-color:#F0DDD8}
-.score-box.bad .num{color:#B85C4A}
+.score-box.bad{background:var(--red-bg);border-color:var(--red-border)}
+.score-box.bad .num{color:var(--red)}
 
 /* 유형별/카테고리 분석 */
 .type-analysis{margin-bottom:20px}
-.type-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #F0EBE6}
+.type-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid #EAEDF3}
 .type-row:last-child{border-bottom:none}
-.type-name{font-size:13px;font-weight:500;color:#3D3929;width:70px;flex-shrink:0}
-.type-bar-wrap{flex:1;height:12px;background:#F0EBE6;border-radius:6px;overflow:hidden;position:relative}
+.type-name{font-size:13px;font-weight:500;color:#191F28;width:70px;flex-shrink:0}
+.type-bar-wrap{flex:1;height:12px;background:#EAEDF3;border-radius:6px;overflow:hidden;position:relative}
 .type-bar{height:100%;border-radius:6px;transition:width .5s}
-.type-bar.green{background:#C9B99A}
-.type-bar.red{background:#D4A8A0}
+.type-bar.green{background:#8B97E0}
+.type-bar.red{background:#E8A2A5}
 .type-pct{font-size:12px;font-weight:600;width:50px;text-align:right;flex-shrink:0}
 
 /* 문항별 결과 */
 .q-results{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;margin-bottom:20px}
 .q-cell{
   aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  border-radius:8px;font-size:12px;font-weight:600;border:0.5px solid #E4DED6;transition:transform .1s;cursor:default;
+  border-radius:8px;font-size:12px;font-weight:600;border:0.5px solid #DDE2EC;transition:transform .1s;cursor:default;
 }
 .q-cell:hover{transform:scale(1.05)}
-.q-cell .qnum{font-size:10px;color:#A09888;margin-bottom:2px}
-.q-cell.correct{background:#F2EDE7;border-color:#E4DED6;color:#6B6356}
-.q-cell.wrong{background:#FDF6F4;border-color:#F0DDD8;color:#B85C4A}
-.q-cell.manual{background:#F7F5F2;border-color:#EDE9E4;color:#8B7355}
-.q-cell.empty{background:#F8F6F3;color:#C4B8AA}
+.q-cell .qnum{font-size:10px;color:#8791A5;margin-bottom:2px}
+.q-cell.correct{background:#EEF0FB;border-color:#D4D9F2;color:#4C5BC4}
+.q-cell.wrong{background:#FDF2F2;border-color:#F3D6D6;color:#D14343}
+.q-cell.manual{background:#F8F3E6;border-color:#EDE2C4;color:#A7842D}
+.q-cell.empty{background:#F2F4F7;color:#A8B1C1}
 
 /* 오답 목록 */
 .wrong-list{margin-bottom:16px}
-.wrong-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#FDF6F4;border:0.5px solid #F0DDD8;border-radius:10px;margin-bottom:8px}
-.wrong-num{width:28px;height:28px;border-radius:8px;background:#B85C4A;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.wrong-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#FDF2F2;border:0.5px solid #F3D6D6;border-radius:8px;margin-bottom:8px}
+.wrong-num{width:28px;height:28px;border-radius:8px;background:#D14343;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
 .wrong-detail{font-size:13px}
-.wrong-detail .your-ans{color:#B85C4A;font-weight:600}
-.wrong-detail .correct-ans{color:#8B7355;font-weight:600}
+.wrong-detail .your-ans{color:#D14343;font-weight:600}
+.wrong-detail .correct-ans{color:#1E9E6E;font-weight:600}
 
 /* 추이 그래프 */
 .trend-section{padding:20px 24px}
-.trend-title{font-size:14px;font-weight:600;color:#6B6356;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.trend-title{font-size:14px;font-weight:600;color:#3A4356;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .trend-chart{position:relative;height:160px;display:flex;align-items:flex-end;gap:8px;padding-bottom:24px;border-bottom:0.5px solid var(--border)}
 .trend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.trend-bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#C9B99A,#B8976A);transition:height .5s;min-height:4px}
-.trend-bar.current{background:linear-gradient(180deg,#D4A088,#C9B99A)}
+.trend-bar{width:100%;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#C3CAF0,#98A5E8);transition:height .5s;min-height:4px}
+.trend-bar.current{background:linear-gradient(180deg,#8B97E0,#6776D3)}
 .trend-label{font-size:10px;color:var(--muted);position:absolute;bottom:4px;text-align:center;width:100%}
-.trend-score{font-size:11px;font-weight:700;color:#8B7355}
+.trend-score{font-size:11px;font-weight:700;color:#4C5BC4}
 
-.footer{text-align:center;padding:20px;font-size:12px;color:#C4B8AA}
-.back-link{display:inline-block;margin-bottom:20px;font-size:13px;color:#8B7355;text-decoration:none}
+.footer{text-align:center;padding:20px;font-size:12px;color:#A8B1C1}
+.back-link{display:inline-block;margin-bottom:20px;font-size:13px;color:#4C5BC4;text-decoration:none}
 .back-link:hover{text-decoration:underline}
 
 .state-msg{text-align:center;padding:80px 20px}
@@ -221,21 +222,21 @@ async function load(){
     const catKeys = Object.keys(catStats).filter(k=>k!=='기타').concat(catStats['기타']?['기타']:[]);
     if(catKeys.length > 1 || (catKeys.length===1 && catKeys[0]!=='기타')){
       html += `<div class="type-analysis" style="margin-top:4px">
-        <div style="font-size:13px;font-weight:600;color:#6B6356;margin-bottom:12px">카테고리별 분석</div>`;
+        <div style="font-size:13px;font-weight:600;color:#3A4356;margin-bottom:12px">카테고리별 분석</div>`;
       catKeys.forEach(cat=>{
         const s = catStats[cat];
         const p = s.max>0 ? Math.round(s.score/s.max*100) : 0;
         html += `<div class="type-row">
           <div class="type-name">${esc(cat)}</div>
           <div class="type-bar-wrap"><div class="type-bar ${p>=70?'green':'red'}" style="width:${p}%"></div></div>
-          <div class="type-pct" style="color:${p>=70?'#6B6356':'#B85C4A'}">${s.score}/${s.max}</div>
+          <div class="type-pct" style="color:${p>=70?'#4C5BC4':'#D14343'}">${s.score}/${s.max}</div>
         </div>`;
       });
       html += `</div>`;
     }
 
     // 문항별 결과 그리드
-    html += `<div style="font-size:13px;font-weight:600;color:#6B6356;margin-bottom:10px">문항별 결과</div>
+    html += `<div style="font-size:13px;font-weight:600;color:#3A4356;margin-bottom:10px">문항별 결과</div>
       <div class="q-results">`;
     questions.forEach((q,i)=>{
       const qnum = String(i+1);
@@ -257,7 +258,7 @@ async function load(){
     // 오답 목록
     if(wrongItems.length){
       html += `<div class="card"><div class="card-body">
-        <div style="font-size:13px;font-weight:600;color:#6B6356;margin-bottom:10px">오답 문항</div>
+        <div style="font-size:13px;font-weight:600;color:#3A4356;margin-bottom:10px">오답 문항</div>
         <div class="wrong-list">`;
       wrongItems.forEach(w=>{
         html += `<div class="wrong-item">
@@ -329,7 +330,7 @@ async function load(){
 
       // 카테고리별 추이 선 그래프
       const catList = [...allCats];
-      const catColors = {'어휘':'#C96442','문법':'#D4764E','독해':'#6B8E7B','듣기':'#7B9EA8','쓰기':'#C96442'};
+      const catColors = {'어휘':'#6776D3','문법':'#4C5BC4','독해':'#22A06B','듣기':'#3A9DBF','쓰기':'#8B5CF6'};
       if(catList.length > 0){
         html += `<div style="margin-top:24px"><div class="trend-title">카테고리별 추이</div>
           <canvas id="trend-cat-chart" height="180"></canvas></div>`;
@@ -372,15 +373,15 @@ async function load(){
           data:{
             labels,
             datasets:[
-              {label:'내 점수',data:myScores,borderColor:'#C96442',backgroundColor:'rgba(201,100,66,.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#C96442'},
-              {label:'반 최고',data:maxLine,borderColor:'#5B8A72',borderDash:[6,3],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#5B8A72'},
-              {label:'반 평균',data:avgLine,borderColor:'#B8976A',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#B8976A'},
+              {label:'내 점수',data:myScores,borderColor:'#6776D3',backgroundColor:'rgba(103,118,211,.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5,pointBackgroundColor:'#6776D3'},
+              {label:'반 최고',data:maxLine,borderColor:'#22A06B',borderDash:[6,3],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#22A06B'},
+              {label:'반 평균',data:avgLine,borderColor:'#C29A3B',borderDash:[4,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#C29A3B'},
               {label:'상위 30%',data:pctLine,borderColor:'#8B7BA8',borderDash:[8,4],tension:.3,borderWidth:2,pointRadius:3,pointBackgroundColor:'#8B7BA8'}
             ]
           },
           options:{
             responsive:true,
-            plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Noto Sans KR'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
+            plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Pretendard'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
             scales:{y:{min:0,max:105,ticks:{stepSize:20,callback:v=>v>100?'':v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
             interaction:{intersect:false,mode:'index'}
           }
@@ -403,7 +404,7 @@ async function load(){
           data:{labels,datasets},
           options:{
             responsive:true,
-            plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Noto Sans KR'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
+            plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Pretendard'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y+'%'}}},
             scales:{y:{min:0,max:105,ticks:{stepSize:20,callback:v=>v>100?'':v+'%',font:{size:11}},grid:{color:'rgba(0,0,0,.06)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},
             interaction:{intersect:false,mode:'index'}
           }
