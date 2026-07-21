@@ -210,7 +210,8 @@ body{font-family:'Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic 
 .lb-top{border-color:rgba(194,154,59,.25);background:linear-gradient(135deg,rgba(194,154,59,.06),rgba(103,118,211,.06))}
 .lb-rank{font-size:18px;width:32px;text-align:center;font-weight:800;flex-shrink:0}
 .lb-top .lb-rank{font-size:22px}
-.lb-streak{flex:1;font-size:20px;font-weight:800;color:var(--text)}
+.lb-name{flex:1;font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-streak{flex-shrink:0;font-size:20px;font-weight:800;color:var(--text)}
 .lb-streak small{font-size:11px;color:var(--muted);margin-left:4px;font-weight:400}
 .lb-top .lb-streak{background:linear-gradient(135deg,var(--gold),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .lb-date{font-size:11px;color:var(--muted);flex-shrink:0}
@@ -794,13 +795,41 @@ async function saveComboRecord(d){
     }catch(e){ return; }
   }
 
+  // 기록 이름 선택(내 이름 / noname) — 선택 전까지 저장 보류
+  var pname = await askComboName(d.streak);
   try{
-    await fetch(SUPA_URL+'/rest/v1/combo_records',{
+    var res = await fetch(SUPA_URL+'/rest/v1/combo_records',{
       method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
-      body:JSON.stringify({quiz_id:qid,quiz_title:qtitle,streak:d.streak})
+      body:JSON.stringify({quiz_id:qid,quiz_title:qtitle,streak:d.streak,player_name:pname})
     });
+    if(!res.ok){
+      // player_name 컬럼 미존재(마이그레이션 전) 등 — 이름 없이 재시도해 기록 유실 방지
+      await fetch(SUPA_URL+'/rest/v1/combo_records',{
+        method:'POST',headers:{...HDR,'Prefer':'return=minimal'},
+        body:JSON.stringify({quiz_id:qid,quiz_title:qtitle,streak:d.streak})
+      });
+    }
   }catch(e){}
   loadLeaderboard();
+}
+
+// 이름 선택 모달 — Promise 로 선택을 기다린다
+var comboNameResolve=null;
+function askComboName(streak){
+  return new Promise(function(resolve){
+    comboNameResolve=resolve;
+    document.getElementById('comboNameTitle').textContent='🔥 '+streak+'연속 기록!';
+    var selfName=(user&&user.name)?user.name:'';
+    var btn=document.getElementById('comboNameSelf');
+    btn.textContent=selfName?(selfName+' (내 이름)'):'내 이름';
+    btn.style.display=selfName?'':'none';  // 이름 없는 세션이면 noname 만
+    document.getElementById('comboNameOverlay').classList.add('show');
+  });
+}
+function pickComboName(anon){
+  document.getElementById('comboNameOverlay').classList.remove('show');
+  var r=comboNameResolve;comboNameResolve=null;
+  if(r) r(anon?'noname':(((user&&user.name)||'noname')));
 }
 
 async function loadLeaderboard(){
@@ -823,7 +852,11 @@ async function loadLeaderboard(){
     var ids=lbQuizzes.map(function(q){return q.id});
     
     // Get top records for these quizzes
-    var rRes=await fetch(SUPA_URL+'/rest/v1/combo_records?quiz_id=in.('+ids.join(',')+')'+'&select=quiz_id,quiz_title,streak,played_at&order=streak.desc&limit=50',{headers:HDR});
+    var rRes=await fetch(SUPA_URL+'/rest/v1/combo_records?quiz_id=in.('+ids.join(',')+')'+'&select=quiz_id,quiz_title,streak,played_at,player_name&order=streak.desc&limit=50',{headers:HDR});
+    if(!rRes.ok){
+      // player_name 컬럼 미존재(마이그레이션 전) — 이름 없이 재조회해 리더보드 자체는 유지
+      rRes=await fetch(SUPA_URL+'/rest/v1/combo_records?quiz_id=in.('+ids.join(',')+')'+'&select=quiz_id,quiz_title,streak,played_at&order=streak.desc&limit=50',{headers:HDR});
+    }
     var records=await rRes.json();
     
     // Group by quiz
@@ -841,7 +874,7 @@ async function loadLeaderboard(){
         var medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
         var cls=i<3?'lb-top':'';
         var date=new Date(r.played_at).toLocaleDateString('ko-KR',{month:'short',day:'numeric'});
-        html+='<div class="lb-row '+cls+'"><span class="lb-rank">'+(medal||(i+1))+'</span><span class="lb-streak">'+r.streak+'<small>연속</small></span><span class="lb-date">'+date+'</span></div>';
+        html+='<div class="lb-row '+cls+'"><span class="lb-rank">'+(medal||(i+1))+'</span><span class="lb-name">'+esc(r.player_name||'noname')+'</span><span class="lb-streak">'+r.streak+'<small>연속</small></span><span class="lb-date">'+date+'</span></div>';
       });
       html+='</div></div>';
     });
@@ -883,6 +916,21 @@ if(typeof initDashboard==='function'){
 
 </script>
 
+
+<!-- 무한콤보 리더보드 이름 선택 팝업 (퀴즈 오버레이 z100 위에 떠야 함) -->
+<div class="notice-overlay" id="comboNameOverlay" style="z-index:1000">
+  <div class="notice-popup" style="max-width:340px">
+    <div class="notice-pop-header">
+      <div class="notice-pop-icon">🏆</div>
+      <div class="notice-pop-title" id="comboNameTitle">기록 달성!</div>
+    </div>
+    <div class="notice-pop-body" style="text-align:center">리더보드에 어떤 이름으로 남길까요?</div>
+    <div class="notice-pop-footer" style="display:flex;flex-direction:column;gap:8px">
+      <button class="notice-pop-btn" id="comboNameSelf" onclick="pickComboName(false)">내 이름</button>
+      <button class="notice-pop-btn" onclick="pickComboName(true)" style="background:none;border:1px solid var(--border);color:var(--muted)">익명 (noname)</button>
+    </div>
+  </div>
+</div>
 
 <div class="notice-overlay" id="noticeOverlay">
   <div class="notice-popup">
