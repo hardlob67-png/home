@@ -33,14 +33,20 @@
   .tab-panel{display:none;padding:16px 16px 100px}
   .tab-panel.active{display:block}
 
-  .search-bar{position:relative;margin-bottom:14px}
+  .student-filters{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:8px;margin-bottom:14px}
+  .search-bar{position:relative}
   .search-bar input{width:100%;padding:12px 16px 12px 40px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;background:var(--card);outline:none}
   .search-bar input:focus{border-color:var(--primary)}
   .search-bar svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+  .class-filter{width:100%;padding:0 10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none}
+  .class-filter:focus{border-color:var(--primary)}
 
   .student-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin-bottom:10px}
   .student-top{margin-bottom:12px}
+  .student-heading{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .student-name{font-size:16px;font-weight:600}
+  .class-badges{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+  .class-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;background:var(--primary-light);color:var(--primary);font-size:11px;font-weight:600;line-height:1.45}
   .student-meta{font-size:12px;color:var(--muted);margin-top:2px}
   .sms-row{display:flex;gap:8px}
   .sms-btn{flex:1;padding:11px 0;border:none;border-radius:10px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -82,6 +88,7 @@
   .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#333;color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:all .3s;white-space:nowrap}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.error{background:var(--danger)}
+  @media(max-width:420px){.student-filters{grid-template-columns:1fr}.class-filter{height:42px}}
   @media(min-width:600px){.tab-panel{max-width:540px;margin:0 auto}}
 </style>
 </head>
@@ -110,9 +117,14 @@
   </div>
 
   <div id="tab-students" class="tab-panel active">
-    <div class="search-bar">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="search-input" type="text" placeholder="학생 이름 검색..." oninput="filterStudents()">
+    <div class="student-filters">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="search-input" type="text" placeholder="학생 이름 또는 분반 검색..." oninput="filterStudents()">
+      </div>
+      <select id="class-filter" class="class-filter" onchange="filterStudents()">
+        <option value="">전체 분반</option>
+      </select>
     </div>
     <div id="student-list"></div>
   </div>
@@ -200,12 +212,13 @@ async function doLogin(){
 }
 function doLogout(){localStorage.removeItem('ca');sessionStorage.clear();currentAdmin=null;location.href='index.html'}
 (function(){
-  // 메인 사이트(index.html)에서 로그인 후 리다이렉트된 경우
+  // JWT가 있는 현재 세션만 복원한다. 오래된 localStorage 사용자 정보만으로 앱을 열면
+  // Supabase 요청은 anon으로 처리되어 명단이 빈 것처럼 보인다.
   const mainUser=JSON.parse(sessionStorage.getItem('qhub_user')||'null');
-  if(mainUser&&mainUser.role==='clinic_admin'){currentAdmin=mainUser;showApp();return}
-  // 직접 로그인한 경우
-  const s=localStorage.getItem('ca');
-  if(s){currentAdmin=JSON.parse(s);showApp()}
+  if(_token&&mainUser&&['clinic_admin','admin'].includes(mainUser.role)){
+    currentAdmin=mainUser;showApp();return;
+  }
+  localStorage.removeItem('ca');
 })();
 
 async function showApp(){
@@ -216,17 +229,62 @@ async function showApp(){
 }
 
 /* ── Students ── */
+function normalizeClassNames(value){
+  const list=Array.isArray(value)?value:[];
+  return [...new Set(list.map(v=>String(v||'').trim()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,'ko'));
+}
+function classLabel(s){return normalizeClassNames(s&&s.class_names).join(' · ')}
+function classBadges(s){
+  return normalizeClassNames(s&&s.class_names)
+    .map(name=>`<span class="class-badge">${esc(name)}</span>`).join('');
+}
 async function loadStudents(){
-  const{data}=await sb.from('members').select('*').eq('role','user').order('name');
-  allStudents=data||[];
+  // 제한된 RPC는 비밀번호 등 민감 컬럼을 노출하지 않고 분반까지 한 번에 반환한다.
+  let students=[];
+  const{data:roster,error:rosterError}=await sb.rpc('clinic_roster');
+  if(!rosterError){
+    students=roster||[];
+  }else{
+    // RPC 적용 전에도 메인 관리자 세션에서는 안전한 필드만 조회해 동작한다.
+    const[{data:members,error:memberError},{data:links,error:classError}]=await Promise.all([
+      sb.from('members').select('id,name,phone,student_phone').eq('role','user').order('name'),
+      sb.from('class_members').select('member_id,classes(name)')
+    ]);
+    if(memberError){toast('학생 명단을 불러오지 못했습니다',1);return}
+    const classMap={};
+    if(!classError)(links||[]).forEach(row=>{
+      const name=row.classes&&row.classes.name;
+      if(!name)return;
+      if(!classMap[row.member_id])classMap[row.member_id]=[];
+      classMap[row.member_id].push(name);
+    });
+    students=(members||[]).map(member=>({...member,class_names:classMap[member.id]||[]}));
+    if(classError)toast('분반 정보를 불러오지 못했습니다',1);
+  }
+  allStudents=students.map(s=>({...s,class_names:normalizeClassNames(s.class_names)}))
+    .sort((a,b)=>a.name.localeCompare(b.name,'ko'));
   renderStudents(allStudents);
+  const filter=document.getElementById('class-filter');
+  const selected=filter.value;
+  const classNames=[...new Set(allStudents.flatMap(s=>s.class_names))].sort((a,b)=>a.localeCompare(b,'ko'));
+  filter.innerHTML='<option value="">전체 분반</option>'+classNames.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join('');
+  if(classNames.includes(selected))filter.value=selected;
   const sel=document.getElementById('res-student');
   sel.innerHTML='<option value="">학생을 선택하세요</option>';
-  allStudents.forEach(s=>{sel.innerHTML+=`<option value="${s.phone}" data-name="${esc(s.name)}">${esc(s.name)}</option>`});
+  allStudents.forEach(s=>{
+    const label=classLabel(s);
+    sel.innerHTML+=`<option value="${s.id}">${esc(s.name)}${label?' · '+esc(label):''}</option>`;
+  });
 }
 function filterStudents(){
   const q=document.getElementById('search-input').value.trim().toLowerCase();
-  renderStudents(q?allStudents.filter(s=>s.name.toLowerCase().includes(q)):allStudents);
+  const selectedClass=document.getElementById('class-filter').value;
+  renderStudents(allStudents.filter(s=>{
+    const matchesClass=!selectedClass||s.class_names.includes(selectedClass);
+    const haystack=`${s.name} ${classLabel(s)}`.toLowerCase();
+    return matchesClass&&(!q||haystack.includes(q));
+  }));
 }
 function renderStudents(list){
   const el=document.getElementById('student-list');
@@ -234,7 +292,10 @@ function renderStudents(list){
   el.innerHTML=list.map(s=>`
     <div class="student-card">
       <div class="student-top">
-        <div class="student-name">${esc(s.name)}</div>
+        <div class="student-heading">
+          <div class="student-name">${esc(s.name)}</div>
+          <div class="class-badges">${classBadges(s)}</div>
+        </div>
         <div class="student-meta">보호자 ${mask(s.phone)}${s.student_phone?' · 학생 '+mask(s.student_phone):''}</div>
       </div>
       <div class="sms-row">
@@ -259,8 +320,7 @@ async function sms(id,type){
   const tpl=localStorage.getItem(key)||(type==='a'?TPL_A:TPL_D);
   const msg=tpl.replace(/{이름}/g,s.name).replace(/{시간}/g,t);
 
-  const targets=[s.phone];
-  if(s.student_phone) targets.push(s.student_phone);
+  const targets=[...new Set([s.phone,s.student_phone].filter(Boolean))];
 
   try{
     await Promise.allSettled(targets.map(to=>sb.functions.invoke('send-sms',{body:{to,text:msg}})));
@@ -280,13 +340,16 @@ async function sms(id,type){
 /* ── Clinics: member_phone, clinic_date, clinic_time, memo, location, reminder_sent ── */
 async function createReservation(){
   const sel=document.getElementById('res-student');
-  const ph=sel.value;
+  const student=allStudents.find(s=>s.id===sel.value);
   const loc=document.getElementById('res-location').value.trim();
   const dt=document.getElementById('res-date').value;
   const tm=document.getElementById('res-time').value;
   const memo=document.getElementById('res-memo').value.trim();
-  if(!ph||!dt||!tm){toast('학생, 날짜, 시간 필수',1);return}
-  const{error}=await sb.from('clinics').insert({member_phone:ph,clinic_date:dt,clinic_time:tm,memo:memo||null,location:loc||null,reminder_sent:false});
+  if(!student||!dt||!tm){toast('학생, 날짜, 시간 필수',1);return}
+  const{error}=await sb.from('clinics').insert({
+    member_id:student.id,member_name:student.name,member_phone:student.phone,
+    clinic_date:dt,clinic_time:tm,memo:memo||null,location:loc||null,reminder_sent:false
+  });
   if(error){toast('등록 실패: '+error.message,1);return}
   toast('클리닉 예약 등록 완료');
   document.getElementById('res-memo').value='';
@@ -297,16 +360,16 @@ async function loadRes(){
   const{data}=await sb.from('clinics').select('*').gte('clinic_date',today).order('clinic_date').order('clinic_time').limit(30);
   const el=document.getElementById('reservation-list');
   if(!data||!data.length){el.innerHTML='<div class="empty-msg">예약이 없습니다</div>';return}
-  const pm={};const phoneToId={};
-  allStudents.forEach(s=>{pm[s.phone]=s.name;phoneToId[s.phone]=s.id});
   el.innerHTML=data.map((r,i)=>{
-    const name=esc(pm[r.member_phone]||r.member_phone);
-    const sid=phoneToId[r.member_phone]||'';
+    const student=allStudents.find(s=>s.id===r.member_id)||allStudents.find(s=>s.phone===r.member_phone);
+    const name=esc(student?student.name:(r.member_name||r.member_phone));
+    const sid=student?student.id:(r.member_id||'');
+    const badges=student?classBadges(student):'';
     return `
     <div class="clinic-item">
       <div class="clinic-top">
         <div class="info" onclick="toggleClinicSms(${i})">
-          <strong>${name}</strong> ${r.clinic_date} ${(r.clinic_time||'').slice(0,5)}
+          <strong>${name}</strong> ${badges} ${r.clinic_date} ${(r.clinic_time||'').slice(0,5)}
           <br><span>${esc(r.location||'')} ${r.memo?'· '+esc(r.memo):''}</span>
         </div>
         <button class="del-btn" onclick="delRes('${r.id}')">취소</button>
@@ -340,8 +403,7 @@ async function clinicSms(studentId,phone,type,i){
   const tpl=localStorage.getItem(key)||(type==='a'?TPL_A:TPL_D);
   const msg=tpl.replace(/{이름}/g,name).replace(/{시간}/g,t);
 
-  const targets=[parentPhone];
-  if(student&&student.student_phone) targets.push(student.student_phone);
+  const targets=[...new Set([parentPhone,student&&student.student_phone].filter(Boolean))];
 
   try{
     await Promise.allSettled(targets.map(to=>sb.functions.invoke('send-sms',{body:{to,text:msg}})));

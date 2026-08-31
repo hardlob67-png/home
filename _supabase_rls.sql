@@ -85,6 +85,45 @@ create policy "class_members_admin_all" on class_members for all
 create policy "class_members_self_select" on class_members for select
   using (member_id = public.user_id());
 
+-- clinic-admin.html 등·하원 문자 명단용 최소 정보 RPC.
+-- clinic_admin에게 members 전체 SELECT 권한을 주지 않고,
+-- 비밀번호를 제외한 연락처와 분반명만 반환한다.
+create or replace function public.clinic_roster()
+returns table (
+  id uuid,
+  name text,
+  phone text,
+  student_phone text,
+  class_names text[]
+)
+language plpgsql stable security definer set search_path = '' as $$
+begin
+  if not (public.is_admin() or public.app_role() = 'clinic_admin') then
+    raise exception 'not authorized' using errcode = '42501';
+  end if;
+
+  return query
+    select
+      m.id,
+      m.name,
+      m.phone,
+      m.student_phone,
+      coalesce(
+        array_agg(distinct c.name order by c.name) filter (where c.name is not null),
+        array[]::text[]
+      ) as class_names
+    from public.members m
+    left join public.class_members cm on cm.member_id = m.id
+    left join public.classes c on c.id = cm.class_id
+    where m.role = 'user'
+    group by m.id, m.name, m.phone, m.student_phone
+    order by m.name;
+end;
+$$;
+
+revoke all on function public.clinic_roster() from public, anon;
+grant execute on function public.clinic_roster() to authenticated;
+
 -- ============================================================
 --  quizzes / quiz_records / badges / combo_records
 --   - admin: 모두
