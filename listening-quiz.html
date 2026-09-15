@@ -44,6 +44,11 @@ audio{width:100%;margin-top:10px}
 .score.good{color:var(--ok)}.score.bad{color:var(--ng)}
 .hint{font-size:12px;color:var(--muted);margin-top:8px}
 .nav{display:flex;justify-content:space-between;margin-top:8px}
+.numbar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:5}
+.numbtn{min-width:44px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#fff;font-family:inherit;font-size:14px;font-weight:700;color:var(--navy);cursor:pointer}
+.numbtn.cur{background:var(--navy);color:#fff;border-color:var(--navy)}
+.numbtn.done{border-color:var(--ok);color:var(--ok)}
+.numbtn.cur.done{background:var(--navy);color:#fff}
 @media (max-width:480px){.script{font-size:15px}.blank{font-size:15px}}
 </style>
 </head>
@@ -70,6 +75,7 @@ audio{width:100%;margin-top:10px}
 
   <!-- 문항 화면 -->
   <div id="itemView" style="display:none">
+    <div class="numbar" id="numBar"></div>
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
         <div style="font-size:18px;font-weight:800"><span id="itemNo"></span>번 <span id="itemKind" style="font-size:13px;color:var(--muted);font-weight:600"></span></div>
@@ -95,7 +101,7 @@ audio{width:100%;margin-top:10px}
 var user=null; try{ user=JSON.parse(sessionStorage.getItem('qhub_user')||'null'); }catch(e){}
 if(!user){ location.href='index.html'; }
 
-var ROUNDS=[], ROUND=null, ITEMS=[], cur=-1, blanks=[], checked=false;
+var ROUNDS=[], ROUND=null, ITEMS=[], cur=-1, blanks=[], checked=false, AUDIO_VER='1';
 var params=new URLSearchParams(location.search);
 var STOP=new Set(['the','a','an','and','or','but','so','to','of','in','on','at','for','with','by','as','is','are','was','were','be','been','am','do','does','did','it','its','this','that','these','those','i','you','he','she','we','they','me','him','her','us','them','my','your','his','our','their','not','no','yes','if','then','than','from','into','up','out','about','just','very','can','will','would','could','should','may','might','have','has','had','what','which','who','how','when','where','why','there','here','all','any','some','one','two','three','ok','okay','oh','hi','hey','mr','mrs','ms']);
 
@@ -117,7 +123,7 @@ async function init(){
 async function loadRound(id){
   ROUND=ROUNDS.find(function(x){return x.id===id})||ROUNDS[0];
   var r=await fetch('listening/'+ROUND.file+'?v='+Date.now()); var data=await r.json();
-  ITEMS=data.items; document.getElementById('subtitle').textContent=data.title||ROUND.title;
+  ITEMS=data.items; AUDIO_VER=String(data.audio_ver||'1'); document.getElementById('subtitle').textContent=data.title||ROUND.title;
   renderGrid(); showList();
 }
 function kindOf(it){ return it.lines.length>1 ? '대화' : '담화'; }
@@ -138,12 +144,21 @@ function openItem(i){
   document.getElementById('listView').style.display='none'; document.getElementById('itemView').style.display='';
   document.getElementById('backBtn').textContent='← 목록';
   document.getElementById('itemNo').textContent=it.no; document.getElementById('itemKind').textContent=kindOf(it);
-  var p=document.getElementById('player'); p.src='listening/'+it.audio; p.load();
+  var p=document.getElementById('player'); p.src='listening/'+it.audio+'?v='+(AUDIO_VER||'1'); p.load();
+  renderNumBar();
   document.getElementById('ko').className='ko'; document.getElementById('ko').innerHTML=(it.ko||[]).map(function(s){return '<p>'+esc(s)+'</p>'}).join('');
   document.getElementById('prevBtn').disabled=(i===0); document.getElementById('nextBtn').disabled=(i===ITEMS.length-1);
   reshuffle(); window.scrollTo(0,0);
 }
 function moveItem(d){ var n=cur+d; if(n<0||n>=ITEMS.length) return; openItem(n); }
+function renderNumBar(){
+  var bar=document.getElementById('numBar'); bar.innerHTML='';
+  ITEMS.forEach(function(it,i){
+    var b=document.createElement('button'); b.className='numbtn'+(i===cur?' cur':'')+(localStorage.getItem(bestKey(it.no))?' done':'');
+    b.textContent=it.no; b.title=kindOf(it); b.onclick=function(){ if(i!==cur) openItem(i); };
+    bar.appendChild(b);
+  });
+}
 function playFromStart(){ var p=document.getElementById('player'); p.currentTime=0; p.play(); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function norm(s){ return String(s).toLowerCase().replace(/[’']/g,"'").replace(/^[^a-z0-9']+|[^a-z0-9']+$/g,'').replace(/'s$/,"'s"); }
