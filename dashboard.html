@@ -584,11 +584,20 @@ async function loadQuizzes(){
     document.getElementById('stat-new').textContent = newCount;
 
     if(!totalCount){
-      grid.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">아직 등록된 퀴즈가 없어요</div></div>`;
+      grid.innerHTML=`<div class="quiz-card" onclick="openQuiz('','listening','듣기 딕테이션')"><span class="quiz-tag tag-new">🎧 듣기</span><div class="quiz-title">듣기 딕테이션</div><div class="quiz-desc">학평 듣기 음원을 문항별로 듣고 무작위 빈칸을 받아써요</div><div class="quiz-meta"><span>회차별 연습</span><span class="quiz-arrow">→</span></div></div>`
+        +`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">아직 등록된 퀴즈가 없어요</div></div>`;
       return;
     }
 
     let html = '';
+
+    // 듣기 딕테이션(정적 페이지, 회차 목록은 listening/rounds.json)
+    html += `<div class="quiz-card" onclick="openQuiz('','listening','듣기 딕테이션')">
+      <span class="quiz-tag tag-new">🎧 듣기</span>
+      <div class="quiz-title">듣기 딕테이션</div>
+      <div class="quiz-desc">학평 듣기 음원을 문항별로 듣고 무작위 빈칸을 받아써요</div>
+      <div class="quiz-meta"><span>회차별 연습</span><span class="quiz-arrow">→</span></div>
+    </div>`;
 
     // 단어장 카드 (위쪽)
     wordlists.forEach(w=>{
@@ -625,7 +634,8 @@ async function loadQuizzes(){
     grid.innerHTML = html;
   }catch(e){
     console.error(e);
-    grid.innerHTML='<div class="empty"><div class="empty-text">퀴즈를 불러오지 못했어요</div></div>';
+    grid.innerHTML=`<div class="quiz-card" onclick="openQuiz('','listening','듣기 딕테이션')"><span class="quiz-tag tag-new">🎧 듣기</span><div class="quiz-title">듣기 딕테이션</div><div class="quiz-desc">학평 듣기 음원을 문항별로 듣고 무작위 빈칸을 받아써요</div><div class="quiz-meta"><span>회차별 연습</span><span class="quiz-arrow">→</span></div></div>`
+      +'<div class="empty"><div class="empty-text">퀴즈를 불러오지 못했어요</div></div>';
   }
 }
 
@@ -640,6 +650,13 @@ async function openQuiz(id, type, titleHint){
   const iframe = document.getElementById('quiz-iframe');
   iframe.onload = onIframeLoad;
 
+  if(type==='listening'){
+    document.getElementById('quiz-panel-title').textContent = titleHint || '듣기 딕테이션';
+    sessionStorage.setItem('qhub_current_quiz_title', titleHint || '듣기 딕테이션');
+    iframe.removeAttribute('srcdoc');
+    iframe.src = 'listening-quiz.html';
+    return;
+  }
   if(type==='wordlist'){
     document.getElementById('quiz-panel-title').textContent = titleHint || '단어장';
     sessionStorage.setItem('qhub_current_quiz_title', titleHint || '단어장');

@@ -1,0 +1,430 @@
+{
+ "round": "2026-09-g1",
+ "title": "2026년 9월 고1 학력평가 영어 듣기 (수행평가 1·4~10·16~17번)",
+ "items": [
+  {
+   "no": "1",
+   "audio": "audio/2026-09-g1_q1.mp3",
+   "lines": [
+    {
+     "sp": "M",
+     "text": "Good morning, students. This is your principal. I’d like to share an important announcement with you today. Recently, we have noticed that many students use AI too much for their assignments. While AI can be helpful, assignments should still reflect each student’s own thinking and effort. Students should use AI responsibly and not copy answers directly from it. For this reason, starting next month, we’ll introduce an AI-detection system to limit the overuse of AI. This system will ensure that you don’t rely on AI alone but instead use it responsibly as a learning tool. Thank you for listening."
+    }
+   ],
+   "ko": [
+    "남: 학생 여러분, 좋은 아침입니다. 저는 교장입니다. 오늘 여러분에게 중요한 안내 사항을 전하고자 합니다. 최근 많은 학생이 과제를 할 때 AI를 지나치게 많이 사용한다는 사실을 알게 되었습니다. AI가 도움이 될 수는 있지만, 과제에는 여전히 학생 각자의 생각과 노력이 반영되어야 합니다. 학생들은 AI를 책임감 있게 사용해야 하며, AI의 답변을 그대로 베껴서는 안 됩니다. 이러한 이유로 다음 달부터 AI의 과도한 사용을 제한하기 위해 AI 탐지 시스템을 도입할 예정입니다. 이 시스템은 여러분이 AI에만 의존하지 않고 학습 도구로서 책임감 있게 사용하도록 해 줄 것입니다. 들어 주셔서 감사합니다."
+   ]
+  },
+  {
+   "no": "4",
+   "audio": "audio/2026-09-g1_q4.mp3",
+   "lines": [
+    {
+     "sp": "W",
+     "text": "Hi, Jun! Come on in. I finished making my hobby room."
+    },
+    {
+     "sp": "M",
+     "text": "Nice! I’ve been curious about how you set it up."
+    },
+    {
+     "sp": "W",
+     "text": "I put a yoga mat on the floor. How do you like the striped pattern?"
+    },
+    {
+     "sp": "M",
+     "text": "I love it. Placing the piano under the window is a great idea."
+    },
+    {
+     "sp": "W",
+     "text": "I can’t wait to play it in the warm natural light. Do you see that canvas next to the armchair? I painted it!"
+    },
+    {
+     "sp": "M",
+     "text": "Amazing. You’ve always liked painting."
+    },
+    {
+     "sp": "W",
+     "text": "Right. And look, I added a round light on the wall for reading in the armchair."
+    },
+    {
+     "sp": "M",
+     "text": "Good idea. The two speakers on the bookshelf are perfect for soft music."
+    },
+    {
+     "sp": "W",
+     "text": "Exactly. Playing quiet music is great while doing yoga."
+    },
+    {
+     "sp": "M",
+     "text": "Absolutely. This room is ideal for enjoying your hobbies."
+    }
+   ],
+   "ko": [
+    "여: 안녕, 준! 어서 들어와. [잠시 후] 내 취미방을 다 꾸몄어.",
+    "남: 멋지다! 네가 어떻게 꾸몄는지 궁금했어.",
+    "여: 바닥에 요가 매트를 깔았어. 줄무늬는 어때?",
+    "남: 마음에 들어. 창문 아래에 피아노를 놓은 건 정말 좋은 생각이야.",
+    "여: 따뜻한 자연광을 받으며 빨리 피아노를 치고 싶어. 안락의자 옆에 있는 저 캔버스 보여? 내가 그린 거야!",
+    "남: 대단하다. 넌 늘 그림 그리는 걸 좋아했지.",
+    "여: 맞아. 그리고 봐, 안락의자에서 책을 읽으려고 벽에 둥근 조명을 달았어.",
+    "남: 좋은 생각이야. 책장 위에 있는 스피커 두 개는 잔잔한 음악을 듣기에 딱 좋네.",
+    "여: 맞아. 요가를 하면서 조용한 음악을 틀어 놓으면 정말 좋아.",
+    "남: 물론이지. 이 방은 네 취미를 즐기기에 정말 딱이야."
+   ]
+  },
+  {
+   "no": "5",
+   "audio": "audio/2026-09-g1_q5.mp3",
+   "lines": [
+    {
+     "sp": "M",
+     "text": "Mia, we are almost ready for next week’s Digital-Free Learning Day. I’m so excited that students will do some activities without digital devices."
+    },
+    {
+     "sp": "W",
+     "text": "Right. Let’s check what we’ve prepared so far. I bought some snacks for the students."
+    },
+    {
+     "sp": "M",
+     "text": "Okay. I put up the event schedule posters in each hallway."
+    },
+    {
+     "sp": "W",
+     "text": "How about the indoor activities in the quiet reading area?"
+    },
+    {
+     "sp": "M",
+     "text": "Those are ready. I set up chairs and books."
+    },
+    {
+     "sp": "W",
+     "text": "Good. I’ve gathered student volunteers to help run the activities. And how is the outdoor mini Olympics going?"
+    },
+    {
+     "sp": "M",
+     "text": "It’s all set! But if it rains, students won’t be able to participate in it."
+    },
+    {
+     "sp": "W",
+     "text": "Then I’ll prepare board games as a backup by tomorrow."
+    },
+    {
+     "sp": "M",
+     "text": "Perfect."
+    }
+   ],
+   "ko": [
+    "남: 미아 씨, 다음 주 ‘디지털 기기 없는 학습의 날’ 준비가 거의 다 됐네요. 학생들이 디지털 기기 없이 여러 활동을 하게 된다니 정말 기대돼요.",
+    "여: 맞아요. 지금까지 준비한 것을 확인해 봐요. [잠시 후] 저는 학생들을 위해 간식을 좀 샀어요.",
+    "남: 좋아요. 저는 복도마다 행사 일정 포스터를 붙였어요.",
+    "여: 조용한 독서 공간에서 할 실내 활동은 어떻게 됐나요?",
+    "남: 그것도 준비됐어요. 의자와 책을 마련해 뒀어요.",
+    "여: 좋아요. 저는 활동 진행을 도울 학생 자원봉사자들을 모았어요. 그리고 야외 미니 올림픽 준비는 어떻게 돼 가나요?",
+    "남: 모두 준비됐어요! 하지만 비가 오면 학생들이 참여할 수 없겠네요.",
+    "여: 그럼 제가 내일까지 대안으로 보드게임을 준비할게요.",
+    "남: 완벽하네요."
+   ]
+  },
+  {
+   "no": "6",
+   "audio": "audio/2026-09-g1_q6.mp3",
+   "lines": [
+    {
+     "sp": "W",
+     "text": "Good afternoon! Welcome to Danny Brothers’ Cookie Shop. How can I help you today?"
+    },
+    {
+     "sp": "M",
+     "text": "Hi, I’m looking for a cookie gift set. Could you tell me about your options?"
+    },
+    {
+     "sp": "W",
+     "text": "Sure. We have Set A with mini cookies for $20, and Set B with jumbo cookies for $35."
+    },
+    {
+     "sp": "M",
+     "text": "Hmm, I think I’ll take Set B."
+    },
+    {
+     "sp": "W",
+     "text": "Great. Would you like gift wrapping?"
+    },
+    {
+     "sp": "M",
+     "text": "Is it free?"
+    },
+    {
+     "sp": "W",
+     "text": "No, the price of the wrapping is $3. But it comes with a special box and a ribbon."
+    },
+    {
+     "sp": "M",
+     "text": "Alright, I’ll add it."
+    },
+    {
+     "sp": "W",
+     "text": "So, that’s one Set B with gift wrapping, right?"
+    },
+    {
+     "sp": "M",
+     "text": "Yes. Oh, I have a Sweet Day coupon."
+    },
+    {
+     "sp": "W",
+     "text": "Perfect! That gives you $5 off the price when your total is over $30."
+    },
+    {
+     "sp": "M",
+     "text": "Awesome! Here’s my credit card."
+    }
+   ],
+   "ko": [
+    "여: 안녕하세요! 대니 브라더스 쿠키 가게에 오신 것을 환영합니다. 무엇을 도와드릴까요?",
+    "남: 안녕하세요, 쿠키 선물 세트를 찾고 있어요. 어떤 종류가 있는지 알려 주시겠어요?",
+    "여: 물론이죠. 미니 쿠키로 구성된 A 세트는 20달러이고, 점보 쿠키로 구성된 B 세트는 35달러예요.",
+    "남: 음, B 세트로 할게요.",
+    "여: 좋아요. 선물 포장도 해 드릴까요?",
+    "남: 무료인가요?",
+    "여: 아니요, 포장 비용은 3달러예요. 대신 특별한 상자와 리본이 포함돼요.",
+    "남: 알겠어요. 포장도 해 주세요.",
+    "여: 그럼 B 세트 하나에 선물 포장을 추가하시는 거죠?",
+    "남: 네. 아, 스위트 데이 쿠폰이 있어요.",
+    "여: 잘됐네요! 총금액이 30달러를 넘으면 그 쿠폰으로 5달러를 할인받으실 수 있어요.",
+    "남: 좋네요! 여기 제 신용 카드요."
+   ]
+  },
+  {
+   "no": "7",
+   "audio": "audio/2026-09-g1_q7.mp3",
+   "lines": [
+    {
+     "sp": "M",
+     "text": "Hey, Emma. It’s Mark. Are you going to the Robotics Experience Expo this Saturday?"
+    },
+    {
+     "sp": "W",
+     "text": "I really want to, but I can’t make it this time."
+    },
+    {
+     "sp": "M",
+     "text": "Really? Is it because you have to finish your science project?"
+    },
+    {
+     "sp": "W",
+     "text": "No, I submitted it yesterday."
+    },
+    {
+     "sp": "M",
+     "text": "Then do you have your math club meeting? I remember you usually meet on Saturdays."
+    },
+    {
+     "sp": "W",
+     "text": "Not this week. The meeting was moved to next Tuesday."
+    },
+    {
+     "sp": "M",
+     "text": "Hmm.... Then do you need to look after your younger brother for your parents?"
+    },
+    {
+     "sp": "W",
+     "text": "No. My parents will be home this weekend."
+    },
+    {
+     "sp": "M",
+     "text": "So why can’t you go? You were so excited about building robots."
+    },
+    {
+     "sp": "W",
+     "text": "Actually, I promised my cousin I’d go to his piano concert. He’s been practicing for months, so I really want to be there."
+    },
+    {
+     "sp": "M",
+     "text": "Oh, that’s sweet. I think you should go then. I hope he does well!"
+    },
+    {
+     "sp": "W",
+     "text": "Thanks. I’ll join the expo next time."
+    }
+   ],
+   "ko": [
+    "[휴대 전화가 울린다.]",
+    "남: 안녕, 엠마. 나 마크야. 이번 토요일에 로봇 체험 박람회에 갈 거야?",
+    "여: 정말 가고 싶은데, 이번에는 못 가.",
+    "남: 정말? 과학 과제를 끝내야 해서 그래?",
+    "여: 아니, 그건 어제 제출했어.",
+    "남: 그럼 수학 동아리 모임이 있어? 너희 보통 토요일마다 모이는 걸로 기억하는데.",
+    "여: 이번 주는 아니야. 모임이 다음 주 화요일로 옮겨졌어.",
+    "남: 음…. 그럼 부모님 대신 남동생을 돌봐야 해?",
+    "여: 아니. 이번 주말에는 부모님이 집에 계실 거야.",
+    "남: 그럼 왜 못 가? 너 로봇 만드는 걸 엄청 기대했잖아.",
+    "여: 사실 사촌한테 피아노 연주회에 가겠다고 약속했어. 몇 달 동안 연습해 왔거든. 그래서 꼭 가고 싶어.",
+    "남: 아, 마음이 참 따뜻하네. 그럼 가는 게 좋겠다. 사촌이 잘하길 바라!",
+    "여: 고마워. 박람회는 다음에 같이 갈게."
+   ]
+  },
+  {
+   "no": "8",
+   "audio": "audio/2026-09-g1_q8.mp3",
+   "lines": [
+    {
+     "sp": "W",
+     "text": "Hey, Ryan. What are you reading on our department notice board?"
+    },
+    {
+     "sp": "M",
+     "text": "It’s about the Island Medical Volunteer Program during this coming winter break."
+    },
+    {
+     "sp": "W",
+     "text": "Sounds special. What kind of program is it?"
+    },
+    {
+     "sp": "M",
+     "text": "It’s a volunteer program where doctors and medical students like us visit a small island to provide free check-ups for the residents."
+    },
+    {
+     "sp": "W",
+     "text": "Wow, that seems very meaningful. How long does it last?"
+    },
+    {
+     "sp": "M",
+     "text": "For a week, from January 4th to 10th."
+    },
+    {
+     "sp": "W",
+     "text": "Where exactly is it held?"
+    },
+    {
+     "sp": "M",
+     "text": "On Silver-Star Island, two hours by boat from the mainland. Why don’t we join?"
+    },
+    {
+     "sp": "W",
+     "text": "Let’s do it. How can we apply for the program?"
+    },
+    {
+     "sp": "M",
+     "text": "We first have to apply online."
+    },
+    {
+     "sp": "W",
+     "text": "I see. How much does it cost to participate?"
+    },
+    {
+     "sp": "M",
+     "text": "Nothing, it’s free. Also, meals and housing are provided."
+    },
+    {
+     "sp": "W",
+     "text": "Sounds like a good opportunity."
+    }
+   ],
+   "ko": [
+    "여: 야, 라이언. 우리 학과 게시판에서 뭐 읽고 있어?",
+    "남: 이번 겨울 방학에 진행되는 섬 의료 봉사 프로그램에 관한 거야.",
+    "여: 특별한 것 같네. 어떤 프로그램이야?",
+    "남: 의사들과 우리 같은 의대생들이 작은 섬을 방문해서 주민들에게 무료 건강 검진을 해 주는 봉사 프로그램이야.",
+    "여: 와, 정말 뜻깊겠다. 얼마나 오래 하는 거야?",
+    "남: 1월 4일부터 10일까지 일주일 동안이야.",
+    "여: 정확히 어디에서 하는데?",
+    "남: 본토에서 배로 두 시간 걸리는 실버스타섬에서 해. 우리 같이 참여할까?",
+    "여: 좋아. 프로그램에 어떻게 신청하면 돼?",
+    "남: 먼저 온라인으로 신청해야 해.",
+    "여: 그렇구나. 참가 비용은 얼마야?",
+    "남: 돈은 안 들어. 무료야. 식사와 숙소도 제공돼.",
+    "여: 좋은 기회인 것 같아."
+   ]
+  },
+  {
+   "no": "9",
+   "audio": "audio/2026-09-g1_q9.mp3",
+   "lines": [
+    {
+     "sp": "W",
+     "text": "Are you looking for an exciting show? Come and experience the SkySymphony at Aurora Sky Resort. It takes place in the lobby of the main building. The show uses LED screens and speakers, turning the lobby into a true theater of lights and sounds. The highlight of the show is that 1,000 lights hanging from the high ceiling move up and down with music. Each show starts every hour from 10 a.m. to midnight. It lasts about five minutes. The theme of the show changes by season, so you can discover something new each time you visit. Bring your family and friends and enjoy your day with a truly memorable moment!"
+    }
+   ],
+   "ko": [
+    "여: 신나는 공연을 찾고 계신가요? 오로라 스카이 리조트에 오셔서 스카이심포니를 경험해 보세요. 이 공연은 본관 로비에서 열립니다. LED 스크린과 스피커를 사용해 로비를 빛과 소리가 어우러지는 진정한 극장으로 바꿔 놓습니다. 공연의 하이라이트는 높은 천장에 매달린 1,000개의 조명이 음악에 맞춰 위아래로 움직이는 것입니다. 공연은 오전 10시부터 자정까지 매시간 정각에 시작합니다. 공연 시간은 약 5분입니다. 계절에 따라 공연의 주제가 바뀌므로 방문하실 때마다 새로운 것을 발견하실 수 있습니다. 가족, 친구들과 함께 오셔서 오래도록 기억에 남을 특별한 순간을 경험하며 즐거운 하루를 보내세요!"
+   ]
+  },
+  {
+   "no": "10",
+   "audio": "audio/2026-09-g1_q10.mp3",
+   "lines": [
+    {
+     "sp": "M",
+     "text": "Hey, Olivia. Could you help me with shopping?"
+    },
+    {
+     "sp": "W",
+     "text": "Sure, Adam. What are you looking for?"
+    },
+    {
+     "sp": "M",
+     "text": "I’m choosing a smart photo frame. I want to display a lot of photos on my desk. Can you help me choose one?"
+    },
+    {
+     "sp": "W",
+     "text": "Sure. What do you need to consider first?"
+    },
+    {
+     "sp": "M",
+     "text": "Well, I don’t want to spend more than $100."
+    },
+    {
+     "sp": "W",
+     "text": "Got it. What about storage capacity?"
+    },
+    {
+     "sp": "M",
+     "text": "I need at least 32GB of storage capacity. I have many family photos to upload."
+    },
+    {
+     "sp": "W",
+     "text": "Okay. Do you have any preference for the screen size?"
+    },
+    {
+     "sp": "M",
+     "text": "A 16-inch screen seems too big for my desk."
+    },
+    {
+     "sp": "W",
+     "text": "In that case, only two options are left. How about buying the one with the sleep mode? It saves power when not in use."
+    },
+    {
+     "sp": "M",
+     "text": "Sounds good! I’ll take the one with the sleep mode. I’ll order it right now."
+    }
+   ],
+   "ko": [
+    "남: 안녕, 올리비아. 쇼핑하는 것 좀 도와줄래?",
+    "여: 물론이지, 애덤. 뭘 찾고 있어?",
+    "남: 스마트 디지털 액자를 고르고 있어. 책상 위에 사진을 많이 띄워 놓고 싶거든. 하나 고르는 것 좀 도와줄래?",
+    "여: 물론이지. 먼저 뭘 고려해야 해?",
+    "남: 음, 100달러 넘게 쓰고 싶지는 않아.",
+    "여: 알겠어. 저장 용량은 어때?",
+    "남: 저장 용량은 적어도 32기가바이트는 필요해. 올릴 가족사진이 많거든.",
+    "여: 그렇구나. 선호하는 화면 크기가 있어?",
+    "남: 16인치 화면은 내 책상에 놓기에는 너무 큰 것 같아.",
+    "여: 그렇다면 선택지가 두 개만 남네. 절전 모드가 있는 걸 사는 건 어때? 사용하지 않을 때 전력을 절약해 주거든.",
+    "남: 좋아! 절전 모드가 있는 걸로 할게. 지금 바로 주문해야겠다."
+   ]
+  },
+  {
+   "no": "16~17",
+   "audio": "audio/2026-09-g1_q16-17.mp3",
+   "lines": [
+    {
+     "sp": "W",
+     "text": "Hello, Fresh Living subscribers. Every year, tons of food are thrown away just because we didn’t store it the right way. Today, I’d like to talk about how we can lower food waste by storing food in the proper way. First, don’t put onions in the refrigerator because they soften easily. Store them in a cool, dry place with good airflow. Next, keep cabbage in the refrigerator’s vegetable drawer. It lasts longer when you don’t remove the outer leaves which protect the inner part from drying out. And what about bread? If you want to keep it fresher for longer, store it in the freezer. Finally, mushrooms go bad fast since they take in water easily. Keeping them in a paper bag makes them stay dry and fresh for a longer time. With these simple tips, we can keep our food fresh and less food goes into the trash. Have a good day."
+    }
+   ],
+   "ko": [
+    "여: 안녕하세요, 프레시 리빙 구독자 여러분. 매년 엄청난 양의 음식이 단지 올바른 방법으로 보관하지 않았다는 이유로 버려집니다. 오늘은 음식을 올바르게 보관해서 음식물 쓰레기를 줄이는 방법에 대해 이야기하려고 합니다. 먼저, 양파는 쉽게 물러지므로 냉장고에 넣지 마세요. 통풍이 잘되는 서늘하고 건조한 곳에 보관하세요. 다음으로, 양배추는 냉장고의 채소 서랍에 보관하세요. 안쪽 부분이 마르지 않도록 보호해 주는 겉잎을 제거하지 않으면 더 오래 보관할 수 있습니다. 그렇다면 빵은 어떨까요? 빵을 더 오랫동안 신선하게 보관하고 싶다면 냉동실에 넣으세요. 마지막으로, 버섯은 물을 쉽게 흡수하기 때문에 빨리 상합니다. 종이봉투에 보관하면 더 오랫동안 물기 없이 신선하게 유지할 수 있습니다. 이런 간단한 요령을 활용하면 음식을 신선하게 보관하고 버려지는 음식의 양도 줄일 수 있습니다. 좋은 하루 보내세요.",
+    "딕테이션 Ａ"
+   ]
+  }
+ ]
+}
