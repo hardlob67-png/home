@@ -55,26 +55,22 @@ body{font-family:"Noto Sans KR","Outfit",sans-serif;background:var(--bg);color:v
 .choice{background:var(--surface);border:2px solid var(--surface2);border-radius:var(--radius-sm);padding:14px 15px;color:var(--text);font-size:16px;font-weight:600;text-align:left;transition:all .15s}
 .choices.two .choice{text-align:center;padding:14px 8px;font-size:15px;word-break:keep-all}
 .choice:active{transform:scale(0.98)}
-.choice.right{border-color:var(--correct);background:var(--correct-bg);color:var(--correct)}
 .choice:disabled{opacity:.45}
-/* 틀린 선지: 카드가 뒤집히며 그 낱말과 뜻을 보여 줌 */
-.choice{position:relative;perspective:700px;min-height:54px}
-.choice .flip{display:block;position:relative;transition:transform .45s ease;transform-style:preserve-3d}
-.choice .face{display:block;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.choice .back{position:absolute;inset:-14px -15px;transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;align-items:inherit;padding:6px 12px;border-radius:10px;background:var(--wrong-bg);line-height:1.25}
-.choices.two .choice .back{inset:-14px -8px;align-items:center;text-align:center}
-.choice .back b{color:var(--wrong);font-size:15px;font-weight:700;text-decoration:line-through;text-decoration-thickness:1px}
-.choice .back small{color:#FFB3B3;font-size:13px;font-weight:500;margin-top:3px;word-break:keep-all;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* 고른 선지가 «뒤집히며» 낱말과 뜻을 보여 줌 — 2D(가로로 접혔다 펴짐) 방식: 아이폰 사파리는 버튼 안 3D 뒤집기(preserve-3d)가 깨진다 */
+.choice{min-height:54px;transition:transform .2s ease}
 .choices.two .choice{min-height:64px}
-.choices.two .choice .back small{font-size:12px}
-.choice.wrong{border-color:var(--wrong);background:var(--surface)}
-.choice.wrong .flip,.choice.right .flip{transform:rotateY(180deg)}
-.choice.wrong:disabled,.choice.right:disabled{opacity:1}
-/* 정답: 초록 면에 «낱말 + 문맥 뜻» */
-.choice.right{border-color:var(--correct);background:var(--surface);color:var(--text)}
-.choice .back.ok{background:var(--correct-bg)}
-.choice .back.ok b{color:var(--correct);text-decoration:none}
-.choice .back.ok small{color:#A6F5D9}
+.choice.turning{transform:scaleX(0)}
+.choice .rv{display:flex;flex-direction:column;justify-content:center;line-height:1.25}
+.choices.two .choice .rv{align-items:center;text-align:center}
+.choice .rv b{font-size:15px;font-weight:700}
+.choice .rv small{font-size:13px;font-weight:500;margin-top:3px;word-break:keep-all;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.choices.two .choice .rv small{font-size:12px}
+.choice.wrong,.choice.wrong:disabled{opacity:1;border-color:var(--wrong);background:var(--wrong-bg)}
+.choice.wrong .rv b{color:var(--wrong);text-decoration:line-through;text-decoration-thickness:1px}
+.choice.wrong .rv small{color:#FFB3B3}
+.choice.right,.choice.right:disabled{opacity:1;border-color:var(--correct);background:var(--correct-bg)}
+.choice.right .rv b{color:var(--correct)}
+.choice.right .rv small{color:#A6F5D9}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .next-btn{margin:2px 18px 24px;background:linear-gradient(135deg,var(--accent),#8B5CF6);border:none;border-radius:var(--radius);padding:16px;color:#fff;font-size:15px;font-weight:800;display:none}
 .next-btn.show{display:block}
@@ -226,24 +222,29 @@ function askBlank(){
   var meanOf = {}; (b.w || []).forEach(function(w, k){ meanOf[w] = (b.wm || [])[k] || ''; });
   box.classList.toggle('two', opts.every(function(o){ return o.length <= 16; }));   // 짧은 선지는 2×2 — 작은 휴대폰에서도 한 화면
   opts.forEach(function(opt){
-    var btn = document.createElement('button'); btn.className = 'choice';
-    var flip = document.createElement('span'); flip.className = 'flip';
-    var front = document.createElement('span'); front.className = 'face front'; front.textContent = opt; flip.appendChild(front);
-    var back = document.createElement('span'); back.className = 'face back' + (opt === b.a ? ' ok' : '');
-    var bw = document.createElement('b'); bw.textContent = opt; back.appendChild(bw);
+    var btn = document.createElement('button'); btn.className = 'choice'; btn.dataset.opt = opt; btn.textContent = opt;
     var mtxt = opt === b.a ? (b.am || '') : meanOf[opt];
-    if (mtxt) { var bm = document.createElement('small'); bm.textContent = mtxt; back.appendChild(bm); }
-    flip.appendChild(back);
-    btn.appendChild(flip);
+    function reveal(cls){   // 가로로 접혔다(0.2초) 펴지며 «낱말 + 뜻» 면으로 바뀜
+      btn.classList.add('turning');
+      setTimeout(function(){
+        btn.textContent = '';
+        var rv = document.createElement('span'); rv.className = 'rv';
+        var bw = document.createElement('b'); bw.textContent = opt; rv.appendChild(bw);
+        if (mtxt) { var bm = document.createElement('small'); bm.textContent = mtxt; rv.appendChild(bm); }
+        btn.appendChild(rv); btn.classList.add(cls); btn.classList.remove('turning');
+      }, 200);
+    }
     btn.onclick = function(){
+      if (btn.disabled) return;
       if (opt === b.a) {
-        btn.classList.add('right'); box.querySelectorAll('.choice').forEach(function(x){ x.disabled = true; });
+        box.querySelectorAll('.choice').forEach(function(x){ x.disabled = true; });
+        reveal('right');
         $('hint').textContent = '정답!';
         var el = $('b' + bi); el.textContent = b.a; el.classList.add('done'); blankTotal++;
         if (missedHere) { el.classList.add('missed'); missedTotal++; }
-        setTimeout(function(){ bi++; askBlank(); }, 1700);   // 뒤집힌 정답 뜻을 읽을 틈(11-26 사용자 「약간 더 느리게」: 0.45초 → 뒤집힘 0.45 + 1.25초)
+        setTimeout(function(){ bi++; askBlank(); }, 1900);   // 정답 뜻 읽을 틈(11-26 사용자 「약간 더 느리게」: 0.45초 → 뒤집힘 0.4 + 약 1.5초)
       } else {
-        btn.classList.add('wrong'); btn.disabled = true; missedHere = true; wrongTotal++;
+        btn.disabled = true; reveal('wrong'); missedHere = true; wrongTotal++;
         $('hint').textContent = '다시 골라 보세요';
       }
     };

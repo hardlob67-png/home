@@ -701,7 +701,7 @@ async function openQuiz(id, type, titleHint){
     document.getElementById('quiz-panel-title').textContent = titleHint || '본문 암기 퀴즈';
     sessionStorage.setItem('qhub_current_quiz_title', titleHint || '본문 암기 퀴즈');
     iframe.removeAttribute('srcdoc');
-    iframe.src = 'sentence-quiz.html' + (id ? '?school=' + encodeURIComponent(id) : '');
+    iframe.src = 'sentence-quiz.html?v=' + Date.now() + (id ? '&school=' + encodeURIComponent(id) : '');   // 페이지 캐시(10분) 우회 — 고친 판이 바로 보이게
     return;
   }
   if(type==='listening'){
