@@ -242,7 +242,7 @@ function askBlank(){
         $('hint').textContent = '정답!';
         var el = $('b' + bi); el.textContent = b.a; el.classList.add('done'); blankTotal++;
         if (missedHere) { el.classList.add('missed'); missedTotal++; }
-        setTimeout(function(){ bi++; askBlank(); }, 1900);   // 정답 뜻 읽을 틈(11-26 사용자 「약간 더 느리게」: 0.45초 → 뒤집힘 0.4 + 약 1.5초)
+        setTimeout(function(){ bi++; askBlank(); }, 1200);   // 정답 뜻 읽을 틈 — 0.45초(처음) → 1.7 → 1.9초 → 11-26 사용자 「좀 더 빨리」: 1.2초(접힘 0.4 + 약 0.8초)
       } else {
         btn.disabled = true; reveal('wrong'); missedHere = true; wrongTotal++;
         $('hint').textContent = '다시 골라 보세요';
