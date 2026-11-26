@@ -10,6 +10,7 @@
       "Gim seems to have been ",
       {
        "a": "harvested",
+       "am": "수확된",
        "w": [
         "harnessed",
         "harbored",
@@ -24,6 +25,7 @@
       " in the past by women who walked into the sea during ",
       {
        "a": "low tide",
+       "am": "썰물",
        "w": [
         "high tide",
         "low pressure",
@@ -45,6 +47,7 @@
       "It was so ",
       {
        "a": "precious",
+       "am": "귀한",
        "w": [
         "precise",
         "precarious",
@@ -59,6 +62,7 @@
       " and ",
       {
        "a": "scarce",
+       "am": "희소한",
        "w": [
         "secure",
         "severe",
@@ -73,6 +77,7 @@
       " that only royalty, like kings and queens, and the very wealthy had the ",
       {
        "a": "privilege",
+       "am": "특권",
        "w": [
         "priority",
         "privacy",
@@ -94,6 +99,7 @@
       "You might be wondering how gim became more ",
       {
        "a": "affordable",
+       "am": "가격이 저렴한",
        "w": [
         "avoidable",
         "adjustable",
@@ -108,6 +114,7 @@
       " and ",
       {
        "a": "readily available",
+       "am": "쉽게 구할 수 있는",
        "w": [
         "closely related",
         "strictly limited",
@@ -129,6 +136,7 @@
       "Two figures ",
       {
        "a": "are behind",
+       "am": "~을 이끈 주역이다",
        "w": [
         "are against",
         "are after",
@@ -143,6 +151,7 @@
       " the striking ",
       {
        "a": "popularity",
+       "am": "인기",
        "w": [
         "populism",
         "punctuality",
@@ -164,6 +173,7 @@
       "It is widely believed that during the reign of King Injo, a man named Yeoik Gim ",
       {
        "a": "succeeded in",
+       "am": "~에 성공했다",
        "w": [
         "consisted of",
         "coincided with",
@@ -178,6 +188,7 @@
       " ",
       {
        "a": "farming",
+       "am": "양식하는 것",
        "w": [
         "forming",
         "framing",
@@ -199,6 +210,7 @@
       "He ",
       {
        "a": "came across",
+       "am": "우연히 발견했다",
        "w": [
         "came along",
         "came after",
@@ -213,6 +225,7 @@
       " floating tree branches with some seaweed ",
       {
        "a": "attached to",
+       "am": "~에 붙어 있는",
        "w": [
         "detached from",
         "aimed at",
@@ -234,6 +247,7 @@
       "He tasted the seaweed ",
       {
        "a": "out of curiosity",
+       "am": "호기심에서",
        "w": [
         "out of print",
         "out of stock",
@@ -255,6 +269,7 @@
       "Floating seaweed became ",
       {
        "a": "entangled in",
+       "am": "~에 얽힌",
        "w": [
         "released from",
         "separated from",
@@ -276,6 +291,7 @@
       "This method allowed more people to enjoy gim, but it was not ",
       {
        "a": "productive",
+       "am": "생산성이 높은",
        "w": [
         "protective",
         "predictive",
@@ -290,6 +306,7 @@
       " enough to ",
       {
        "a": "cultivate",
+       "am": "양식하다",
        "w": [
         "calculate",
         "circulate",
@@ -304,6 +321,7 @@
       " as much gim as we ",
       {
        "a": "consume",
+       "am": "소비하다",
        "w": [
         "conserve",
         "conceal",
@@ -324,6 +342,7 @@
      "parts": [
       {
        "a": "To our surprise",
+       "am": "놀랍게도",
        "w": [
         "To the brim",
         "By the dozen",
@@ -338,6 +357,7 @@
       ", a British scientist named Kathleen Drew-Baker, who had never been to Korea, ",
       {
        "a": "contributed to",
+       "am": "~에 기여했다",
        "w": [
         "objected to",
         "withdrew from",
@@ -359,6 +379,7 @@
       "While researching the annual ",
       {
        "a": "life cycle",
+       "am": "생활사",
        "w": [
         "water cycle",
         "carbon cycle",
@@ -373,6 +394,7 @@
       " of seaweed, she discovered how seaweed ",
       {
        "a": "reproduces",
+       "am": "번식한다",
        "w": [
         "reduces",
         "recedes",
@@ -387,6 +409,7 @@
       " through ",
       {
        "a": "spores",
+       "am": "포자",
        "w": [
         "sprains",
         "spasms",
@@ -408,6 +431,7 @@
       "Since her research, people have been able to produce gim ",
       {
        "a": "in large quantities",
+       "am": "대량으로",
        "w": [
         "on speaking terms",
         "at face value",
@@ -422,6 +446,7 @@
       " by artificially collecting ",
       {
        "a": "spores",
+       "am": "포자",
        "w": [
         "sprains",
         "spasms",
@@ -436,6 +461,7 @@
       " and attaching them to ",
       {
        "a": "cultivating frames",
+       "am": "양식 틀",
        "w": [
         "circulating pumps",
         "ventilating fans",
@@ -457,6 +483,7 @@
       "That is how gim became more ",
       {
        "a": "affordable",
+       "am": "가격이 저렴한",
        "w": [
         "avoidable",
         "adjustable",
@@ -478,6 +505,7 @@
       "In the first half of 2017, Korean gim ",
       {
        "a": "accounted for",
+       "am": "~의 비중을 차지했다",
        "w": [
         "called for",
         "settled for",
@@ -499,6 +527,7 @@
       "Not surprisingly, Korea is the world’s largest gim ",
       {
        "a": "producer",
+       "am": "생산국",
        "w": [
         "projector",
         "protractor",
@@ -513,6 +542,7 @@
       " and ",
       {
        "a": "exporter",
+       "am": "수출국",
        "w": [
         "extinguisher",
         "exorcist",
@@ -527,6 +557,7 @@
       ", ",
       {
        "a": "dominating",
+       "am": "지배하는",
        "w": [
         "donating",
         "diminishing",
@@ -548,6 +579,7 @@
       "According to Graph 1, gim ",
       {
        "a": "exports",
+       "am": "수출액",
        "w": [
         "imports",
         "experts",
@@ -562,6 +594,7 @@
       " overseas were only $100 million in 2010, but have steadily increased ",
       {
        "a": "year after year",
+       "am": "해마다",
        "w": [
         "back and forth",
         "at a standstill",
@@ -583,6 +616,7 @@
       "In 2019, the top three ",
       {
        "a": "export destinations",
+       "am": "수출 대상국",
        "w": [
         "export gestations",
         "export conjugations",
@@ -604,6 +638,7 @@
       "Furthermore, the number of ",
       {
        "a": "export destinations",
+       "am": "수출 대상국",
        "w": [
         "export gestations",
         "export conjugations",
@@ -625,6 +660,7 @@
       "According to Graph 2, gim was only exported to 64 countries in 2010, but by September 2021, gim ",
       {
        "a": "exports",
+       "am": "수출",
        "w": [
         "imports",
         "experts",
@@ -639,6 +675,7 @@
       " had ",
       {
        "a": "expanded",
+       "am": "확대되었다",
        "w": [
         "expended",
         "expelled",
@@ -660,6 +697,7 @@
       "As more countries begin to eat gim, it is being ",
       {
        "a": "consumed",
+       "am": "소비되는",
        "w": [
         "conserved",
         "concealed",
@@ -674,6 +712,7 @@
       " in new ways ",
       {
        "a": "depending on",
+       "am": "~에 따라",
        "w": [
         "insisting on",
         "focusing on",
@@ -695,6 +734,7 @@
       "Also, Thailand is producing its own gim snacks by ",
       {
        "a": "importing",
+       "am": "수입하는",
        "w": [
         "exporting",
         "imparting",
@@ -709,6 +749,7 @@
       " gim from Korea and ",
       {
        "a": "processing",
+       "am": "가공하는",
        "w": [
         "possessing",
         "proceeding",
@@ -723,6 +764,7 @@
       " it with popular Thai ",
       {
        "a": "flavors",
+       "am": "맛",
        "w": [
         "favors",
         "flaws",
@@ -743,6 +785,7 @@
      "parts": [
       {
        "a": "What is more",
+       "am": "게다가",
        "w": [
         "What is worse",
         "That is why",
@@ -764,6 +807,7 @@
       "For example, the Culinary Institute of America, an internationally famous ",
       {
        "a": "culinary",
+       "am": "요리의",
        "w": [
         "cultural",
         "customary",
@@ -778,6 +822,7 @@
       " university, published a ",
       {
        "a": "recipe book",
+       "am": "요리법 책",
        "w": [
         "receipt book",
         "record book",
@@ -799,6 +844,7 @@
       "It is quite clear that gim is being used to create new and delicious types of food and to give new ",
       {
        "a": "flavors",
+       "am": "맛",
        "w": [
         "favors",
         "flaws",
@@ -820,6 +866,7 @@
       "The future of the gim ",
       {
        "a": "industry",
+       "am": "산업",
        "w": [
         "identity",
         "integrity",
@@ -834,6 +881,7 @@
       " appears bright, as global ",
       {
        "a": "demand",
+       "am": "수요",
        "w": [
         "decline",
         "deposit",
@@ -855,6 +903,7 @@
       "First of all, gim is a highly valued product on the global market as a healthy food due to its ",
       {
        "a": "nutritional",
+       "am": "영양상의",
        "w": [
         "national",
         "traditional",
@@ -869,6 +918,7 @@
       " ",
       {
        "a": "properties",
+       "am": "특성",
        "w": [
         "priorities",
         "proposals",
@@ -890,6 +940,7 @@
       "One hundred grams of gim contain sixteen times more ",
       {
        "a": "dietary fiber",
+       "am": "식이 섬유",
        "w": [
         "dietary fervor",
         "dietary fever",
@@ -904,6 +955,7 @@
       " than the same amount of cabbage, two times more ",
       {
        "a": "protein",
+       "am": "단백질",
        "w": [
         "probity",
         "propriety",
@@ -918,6 +970,7 @@
       " than beans, and four times more ",
       {
        "a": "calcium",
+       "am": "칼슘",
        "w": [
         "delirium",
         "tedium",
@@ -939,6 +992,7 @@
       "Gim’s high ",
       {
        "a": "nutrient content",
+       "am": "영양소 함량",
        "w": [
         "nutrient deficiency",
         "nutrient loss",
@@ -953,6 +1007,7 @@
       " will make it a popular choice among ",
       {
        "a": "consumers",
+       "am": "소비자",
        "w": [
         "consonants",
         "condensers",
@@ -974,6 +1029,7 @@
       "Second, gim is ",
       {
        "a": "environmentally friendly",
+       "am": "환경친화적인",
        "w": [
         "legally married",
         "gainfully employed",
@@ -995,6 +1051,7 @@
       "In fact, research shows that seaweed has been shown to ",
       {
        "a": "capture",
+       "am": "포집하다",
        "w": [
         "culture",
         "calculate",
@@ -1016,6 +1073,7 @@
       "For example, one ton of seaweed ",
       {
        "a": "absorbs",
+       "am": "흡수한다",
        "w": [
         "absolves",
         "abolishes",
@@ -1042,6 +1100,7 @@
       "Several ",
       {
        "a": "artificial intelligence",
+       "am": "인공지능",
        "w": [
         "artificial interference",
         "artificial immunity",
@@ -1056,6 +1115,7 @@
       " (AI) ",
       {
        "a": "technologies",
+       "am": "기술",
        "w": [
         "terminologies",
         "chronologies",
@@ -1077,6 +1137,7 @@
       "One of them is ",
       {
        "a": "self-driving cars",
+       "am": "자율 주행 자동차",
        "w": [
         "self-cleaning cars",
         "self-parking cars",
@@ -1098,6 +1159,7 @@
       "The taxi ",
       {
        "a": "is capable of",
+       "am": "~할 수 있다",
        "w": [
         "is afraid of",
         "is opposed to",
@@ -1112,6 +1174,7 @@
       " driving itself without any human ",
       {
        "a": "intervention",
+       "am": "개입",
        "w": [
         "interment",
         "intermarriage",
@@ -1133,6 +1196,7 @@
       "Luckily, ",
       {
        "a": "self-driving cars",
+       "am": "자율 주행 자동차",
        "w": [
         "self-cleaning cars",
         "self-parking cars",
@@ -1147,6 +1211,7 @@
       " are being developed and certain versions are already ",
       {
        "a": "on the road",
+       "am": "도로에서 운행 중인",
        "w": [
         "in the way",
         "on the run",
@@ -1168,6 +1233,7 @@
       "Additionally, many other AI ",
       {
        "a": "technologies",
+       "am": "기술",
        "w": [
         "terminologies",
         "chronologies",
@@ -1182,6 +1248,7 @@
       " from movies are either ",
       {
        "a": "in use",
+       "am": "사용 중인",
        "w": [
         "in doubt",
         "at risk",
@@ -1196,6 +1263,7 @@
       " or ",
       {
        "a": "under development",
+       "am": "개발 중인",
        "w": [
         "under oath",
         "on bail",
@@ -1217,6 +1285,7 @@
       "This movie, ",
       {
        "a": "set in",
+       "am": "~을 배경으로 하는",
        "w": [
         "set off",
         "set aside",
@@ -1238,6 +1307,7 @@
       "However, it was released in 1968, a year ",
       {
        "a": "prior to",
+       "am": "~에 앞서",
        "w": [
         "subsequent to",
         "owing to",
@@ -1259,6 +1329,7 @@
       "This means that human ",
       {
        "a": "imagination",
+       "am": "상상력",
        "w": [
         "imitation",
         "immigration",
@@ -1273,6 +1344,7 @@
       " goes far beyond ",
       {
        "a": "reality",
+       "am": "현실",
        "w": [
         "royalty",
         "regularity",
@@ -1294,6 +1366,7 @@
       "It ",
       {
        "a": "provided the audience with",
+       "am": "관객에게 ~을 제공했다",
        "w": [
         "deprived the audience of",
         "protected the audience from",
@@ -1315,6 +1388,7 @@
       "It could operate and ",
       {
        "a": "regulate",
+       "am": "제어하다",
        "w": [
         "replicate",
         "relocate",
@@ -1329,6 +1403,7 @@
       " all of the spacecraft’s systems and help the astronauts ",
       {
        "a": "conduct experiments",
+       "am": "실험을 수행하다",
        "w": [
         "conduct interviews",
         "hold negotiations",
@@ -1343,6 +1418,7 @@
       " by ",
       {
        "a": "analyzing",
+       "am": "분석하는",
        "w": [
         "paralyzing",
         "authorizing",
@@ -1364,6 +1440,7 @@
       "In one scene, the astronauts and HAL-9000 ",
       {
        "a": "carry out",
+       "am": "수행하다",
        "w": [
         "carry over",
         "carry away",
@@ -1385,6 +1462,7 @@
       "Then, HAL-9000 ",
       {
        "a": "makes a recommendation",
+       "am": "권고한다",
        "w": [
         "makes a reservation",
         "makes an accusation",
@@ -1406,6 +1484,7 @@
       "The system could even draw logical conclusions and ",
       {
        "a": "evaluate",
+       "am": "평가하다",
        "w": [
         "evacuate",
         "elevate",
@@ -1427,6 +1506,7 @@
       "The AI helper for a spaceship, which was only seen in the film at the time, has become a ",
       {
        "a": "reality",
+       "am": "현실",
        "w": [
         "royalty",
         "regularity",
@@ -1448,6 +1528,7 @@
       "CIMON, weighing only 5 kg, ",
       {
        "a": "serves as",
+       "am": "~의 역할을 한다",
        "w": [
         "stands for",
         "calls for",
@@ -1462,6 +1543,7 @@
       " a ",
       {
        "a": "competent",
+       "am": "유능한",
        "w": [
         "complacent",
         "compulsory",
@@ -1476,6 +1558,7 @@
       " ",
       {
        "a": "AI assistant",
+       "am": "인공지능 보조원",
        "w": [
         "AI applicant",
         "AI accountant",
@@ -1497,6 +1580,7 @@
       "The robot ",
       {
        "a": "assists astronauts in",
+       "am": "우주 비행사들이 ~하는 것을 돕는다",
        "w": [
         "prevents astronauts from",
         "accuses astronauts of",
@@ -1511,6 +1595,7 @@
       " more effectively ",
       {
        "a": "accomplishing",
+       "am": "완수하는",
        "w": [
         "accompanying",
         "accumulating",
@@ -1525,6 +1610,7 @@
       " complex tasks by ",
       {
        "a": "offering advice",
+       "am": "조언을 제공하는",
        "w": [
         "taking root",
         "catching cold",
@@ -1546,6 +1632,7 @@
       "It is also able to ",
       {
        "a": "record",
+       "am": "기록하다",
        "w": [
         "reward",
         "regret",
@@ -1560,6 +1647,7 @@
       " and ",
       {
        "a": "film",
+       "am": "촬영하다",
        "w": [
         "filter",
         "file",
@@ -1581,6 +1669,7 @@
       "It features AI-based ",
       {
        "a": "advertisements",
+       "am": "광고",
        "w": [
         "adjournments",
         "atonements",
@@ -1595,6 +1684,7 @@
       " that can ",
       {
        "a": "identify",
+       "am": "식별하다",
        "w": [
         "intensify",
         "justify",
@@ -1616,6 +1706,7 @@
       "After scanning him and identifying who he is, the ",
       {
        "a": "advertising system",
+       "am": "광고 시스템",
        "w": [
         "accounting system",
         "manufacturing system",
@@ -1630,6 +1721,7 @@
       " offers products that may ",
       {
        "a": "be appealing to",
+       "am": "~에게 매력적이다",
        "w": [
         "be opposed to",
         "be derived from",
@@ -1651,6 +1743,7 @@
       "Nowadays, we frequently encounter ",
       {
        "a": "personalized",
+       "am": "개인 맞춤형의",
        "w": [
         "penalized",
         "polarized",
@@ -1665,6 +1758,7 @@
       " ",
       {
        "a": "advertisements",
+       "am": "광고",
        "w": [
         "advancements",
         "appointments",
@@ -1686,6 +1780,7 @@
       "Their AI systems ",
       {
        "a": "provide us with",
+       "am": "우리에게 ~을 제공하다",
        "w": [
         "prevent us from",
         "deprive us of",
@@ -1700,6 +1795,7 @@
       " advertisements ",
       {
        "a": "based on",
+       "am": "~에 기반한",
        "w": [
         "opposed to",
         "deprived of",
@@ -1714,6 +1810,7 @@
       " our previous searches or other online ",
       {
        "a": "behavior",
+       "am": "행동",
        "w": [
         "believer",
         "beverage",
@@ -1735,6 +1832,7 @@
       "Regarding the technology identifying people through ",
       {
        "a": "scanning",
+       "am": "스캔하기",
        "w": [
         "spanning",
         "scaling",
@@ -1756,6 +1854,7 @@
       "However, those that do not use AI technology have a critical ",
       {
        "a": "limitation",
+       "am": "한계",
        "w": [
         "liberation",
         "lubrication",
@@ -1777,6 +1876,7 @@
       "They can ",
       {
        "a": "identify",
+       "am": "식별하다",
        "w": [
         "intensify",
         "justify",
@@ -1791,6 +1891,7 @@
       " a person only if he or she is ",
       {
        "a": "standing still",
+       "am": "가만히 서 있는",
        "w": [
         "walking away",
         "turning around",
@@ -1811,6 +1912,7 @@
      "parts": [
       {
        "a": "On the other hand",
+       "am": "반면에",
        "w": [
         "In the long run",
         "For the time being",
@@ -1825,6 +1927,7 @@
       ", devices employing AI have ",
       {
        "a": "overcome",
+       "am": "극복했다",
        "w": [
         "overlooked",
         "overestimated",
@@ -1839,6 +1942,7 @@
       " this ",
       {
        "a": "limitation",
+       "am": "한계",
        "w": [
         "liberation",
         "lubrication",
@@ -1860,6 +1964,7 @@
       "There has been continuous ",
       {
        "a": "development",
+       "am": "개발",
        "w": [
         "deferment",
         "detachment",
@@ -1881,6 +1986,7 @@
       "There is a scene in the movie where a boy meets Baymax, a personal ",
       {
        "a": "medical aid",
+       "am": "의료 지원",
        "w": [
         "medical audit",
         "medical trial",
@@ -1902,6 +2008,7 @@
       "The robot ",
       {
        "a": "scans",
+       "am": "스캔하다",
        "w": [
         "spans",
         "scars",
@@ -1916,6 +2023,7 @@
       " the boy’s body to ",
       {
        "a": "detect",
+       "am": "발견하다",
        "w": [
         "deflect",
         "detest",
@@ -1930,6 +2038,7 @@
       " potential health problems using its ",
       {
        "a": "sensors",
+       "am": "감지기",
        "w": [
         "censors",
         "sponsors",
@@ -1951,6 +2060,7 @@
       "It ",
       {
        "a": "administers medicine",
+       "am": "약을 투여하다",
        "w": [
         "administers justice",
         "practices medicine",
@@ -1965,6 +2075,7 @@
       " on the ",
       {
        "a": "wound",
+       "am": "상처",
        "w": [
         "mound",
         "womb",
@@ -1986,6 +2097,7 @@
       "In another scene where he has a mood swing, Baymax checks his ",
       {
        "a": "hormone levels",
+       "am": "호르몬 수치",
        "w": [
         "hormone labels",
         "hormone blockers",
@@ -2007,6 +2119,7 @@
       "These days, AI-based programs or robots are widely used in the ",
       {
        "a": "medical industry",
+       "am": "의료 산업",
        "w": [
         "mechanical industry",
         "chemical industry",
@@ -2028,6 +2141,7 @@
       "Some AI programs have been ",
       {
        "a": "refined",
+       "am": "정교하게 개선된",
        "w": [
         "confined",
         "defined",
@@ -2042,6 +2156,7 @@
       " ",
       {
        "a": "to the point that",
+       "am": "~할 정도까지",
        "w": [
         "on the verge of",
         "at the expense of",
@@ -2056,6 +2171,7 @@
       " they can not only identify cancer quickly and accurately, but also ",
       {
        "a": "predict",
+       "am": "예측하다",
        "w": [
         "protect",
         "prescribe",
@@ -2077,6 +2193,7 @@
       "AI robots are also used in ",
       {
        "a": "operating rooms",
+       "am": "수술실",
        "w": [
         "waiting rooms",
         "meeting rooms",
@@ -2097,6 +2214,7 @@
      "parts": [
       {
        "a": "Based on",
+       "am": "~에 기반하여",
        "w": [
         "Contrary to",
         "Apart from",
@@ -2111,6 +2229,7 @@
       " the collected data, AI surgical robots can conduct ",
       {
        "a": "cognitive",
+       "am": "인지적인",
        "w": [
         "combative",
         "consecutive",
@@ -2125,6 +2244,7 @@
       " activities such as ",
       {
        "a": "voice recognition",
+       "am": "음성 인식",
        "w": [
         "voice reconstruction",
         "voice regulation",
@@ -2146,6 +2266,7 @@
       "Under the guidance and control of doctors, they can conduct elementary ",
       {
        "a": "operations",
+       "am": "수술",
        "w": [
         "observations",
         "occupations",
@@ -2160,6 +2281,7 @@
       " such as cutting and ",
       {
        "a": "stitching",
+       "am": "봉합하기",
        "w": [
         "stretching",
         "switching",
@@ -2174,6 +2296,7 @@
       " patients ",
       {
        "a": "undergoing surgery",
+       "am": "수술을 받는",
        "w": [
         "performing surgery",
         "postponing surgery",
@@ -2195,6 +2318,7 @@
       "Another example is the development of an AI system to ",
       {
        "a": "forecast",
+       "am": "예측하다",
        "w": [
         "foreclose",
         "forestall",
@@ -2209,6 +2333,7 @@
       " when a ",
       {
        "a": "hospitalized",
+       "am": "입원한",
        "w": [
         "hypnotized",
         "immunized",
@@ -2223,6 +2348,7 @@
       " patient’s condition ",
       {
        "a": "is likely to",
+       "am": "~할 가능성이 있다",
        "w": [
         "is unable to",
         "is willing to",
@@ -2244,6 +2370,7 @@
       "It ",
       {
        "a": "analyzes",
+       "am": "분석하다",
        "w": [
         "paralyzes",
         "authorizes",
@@ -2258,6 +2385,7 @@
       " the patient’s profile and data and assigns scores indicating the need for ",
       {
        "a": "transfer",
+       "am": "이송",
        "w": [
         "transformation",
         "translation",
@@ -2272,6 +2400,7 @@
       " to an ",
       {
        "a": "intensive care",
+       "am": "집중 치료",
        "w": [
         "preventive care",
         "palliative care",
@@ -2293,6 +2422,7 @@
       "The medical team ",
       {
        "a": "intervenes",
+       "am": "개입하다",
        "w": [
         "interviews",
         "interprets",
@@ -2314,6 +2444,7 @@
       "AI has been ",
       {
        "a": "progressing",
+       "am": "발전하는",
        "w": [
         "processing",
         "regressing",
@@ -2328,6 +2459,7 @@
       " rapidly over the years, and its ",
       {
        "a": "potential",
+       "am": "잠재력",
        "w": [
         "patent",
         "petition",
@@ -2349,6 +2481,7 @@
       "Some AI robots have ",
       {
        "a": "personalities",
+       "am": "인격",
        "w": [
         "nationalities",
         "formalities",
@@ -2363,6 +2496,7 @@
       " and emotionally ",
       {
        "a": "engage with",
+       "am": "~와 교류하다",
        "w": [
         "compete with",
         "break with",
@@ -2384,6 +2518,7 @@
       "Furthermore, some AI characters are physically ",
       {
        "a": "indistinguishable from",
+       "am": "~와 구별할 수 없는",
        "w": [
         "indispensable to",
         "incompatible with",
@@ -2410,6 +2545,7 @@
       "We often think that we will enjoy a ",
       {
        "a": "leisure activity",
+       "am": "여가 활동",
        "w": [
         "literary ability",
         "legal authority",
@@ -2424,6 +2560,7 @@
       " or vacation as a ",
       {
        "a": "reward",
+       "am": "보상",
        "w": [
         "request",
         "receipt",
@@ -2438,6 +2575,7 @@
       " for getting our work done, but it ",
       {
        "a": "turns out",
+       "am": "~임이 드러나다",
        "w": [
         "turns in",
         "turns over",
@@ -2459,6 +2597,7 @@
       "Before the experiment, the students who visited the spa before midterms were predicted to have less enjoyable time due to ",
       {
        "a": "looming",
+       "am": "임박한",
        "w": [
         "looping",
         "lowering",
@@ -2480,6 +2619,7 @@
       "However, they actually ",
       {
        "a": "enjoyed themselves",
+       "am": "즐거운 시간을 보냈다",
        "w": [
         "composed themselves",
         "helped themselves",
@@ -2501,6 +2641,7 @@
       "This suggests that we may be ",
       {
        "a": "overworrying",
+       "am": "지나치게 걱정하는",
        "w": [
         "overwintering",
         "overwatering",
@@ -2515,6 +2656,7 @@
       " and ",
       {
        "a": "overworking",
+       "am": "지나치게 일하는",
        "w": [
         "overlapping",
         "overheating",
@@ -2529,6 +2671,7 @@
       " for future ",
       {
        "a": "rewards",
+       "am": "보상",
        "w": [
         "requests",
         "receipts",
@@ -2550,6 +2693,7 @@
       "Until recently, theorists have argued that ",
       {
        "a": "literary works",
+       "am": "문학 작품",
        "w": [
         "literacy rates",
         "literal meanings",
@@ -2564,6 +2708,7 @@
       " are created by ",
       {
        "a": "incorporating",
+       "am": "포함하여 통합하는",
        "w": [
         "incapacitating",
         "incriminating",
@@ -2578,6 +2723,7 @@
       " elements from prior works, which are ",
       {
        "a": "adopted",
+       "am": "차용된",
        "w": [
         "abducted",
         "aborted",
@@ -2599,6 +2745,7 @@
       "This notion sometimes ",
       {
        "a": "goes by",
+       "am": "~라는 이름으로 불리다",
        "w": [
         "goes for",
         "goes against",
@@ -2613,6 +2760,7 @@
       " the fancy name of “",
       {
        "a": "intertextuality",
+       "am": "상호텍스트성",
        "w": [
         "intersexuality",
         "internationality",
@@ -2634,6 +2782,7 @@
       "A ",
       {
        "a": "literary work",
+       "am": "문학 작품",
        "w": [
         "literacy rate",
         "literal meaning",
@@ -2648,6 +2797,7 @@
       " exists between and among other texts, through its ",
       {
        "a": "relations",
+       "am": "관계",
        "w": [
         "relocations",
         "regulations",
@@ -2669,6 +2819,7 @@
       "To read something as literature is to ",
       {
        "a": "consider it as",
+       "am": "그것을 ~로 여기다",
        "w": [
         "protect it from",
         "supply it with",
@@ -2683,6 +2834,7 @@
       " a ",
       {
        "a": "linguistic",
+       "am": "언어적인",
        "w": [
         "logistical",
         "legislative",
@@ -2697,6 +2849,7 @@
       " event that ",
       {
        "a": "relies on",
+       "am": "~에 의존하다",
        "w": [
         "results in",
         "retreats from",
@@ -2718,6 +2871,7 @@
       "In one of the lines of Shakespeare’s Sonnet 130, ‘But no such roses see I in her cheeks,’ the speaker ",
       {
        "a": "takes up",
+       "am": "채택하여 사용하다",
        "w": [
         "takes after",
         "takes off",
@@ -2732,6 +2886,7 @@
       " the conventions of love poetry, which often ",
       {
        "a": "compare a beloved to",
+       "am": "사랑하는 사람을 ~에 비유하다",
        "w": [
         "protect a beloved from",
         "provide a beloved with",
@@ -2753,6 +2908,7 @@
       "This ",
       {
        "a": "subversion",
+       "am": "전복",
        "w": [
         "subscription",
         "subdivision",
@@ -2767,6 +2923,7 @@
       " of traditional love poetry ",
       {
        "a": "counts on",
+       "am": "~에 의존하다",
        "w": [
         "counts out",
         "calls off",
@@ -2781,6 +2938,7 @@
       " the reader’s ",
       {
        "a": "familiarity",
+       "am": "친숙함",
        "w": [
         "formality",
         "fertility",
@@ -2802,6 +2960,7 @@
       "The obvious role of sugar in ice cream is to ",
       {
        "a": "sweeten",
+       "am": "달게 하다",
        "w": [
         "straighten",
         "strengthen",
@@ -2823,6 +2982,7 @@
       "However, sugar also ",
       {
        "a": "plays a role in",
+       "am": "~하는 데 역할을 하다",
        "w": [
         "puts an end to",
         "takes a break from",
@@ -2837,6 +2997,7 @@
       " determining the ",
       {
        "a": "textural",
+       "am": "질감의",
        "w": [
         "textual",
         "textile",
@@ -2858,6 +3019,7 @@
       "In fact, a cup of sugar in a quart of an ice cream mixture will decrease the ",
       {
        "a": "freezing point",
+       "am": "어는점",
        "w": [
         "boiling point",
         "flash point",
@@ -2872,6 +3034,7 @@
       " approximately 2˚F. This means that the ice cream must be ",
       {
        "a": "chilled",
+       "am": "냉각된",
        "w": [
         "charred",
         "charged",
@@ -2886,6 +3049,7 @@
       " below the normal freezing temperature of water if ",
       {
        "a": "ice crystals",
+       "am": "얼음 결정",
        "w": [
         "ionic charges",
         "ice shelves",
@@ -2907,6 +3071,7 @@
       "The greater the ",
       {
        "a": "content",
+       "am": "함량",
        "w": [
         "consent",
         "contest",
@@ -2921,6 +3086,7 @@
       " of sugar in an ice cream, the lower the ",
       {
        "a": "freezing point",
+       "am": "어는점",
        "w": [
         "boiling point",
         "flash point",
@@ -2942,6 +3108,7 @@
       "This delayed freezing temperature helps to keep the size of crystals in the ice cream very small because a reasonable amount of ",
       {
        "a": "stirring",
+       "am": "젓기",
        "w": [
         "staring",
         "steering",
@@ -2956,6 +3123,7 @@
       " can be done during the freezing process to help ",
       {
        "a": "break up",
+       "am": "잘게 부수다",
        "w": [
         "bring up",
         "build up",
@@ -2970,6 +3138,7 @@
       " any ice crystal ",
       {
        "a": "aggregates",
+       "am": "응집체",
        "w": [
         "aggravations",
         "allegations",
@@ -2991,6 +3160,7 @@
       "For those of us who have ",
       {
        "a": "lived through",
+       "am": "~을 겪으며 살아왔다",
        "w": [
         "lived down",
         "looked after",
@@ -3005,6 +3175,7 @@
       " the invention of the Internet and mobile computing, it feels like ",
       {
        "a": "digital technology",
+       "am": "디지털 기술",
        "w": [
         "dental technology",
         "decimal notation",
@@ -3019,6 +3190,7 @@
       " has finally reached a ",
       {
        "a": "mature",
+       "am": "성숙한",
        "w": [
         "marital",
         "maternal",
@@ -3040,6 +3212,7 @@
       "But as most tech experts will tell you, we’ve barely ",
       {
        "a": "scratched the surface",
+       "am": "아주 일부만 다루었다",
        "w": [
         "missed the boat",
         "broken the ice",
@@ -3061,6 +3234,7 @@
       "Every day, tens of thousands of new apps are developed, and smarter, more powerful gadgets are designed to replace what’s in our pockets and ",
       {
        "a": "fill the gaps",
+       "am": "부족한 부분을 채우다",
        "w": [
         "draw the line",
         "pass the buck",
@@ -3075,6 +3249,7 @@
       " in our lives that ",
       {
        "a": "have yet to",
+       "am": "아직 ~하지 않았다",
        "w": [
         "have resorted to",
         "have objected to",
@@ -3096,6 +3271,7 @@
       "This modern digital world offers much to amuse, amaze, and delight us, ",
       {
        "a": "enabling us to",
+       "am": "우리가 ~할 수 있게 하며",
        "w": [
         "forbidding us to",
         "warning us to",
@@ -3117,6 +3293,7 @@
       "For example, today we ",
       {
        "a": "have the option of",
+       "am": "~할 선택권이 있다",
        "w": [
         "run the risk of",
         "bear the burden of",
@@ -3131,6 +3308,7 @@
       " “hiring” an app as our ",
       {
        "a": "personal assistant",
+       "am": "개인 비서",
        "w": [
         "personal assignment",
         "personnel assessment",
@@ -3152,6 +3330,7 @@
       "It can send birthday greetings for us, nudge us when a friend posts troublesome news, and even ",
       {
        "a": "remind us to",
+       "am": "우리에게 ~하라고 상기시키다",
        "w": [
         "forbid us to",
         "force us to",
@@ -3172,6 +3351,7 @@
      "parts": [
       {
        "a": "Caches",
+       "am": "매장된 물품들",
        "w": [
         "Catches",
         "Clashes",
@@ -3186,6 +3366,7 @@
       " of these coins are still being discovered in south India, ",
       {
        "a": "offering us a glimpse of",
+       "am": "~을 엿봄",
        "w": [
         "robbing us of access to",
         "bringing us into conflict with",
@@ -3207,6 +3388,7 @@
       "They include gold and silver coins from the reigns of Augustus and Tiberius (27 BC to AD 37), suggesting a ",
       {
        "a": "vigorous",
+       "am": "활발한",
        "w": [
         "viscous",
         "vicarious",
@@ -3228,6 +3410,7 @@
       "After the death of Tiberius, the ",
       {
        "a": "composition",
+       "am": "구성",
        "w": [
         "competition",
         "compensation",
@@ -3242,6 +3425,7 @@
       " of the Indian coin ",
       {
        "a": "caches",
+       "am": "매장된 물품들",
        "w": [
         "catches",
         "clashes",
@@ -3263,6 +3447,7 @@
       "According to the historian E. H. Warmington, this ",
       {
        "a": "absence",
+       "am": "부재",
        "w": [
         "abundance",
         "absorption",
@@ -3277,6 +3462,7 @@
       " of silver coins suggests a trade mainly in ",
       {
        "a": "luxury goods",
+       "am": "사치품",
        "w": [
         "luxury taxes",
         "liquid assets",
@@ -3298,6 +3484,7 @@
       "When Roman and Han ",
       {
        "a": "authority",
+       "am": "통치 권력",
        "w": [
         "authenticity",
         "authorship",
@@ -3312,6 +3499,7 @@
       " finally ",
       {
        "a": "collapsed",
+       "am": "붕괴했다",
        "w": [
         "collided",
         "collaborated",
@@ -3326,6 +3514,7 @@
       " around AD 200, trade with the East came to an almost complete ",
       {
        "a": "standstill",
+       "am": "정지 상태",
        "w": [
         "standpoint",
         "standard",
@@ -3352,6 +3541,7 @@
       "In the United States, we ",
       {
        "a": "tend to",
+       "am": "~하는 경향이 있다",
        "w": [
         "fail to",
         "refuse to",
@@ -3366,6 +3556,7 @@
       " ",
       {
        "a": "equate creativity with",
+       "am": "창의성을 ~와 동일시하다",
        "w": [
         "protect creativity from",
         "replace creativity with",
@@ -3380,6 +3571,7 @@
       " ",
       {
        "a": "novelty",
+       "am": "참신함",
        "w": [
         "nobility",
         "notoriety",
@@ -3401,6 +3593,7 @@
       "But the high value that we place on ",
       {
        "a": "novelty",
+       "am": "참신함",
        "w": [
         "nobility",
         "notoriety",
@@ -3422,6 +3615,7 @@
       "In performance, for example, we find that in almost all cultures — including our own — improvisation is allowed only in ",
       {
        "a": "informal",
+       "am": "비공식 공연",
        "w": [
         "informative",
         "inflexible",
@@ -3436,6 +3630,7 @@
       " performances; in formal settings, ",
       {
        "a": "in contrast",
+       "am": "그와 대조적으로",
        "w": [
         "in addition",
         "in advance",
@@ -3457,6 +3652,7 @@
       "In most cultures, ",
       {
        "a": "rituals",
+       "am": "의례",
        "w": [
         "rentals",
         "reversals",
@@ -3471,6 +3667,7 @@
       " ",
       {
        "a": "forbid",
+       "am": "금지하다",
        "w": [
         "forecast",
         "forfeit",
@@ -3485,6 +3682,7 @@
       " ",
       {
        "a": "improvisation",
+       "am": "즉흥적 표현",
        "w": [
         "impoverishment",
         "imprisonment",
@@ -3506,6 +3704,7 @@
       "This seems to ",
       {
        "a": "be related to",
+       "am": "~와 관련이 있다",
        "w": [
         "be replaced by",
         "be removed from",
@@ -3520,6 +3719,7 @@
       " the power of ritual; a ritual can only perform its supernatural function if performed exactly, and a ",
       {
        "a": "divergence",
+       "am": "일탈",
        "w": [
         "convergence",
         "dependence",
@@ -3534,6 +3734,7 @@
       " from the appropriate dance or script would ",
       {
        "a": "result in",
+       "am": "~을 초래하다",
        "w": [
         "result from",
         "recover from",
@@ -3555,6 +3756,7 @@
       "In a traditional U.S. Christian wedding, the religious official is expected to say “I now pronounce you husband and wife”; an unexpected creative ",
       {
        "a": "improvisation",
+       "am": "즉흥적 표현",
        "w": [
         "impoverishment",
         "imprisonment",
@@ -3576,6 +3778,7 @@
       "Despite the widespread adoption of ",
       {
        "a": "anti-discrimination legislation",
+       "am": "차별 금지 법률",
        "w": [
         "anti-inflation legislation",
         "anti-corruption legislation",
@@ -3590,6 +3793,7 @@
       ", ",
       {
        "a": "minority",
+       "am": "소수의",
        "w": [
         "monetary",
         "ministerial",
@@ -3604,6 +3808,7 @@
       " ethnic groups are still ",
       {
        "a": "at a disadvantage",
+       "am": "불리한 처지에 있는",
        "w": [
         "at a crossroads",
         "at a premium",
@@ -3625,6 +3830,7 @@
       "This is particularly noticeable in ",
       {
        "a": "employment",
+       "am": "고용",
        "w": [
         "enjoyment",
         "enlargement",
@@ -3639,6 +3845,7 @@
       ", where ",
       {
        "a": "minorities",
+       "am": "소수 집단",
        "w": [
         "majorities",
         "ministers",
@@ -3653,6 +3860,7 @@
       " are more than statistically likely to be in lower-paid or unwanted jobs, and the top positions are occupied almost exclusively by members of the dominant ",
       {
        "a": "ethnic group",
+       "am": "민족 집단",
        "w": [
         "ethical code",
         "economic growth",
@@ -3673,6 +3881,7 @@
      "parts": [
       {
        "a": "Legislation",
+       "am": "법률",
        "w": [
         "Legibility",
         "Lamination",
@@ -3687,6 +3896,7 @@
       " is clearly not effective in preventing discrimination, so some countries have used a system of ",
       {
        "a": "positive discrimination",
+       "am": "적극적 우대 조치",
        "w": [
         "positive correlation",
         "passive distribution",
@@ -3701,6 +3911,7 @@
       " to try to correct the ",
       {
        "a": "inequality",
+       "am": "불평등",
        "w": [
         "inactivity",
         "instability",
@@ -3722,6 +3933,7 @@
       "For example, India, which has a very ethnically diverse population, operates a system of ",
       {
        "a": "quotas",
+       "am": "할당제",
        "w": [
         "quotes",
         "quorums",
@@ -3736,6 +3948,7 @@
       " in educational places and companies for the various ethnic groups; elsewhere, applicants from minority ethnic groups are ",
       {
        "a": "given preference",
+       "am": "우대받는",
        "w": [
         "turned down",
         "held responsible",
@@ -3757,6 +3970,7 @@
       "However, these schemes have been ",
       {
        "a": "accused of",
+       "am": "~한다는 비난을 받는",
        "w": [
         "acquitted of",
         "exempted from",
@@ -3771,6 +3985,7 @@
       " unfairly ",
       {
        "a": "tipping the balance",
+       "am": "균형을 한쪽으로 기울이는",
        "w": [
         "missing the point",
         "passing the buck",
@@ -3785,6 +4000,7 @@
       ", and run the risk of increasing ",
       {
        "a": "prejudice",
+       "am": "편견",
        "w": [
         "prevalence",
         "precedence",
@@ -3806,6 +4022,7 @@
       "These “",
       {
        "a": "ill-structured",
+       "am": "구조가 명확하지 않은",
        "w": [
         "ill-tempered",
         "ill-mannered",
@@ -3820,6 +4037,7 @@
       "” problems require a ",
       {
        "a": "creative",
+       "am": "창의적인",
        "w": [
         "digestive",
         "reproductive",
@@ -3841,6 +4059,7 @@
       "Paradoxically, when people are ",
       {
        "a": "given free rein",
+       "am": "마음껏 할 자유를 부여받은",
        "w": [
         "kept in check",
         "put under pressure",
@@ -3855,6 +4074,7 @@
       " to solve a problem, they tend to be wholly ",
       {
        "a": "uncreative",
+       "am": "창의적이지 않은",
        "w": [
         "uncritical",
         "unproductive",
@@ -3869,6 +4089,7 @@
       ", ",
       {
        "a": "focusing on",
+       "am": "~에 집중하는",
        "w": [
         "breaking with",
         "getting over",
@@ -3890,6 +4111,7 @@
       "This is due to the fundamental nature of human ",
       {
        "a": "cognition",
+       "am": "인지",
        "w": [
         "condition",
         "coalition",
@@ -3911,6 +4133,7 @@
       "Such freedom can ",
       {
        "a": "hinder",
+       "am": "방해하다",
        "w": [
         "harness",
         "heighten",
@@ -3925,6 +4148,7 @@
       " creativity, whereas the strategic use of ",
       {
        "a": "constraints",
+       "am": "제약",
        "w": [
         "constants",
         "constituents",
@@ -3939,6 +4163,7 @@
       " can ",
       {
        "a": "promote",
+       "am": "촉진하다",
        "w": [
         "protrude",
         "prorate",
@@ -3960,6 +4185,7 @@
       "By using ",
       {
        "a": "constraints",
+       "am": "제약",
        "w": [
         "constants",
         "constituents",
@@ -3974,6 +4200,7 @@
       ", reliable responses are ",
       {
        "a": "precluded",
+       "am": "배제되는",
        "w": [
         "preceded",
         "preserved",
@@ -3988,6 +4215,7 @@
       " and ",
       {
        "a": "novel",
+       "am": "참신한",
        "w": [
         "normal",
         "nominal",
@@ -4009,6 +4237,7 @@
       "You’ll be more creative if your mind is not allowed to ",
       {
        "a": "roam free",
+       "am": "자유롭게 떠돌다",
        "w": [
         "break even",
         "come true",
@@ -4030,6 +4259,7 @@
       "Rap music ",
       {
        "a": "flourished",
+       "am": "번성했다",
        "w": [
         "furnished",
         "furbished",
@@ -4044,6 +4274,7 @@
       " without ",
       {
        "a": "access to",
+       "am": "~에 대한 접근·이용 기회",
        "w": [
         "excess of",
         "recess of",
@@ -4058,6 +4289,7 @@
       " the ",
       {
        "a": "music establishment",
+       "am": "기성 음악계",
        "w": [
         "music equipment",
         "music education",
@@ -4079,6 +4311,7 @@
       "Most rap is performed by artists in their own homes, using inexpensive, widely ",
       {
        "a": "accessible",
+       "am": "쉽게 이용할 수 있는",
        "w": [
         "assessable",
         "accountable",
@@ -4093,6 +4326,7 @@
       " equipment, ",
       {
        "a": "in contrast to",
+       "am": "~와 대조적으로",
        "w": [
         "in response to",
         "in addition to",
@@ -4107,6 +4341,7 @@
       " the sound studios and ",
       {
        "a": "sophisticated",
+       "am": "정교한",
        "w": [
         "vaccinated",
         "intoxicated",
@@ -4128,6 +4363,7 @@
       "Rap music is mainly ",
       {
        "a": "disseminated",
+       "am": "보급되는",
        "w": [
         "discriminated",
         "disintegrated",
@@ -4142,6 +4378,7 @@
       " on homemade cassettes and by locally owned ",
       {
        "a": "independent",
+       "am": "독립적인",
        "w": [
         "intransitive",
         "infinitival",
@@ -4156,6 +4393,7 @@
       " ",
       {
        "a": "record companies",
+       "am": "음반 회사",
        "w": [
         "record collections",
         "record contracts",
@@ -4177,6 +4415,7 @@
       "For a decade, the major recording companies ",
       {
        "a": "resisted",
+       "am": "거부했다",
        "w": [
         "revisited",
         "registered",
@@ -4191,6 +4430,7 @@
       " rap, and even in the mid-1990s only a small portion of the music on the Billboard rap singles chart was produced by the major ",
       {
        "a": "labels",
+       "am": "음반사",
        "w": [
         "laboratories",
         "libraries",
@@ -4212,6 +4452,7 @@
       "The radio industry (which usually ",
       {
        "a": "makes or breaks",
+       "am": "성패를 좌우하다",
        "w": [
         "comes down with",
         "puts up at",
@@ -4226,6 +4467,7 @@
       " the success of any piece of music) ignored rap because its audience is not a ",
       {
        "a": "priority",
+       "am": "우선순위",
        "w": [
         "propriety",
         "probability",
@@ -4240,6 +4482,7 @@
       " for radio ",
       {
        "a": "advertisers",
+       "am": "광고주",
        "w": [
         "advisers",
         "adversaries",
@@ -4261,6 +4504,7 @@
       "Why is severe ",
       {
        "a": "mental burden",
+       "am": "정신적 부담",
        "w": [
         "mental balance",
         "mental maturity",
@@ -4275,6 +4519,7 @@
       " so closely ",
       {
        "a": "associated with",
+       "am": "~와 관련된",
        "w": [
         "contrasted with",
         "separated from",
@@ -4289,6 +4534,7 @@
       " ",
       {
        "a": "creativity",
+       "am": "창의성",
        "w": [
         "credibility",
         "connectivity",
@@ -4310,6 +4556,7 @@
       "As a result, the ability to ",
       {
        "a": "stick with",
+       "am": "~을 끈기 있게 계속하다",
        "w": [
         "break with",
         "put off",
@@ -4331,6 +4578,7 @@
       "“Successful writers are like prizefighters who keep on getting hit but won’t ",
       {
        "a": "go down",
+       "am": "쓰러지다",
        "w": [
         "show off",
         "hang around",
@@ -4352,6 +4600,7 @@
       "“They’ll ",
       {
        "a": "stick with",
+       "am": "~을 끈기 있게 계속하다",
        "w": [
         "break with",
         "put off",
@@ -4373,6 +4622,7 @@
       "And that seems to be what the ",
       {
        "a": "mood disorders",
+       "am": "기분 장애",
        "w": [
         "mold spores",
         "moon craters",
@@ -4394,6 +4644,7 @@
       "According to her data, successful writers were eight times as likely as people in the general population to ",
       {
        "a": "suffer from",
+       "am": "~으로 고통받다",
        "w": [
         "enroll in",
         "resign from",
@@ -4408,6 +4659,7 @@
       " feelings of severe ",
       {
        "a": "despondency",
+       "am": "낙담",
        "w": [
         "dependency",
         "discrepancy",
@@ -4422,6 +4674,7 @@
       " and ",
       {
        "a": "dejection",
+       "am": "의기소침",
        "w": [
         "defection",
         "detection",
@@ -4448,6 +4701,7 @@
       "There is nothing inherently ",
       {
        "a": "irrational",
+       "am": "비합리적인",
        "w": [
         "iridescent",
         "irradiated",
@@ -4469,6 +4723,7 @@
       "All things being equal, ",
       {
        "a": "it pays to",
+       "am": "~하는 것이 이롭다",
        "w": [
         "it is wrong to",
         "it is hard to",
@@ -4490,6 +4745,7 @@
       "That is why, when we ",
       {
        "a": "lend out",
+       "am": "빌려주다",
        "w": [
         "take after",
         "tell off",
@@ -4504,6 +4760,7 @@
       " money, we ",
       {
        "a": "insist on",
+       "am": "~을 요구하다",
        "w": [
         "object to",
         "dispense with",
@@ -4518,6 +4775,7 @@
       " ",
       {
        "a": "interest",
+       "am": "이자",
        "w": [
         "interment",
         "interphase",
@@ -4539,6 +4797,7 @@
       "A dollar tomorrow really is worth less than a dollar today (even if we assume there is no ",
       {
        "a": "inflation",
+       "am": "물가 상승",
        "w": [
         "infiltration",
         "inflammation",
@@ -4559,6 +4818,7 @@
      "parts": [
       {
        "a": "Interest",
+       "am": "이자",
        "w": [
         "Insurance",
         "Inheritance",
@@ -4573,6 +4833,7 @@
       " is charged at a ",
       {
        "a": "fixed rate",
+       "am": "고정 비율",
        "w": [
         "fixed term",
         "flexible rate",
@@ -4587,6 +4848,7 @@
       " per unit of time, which means that it ",
       {
        "a": "compounds",
+       "am": "복리로 늘어나다",
        "w": [
         "contracts",
         "collapses",
@@ -4608,6 +4870,7 @@
       "That ",
       {
        "a": "compensates",
+       "am": "보상하다",
        "w": [
         "compliments",
         "congratulates",
@@ -4629,6 +4892,7 @@
       "With every passing day, there is a fixed chance that you will die, or that the ",
       {
        "a": "borrower",
+       "am": "돈을 빌린 사람",
        "w": [
         "burrow",
         "barrow",
@@ -4643,6 +4907,7 @@
       " will ",
       {
        "a": "abscond",
+       "am": "잠적하다",
        "w": [
         "ascend",
         "abstain",
@@ -4657,6 +4922,7 @@
       " or ",
       {
        "a": "go bankrupt",
+       "am": "파산하다",
        "w": [
         "break even",
         "strike gold",
@@ -4678,6 +4944,7 @@
       "Going back to pleasure, a ",
       {
        "a": "rational agent",
+       "am": "합리적 행위자",
        "w": [
         "rational argument",
         "regional agent",
@@ -4692,6 +4959,7 @@
       ", when deciding between indulging today and indulging tomorrow, would ",
       {
        "a": "opt for",
+       "am": "~을 선택하다",
        "w": [
         "account for",
         "call off",
@@ -4713,6 +4981,7 @@
       "The Sun sends us more than heat and light; it sends lots of other energy and small ",
       {
        "a": "particles",
+       "am": "입자",
        "w": [
         "particulars",
         "participles",
@@ -4734,6 +5003,7 @@
       "The protective ",
       {
        "a": "magnetic field",
+       "am": "자기장",
        "w": [
         "magnetic pole",
         "magnetic core",
@@ -4748,6 +5018,7 @@
       " around Earth ",
       {
        "a": "shields us from",
+       "am": "우리를 ~으로부터 보호하다",
        "w": [
         "exposes us to",
         "supplies us with",
@@ -4769,6 +5040,7 @@
       "During one kind of ",
       {
        "a": "solar storm",
+       "am": "태양 폭풍",
        "w": [
         "solar eclipse",
         "polar storm",
@@ -4783,6 +5055,7 @@
       " called a coronal mass ejection, the Sun ",
       {
        "a": "burps out",
+       "am": "트림하듯 내뿜는다",
        "w": [
         "breaks down",
         "draws in",
@@ -4797,6 +5070,7 @@
       " a huge bubble of ",
       {
        "a": "electrified",
+       "am": "전하를 띤",
        "w": [
         "electroplated",
         "evaporated",
@@ -4818,6 +5092,7 @@
       "When it comes toward Earth, some of the energy and small particles ",
       {
        "a": "ionize",
+       "am": "이온화하다",
        "w": [
         "idealize",
         "itemize",
@@ -4832,6 +5107,7 @@
       " the ",
       {
        "a": "oxygen",
+       "am": "산소",
        "w": [
         "hydrogen",
         "oxytocin",
@@ -4846,6 +5122,7 @@
       " and ",
       {
        "a": "nitrogen",
+       "am": "질소",
        "w": [
         "hydrogen",
         "nitroglycerin",
@@ -4867,6 +5144,7 @@
       "This usually happens around the poles of a planet where the ",
       {
        "a": "magnetic field",
+       "am": "자기장",
        "w": [
         "magnetic pole",
         "magnetic core",
@@ -4881,6 +5159,7 @@
       " lines are ",
       {
        "a": "concentrated",
+       "am": "집중된",
        "w": [
         "consecrated",
         "contaminated",
@@ -4895,6 +5174,7 @@
       " and the ",
       {
        "a": "atmosphere",
+       "am": "대기",
        "w": [
         "biosphere",
         "hemisphere",
@@ -4916,6 +5196,7 @@
       "There, the particles ",
       {
        "a": "interact with",
+       "am": "~와 상호 작용하다",
        "w": [
         "compete with",
         "dispense with",
@@ -4930,6 +5211,7 @@
       " gases in the atmosphere ",
       {
        "a": "resulting in",
+       "am": "~을 일으키는",
        "w": [
         "resulting from",
         "calling for",
@@ -4944,6 +5226,7 @@
       " beautiful displays of light in the sky called ",
       {
        "a": "auroras",
+       "am": "오로라",
        "w": [
         "auricles",
         "aerosols",
@@ -4964,6 +5247,7 @@
      "parts": [
       {
        "a": "Oxygen",
+       "am": "산소",
        "w": [
         "Hydrogen",
         "Oxytocin",
@@ -4978,6 +5262,7 @@
       " ",
       {
        "a": "gives off",
+       "am": "방출하다",
        "w": [
         "takes in",
         "holds back",
@@ -4998,6 +5283,7 @@
      "parts": [
       {
        "a": "Nitrogen",
+       "am": "질소",
        "w": [
         "Hydrogen",
         "Nicotine",
@@ -5012,6 +5298,7 @@
       " ",
       {
        "a": "glows",
+       "am": "빛을 내다",
        "w": [
         "grows",
         "flows",
@@ -5033,6 +5320,7 @@
       "As you probably know, our ",
       {
        "a": "metabolisms",
+       "am": "신진대사",
        "w": [
         "mechanisms",
         "microorganisms",
@@ -5047,6 +5335,7 @@
       " stay ",
       {
        "a": "elevated",
+       "am": "높아진",
        "w": [
         "evaluated",
         "evacuated",
@@ -5068,6 +5357,7 @@
       "Unfortunately though, by the time we actually get around to exercising again, our metabolism has ",
       {
        "a": "reverted to",
+       "am": "~로 되돌아갔다",
        "w": [
         "referred to",
         "departed from",
@@ -5082,6 +5372,7 @@
       " a slower pace and getting “",
       {
        "a": "back into the groove",
+       "am": "다시 익숙한 운동 리듬으로",
        "w": [
         "out of the woods",
         "down to the wire",
@@ -5103,6 +5394,7 @@
       "Wheezing, ",
       {
        "a": "gasping for breath",
+       "am": "숨을 헐떡이는",
        "w": [
         "grasping at straws",
         "fishing for compliments",
@@ -5117,6 +5409,7 @@
       ", coughing, stumbling, and feeling sleepy, lethargic, or fatigued are sometimes ",
       {
        "a": "associated with",
+       "am": "~와 관련된",
        "w": [
         "replaced by",
         "protected from",
@@ -5138,6 +5431,7 @@
       "This is because our body must be warm, our lungs must be stretched, and our blood must be actively flowing before our body begins efficiently utilizing ",
       {
        "a": "oxygen",
+       "am": "산소",
        "w": [
         "hydrogen",
         "nitrogen",
@@ -5158,6 +5452,7 @@
      "parts": [
       {
        "a": "Rather than",
+       "am": "~하는 대신에",
        "w": [
         "Because of",
         "Prior to",
@@ -5172,6 +5467,7 @@
       " struggling through these first two minutes at a slow pace, your post-exercise ",
       {
        "a": "metabolic rate",
+       "am": "대사율",
        "w": [
         "metabolic waste",
         "metallic taste",
@@ -5186,6 +5482,7 @@
       " will be higher if you simply start the cardio at a moderate pace and ",
       {
        "a": "hang on",
+       "am": "버티다",
        "w": [
         "give up",
         "back off",
@@ -5207,6 +5504,7 @@
       "In addition, you’ll not only ",
       {
        "a": "warm-up",
+       "am": "몸을 풀다",
        "w": [
         "cool-down",
         "slow-down",
@@ -5221,6 +5519,7 @@
       " faster, but the rest of your exercise routine will burn more ",
       {
        "a": "calories",
+       "am": "열량",
        "w": [
         "categories",
         "capillaries",
@@ -5242,6 +5541,7 @@
       "Brilliant individuals, whether anthropologists, psychologists, or economists, assume that ",
       {
        "a": "brilliance",
+       "am": "뛰어난 지적 능력",
        "w": [
         "variance",
         "reliance",
@@ -5256,6 +5556,7 @@
       " is the key to human ",
       {
        "a": "achievement",
+       "am": "성취",
        "w": [
         "attachment",
         "assignment",
@@ -5277,6 +5578,7 @@
       "They vote for the smartest people to run governments, they ask the cleverest experts to devise plans for the economy, and they ",
       {
        "a": "credit the sharpest scientists with",
+       "am": "가장 영리한 과학자들의 공으로 돌리다",
        "w": [
         "accuse the sharpest scientists of",
         "deprive the sharpest scientists of",
@@ -5298,6 +5600,7 @@
       "They are all ",
       {
        "a": "barking up the wrong tree",
+       "am": "완전히 잘못 짚고 있는",
        "w": [
         "beating around the bush",
         "burning the candle at both ends",
@@ -5319,6 +5622,7 @@
       "The key to human achievement is not ",
       {
        "a": "individual intelligence",
+       "am": "개인의 지능",
        "w": [
         "individual negligence",
         "institutional independence",
@@ -5340,6 +5644,7 @@
       "Human achievement is entirely a ",
       {
        "a": "networking",
+       "am": "상호 연결과 교류",
        "w": [
         "benchmarking",
         "bookkeeping",
@@ -5361,6 +5666,7 @@
       "It is by combining ",
       {
        "a": "brainpower",
+       "am": "지적 능력",
        "w": [
         "horsepower",
         "firepower",
@@ -5375,6 +5681,7 @@
       " through the ",
       {
        "a": "division of labor",
+       "am": "분업",
        "w": [
         "loss of face",
         "breach of trust",
@@ -5389,6 +5696,7 @@
       " that human society ",
       {
        "a": "happened upon",
+       "am": "우연히 발견했다",
        "w": [
         "turned down",
         "gave up",
@@ -5410,6 +5718,7 @@
       "We can see this in all sorts of phenomena: the collapse of technology in people who became ",
       {
        "a": "isolated",
+       "am": "고립된",
        "w": [
         "integrated",
         "irritated",
@@ -5424,6 +5733,7 @@
       ", like native Tasmanians; the ",
       {
        "a": "prosperity",
+       "am": "번영",
        "w": [
         "proximity",
         "posterity",
@@ -5438,6 +5748,7 @@
       " of trading city states in Greece, Italy, Holland, and Southeast Asia; the creative consequences of ",
       {
        "a": "trade",
+       "am": "교역",
        "w": [
         "treason",
         "trespass",
@@ -5459,6 +5770,7 @@
       "Human achievement ",
       {
        "a": "is rooted in",
+       "am": "~에 뿌리를 두고 있다",
        "w": [
         "is opposed to",
         "is deprived of",
@@ -5473,6 +5785,7 @@
       " ",
       {
        "a": "collective intelligence",
+       "am": "집단 지성",
        "w": [
         "selective ignorance",
         "competitive interference",
@@ -5487,6 +5800,7 @@
       " — the ",
       {
        "a": "nodes",
+       "am": "연결 지점들",
        "w": [
         "modes",
         "codes",
@@ -5508,6 +5822,7 @@
       "By each doing one thing and ",
       {
        "a": "mastering",
+       "am": "숙달하는",
        "w": [
         "mustering",
         "misplacing",
@@ -5522,6 +5837,7 @@
       " it, then combining the results through ",
       {
        "a": "exchange",
+       "am": "교환",
        "w": [
         "exhaustion",
         "exemption",
@@ -5536,6 +5852,7 @@
       ", people ",
       {
        "a": "become capable of",
+       "am": "~할 수 있게 되다",
        "w": [
         "become guilty of",
         "remain opposed to",
@@ -5557,6 +5874,7 @@
       "As the economist Leonard Read ",
       {
        "a": "pointed out",
+       "am": "지적했다",
        "w": [
         "ruled out",
         "covered up",
@@ -5571,6 +5889,7 @@
       " in his essay “I, Pencil,” no single person knows how to make even a pencil — the knowledge is ",
       {
        "a": "distributed",
+       "am": "분산된",
        "w": [
         "distorted",
         "dissolved",
@@ -5597,6 +5916,7 @@
       "Some people argue that since the brain ",
       {
        "a": "hemispheres",
+       "am": "뇌의 반구들",
        "w": [
         "atmospheres",
         "biospheres",
@@ -5611,6 +5931,7 @@
       " do have certain ",
       {
        "a": "proclivities",
+       "am": "성향",
        "w": [
         "prohibitions",
         "prescriptions",
@@ -5625,6 +5946,7 @@
       " towards creativity versus logic, people should target their learning to ",
       {
        "a": "cater to",
+       "am": "~에 맞추다",
        "w": [
         "dispose of",
         "bring about",
@@ -5646,6 +5968,7 @@
       "For example, right-brain people are supposed to be more creative, free-minded, and carefree, while left-brain people are supposed to be more logical, ",
       {
        "a": "analytical",
+       "am": "분석적인",
        "w": [
         "anatomical",
         "anecdotal",
@@ -5667,6 +5990,7 @@
       "It can certainly be a plausible story to ",
       {
        "a": "buy into",
+       "am": "믿고 받아들이다",
        "w": [
         "turn down",
         "pick apart",
@@ -5681,6 +6005,7 @@
       ", but it’s not as if you learn with just one side and that side should ",
       {
        "a": "be appealed to",
+       "am": "호소의 대상이 되다",
        "w": [
         "be cut off",
         "be held back",
@@ -5702,6 +6027,7 @@
       "Both brain hemispheres ",
       {
        "a": "are involved in",
+       "am": "~에 관여한다",
        "w": [
         "are excluded from",
         "are opposed to",
@@ -5716,6 +6042,7 @@
       " almost every single mental process, and studies have demonstrated that people do not have ",
       {
        "a": "dominant hemispheres",
+       "am": "우세한 뇌 반구들",
        "w": [
         "dormant hemispheres",
         "damaged hemispheres",
@@ -5737,6 +6064,7 @@
       "Just because you’re more ",
       {
        "a": "artistic",
+       "am": "예술적인",
        "w": [
         "artificial",
         "arthritic",
@@ -5751,6 +6079,7 @@
       " or more ",
       {
        "a": "analytical",
+       "am": "분석적인",
        "w": [
         "anatomical",
         "anecdotal",
@@ -5772,6 +6101,7 @@
       "You can be equally as good at those parts, ",
       {
        "a": "if not",
+       "am": "어쩌면 ~까지도",
        "w": [
         "even though",
         "as though",
@@ -5786,6 +6116,7 @@
       " better, so don’t let the idea of the dominant hemisphere ",
       {
        "a": "prevent you from",
+       "am": "네가 ~하지 못하게 막다",
        "w": [
         "prepare you for",
         "reward you for",
@@ -5807,6 +6138,7 @@
       "We often think we slow down and stop during athletic training because we ",
       {
        "a": "run out of",
+       "am": "~을 다 써 버리다",
        "w": [
         "hold on to",
         "break away from",
@@ -5821,6 +6153,7 @@
       " ",
       {
        "a": "physiological",
+       "am": "생리적인",
        "w": [
         "psychological",
         "pathological",
@@ -5835,6 +6168,7 @@
       " energy — that it is the strength of our muscles or the oxygen in our blood that caps our maximum ",
       {
        "a": "expenditure",
+       "am": "에너지 소비",
        "w": [
         "exposure",
         "expedition",
@@ -5856,6 +6190,7 @@
       "Yet research finds that when individuals feel they’ve reached their ",
       {
        "a": "physical limits",
+       "am": "신체적 한계",
        "w": [
         "political limits",
         "financial limits",
@@ -5870,6 +6205,7 @@
       ", they actually have the ",
       {
        "a": "capacity",
+       "am": "능력",
        "w": [
         "captivity",
         "complexity",
@@ -5891,6 +6227,7 @@
       "It isn’t your body that ",
       {
        "a": "shuts things down",
+       "am": "활동을 중단시킨다",
        "w": [
         "turns things over",
         "brings things up",
@@ -5912,6 +6249,7 @@
       "The brain exercises a miserly control over the body’s life-sustaining resources; it monitors the environment within and without, and when it feels there’s a risk of your getting too ",
       {
        "a": "fatigued",
+       "am": "피로한",
        "w": [
         "fabricated",
         "fermented",
@@ -5926,6 +6264,7 @@
       " and run-down, it ",
       {
        "a": "puts the brakes on",
+       "am": "~에 제동을 건다",
        "w": [
         "gives rise to",
         "makes the most of",
@@ -5940,6 +6279,7 @@
       " your efforts, throwing the switch far from the actual point at which you would become dangerously ",
       {
        "a": "exhausted",
+       "am": "탈진한",
        "w": [
         "exhilarated",
         "exasperated",
@@ -5961,6 +6301,7 @@
       "But, when an unusual necessity compels you beyond this ",
       {
        "a": "premature",
+       "am": "때 이른",
        "w": [
         "permanent",
         "peripheral",
@@ -5975,6 +6316,7 @@
       " barrier — such as the pressures of competition — a surprising thing occurs: The power of the brain ",
       {
        "a": "relents",
+       "am": "통제를 늦춘다",
        "w": [
         "repents",
         "resists",
@@ -5989,6 +6331,7 @@
       ", allowing you to experience ",
       {
        "a": "a second wind",
+       "am": "지친 뒤 되살아나는 기력",
        "w": [
         "a close shave",
         "a cold shoulder",
@@ -6010,6 +6353,7 @@
       "If the adult didn’t show any particular pride in the picture, the kids were ",
       {
        "a": "truthful",
+       "am": "정직한",
        "w": [
         "trustful",
         "boastful",
@@ -6031,6 +6375,7 @@
       "If the grown-up acted sad about being a bad artist, most of the kids would rush to ",
       {
        "a": "reassure",
+       "am": "안심시키다",
        "w": [
         "reassess",
         "reprimand",
@@ -6052,6 +6397,7 @@
       "In other words, they ",
       {
        "a": "told a white lie",
+       "am": "선의의 거짓말을 했다",
        "w": [
         "took a wild guess",
         "made a false start",
@@ -6073,6 +6419,7 @@
       "In other words, says Warneken, it’s a feeling of ",
       {
        "a": "empathic",
+       "am": "공감의",
        "w": [
         "emphatic",
         "empirical",
@@ -6087,6 +6434,7 @@
       " ",
       {
        "a": "connection",
+       "am": "유대감",
        "w": [
         "convection",
         "contraction",
@@ -6101,6 +6449,7 @@
       " that drives children to ",
       {
        "a": "tell white lies",
+       "am": "선의의 거짓말을 하다",
        "w": [
         "break the ice",
         "pass the buck",
@@ -6122,6 +6471,7 @@
       "In fact, children are trying to resolve two conflicting norms — honesty vs. kindness — and by about age seven, his studies suggest, they start consistently ",
       {
        "a": "coming down on the side of",
+       "am": "~의 편에",
        "w": [
         "getting to the bottom of",
         "turning a blind eye to",
@@ -6143,6 +6493,7 @@
       "The ",
       {
        "a": "electromagnetic force",
+       "am": "전자기력",
        "w": [
         "electromotive force",
         "gravitational potential",
@@ -6157,6 +6508,7 @@
       " works between any two things that have ",
       {
        "a": "electric charge",
+       "am": "전하",
        "w": [
         "elastic strain",
         "thermal capacity",
@@ -6178,6 +6530,7 @@
       "And, like ",
       {
        "a": "gravity",
+       "am": "중력",
        "w": [
         "density",
         "velocity",
@@ -6192,6 +6545,7 @@
       ", the force depends on the ",
       {
        "a": "separation",
+       "am": "떨어진 거리",
        "w": [
         "saturation",
         "acceleration",
@@ -6213,6 +6567,7 @@
       "But unlike gravity, ",
       {
        "a": "electromagnetism",
+       "am": "전자기 작용",
        "w": [
         "electrolysis",
         "electroplating",
@@ -6227,6 +6582,7 @@
       " can be both ",
       {
        "a": "attractive",
+       "am": "끌어당기는",
        "w": [
         "addictive",
         "adaptive",
@@ -6241,6 +6597,7 @@
       " and ",
       {
        "a": "repulsive",
+       "am": "밀어내는",
        "w": [
         "reclusive",
         "recursive",
@@ -6261,6 +6618,7 @@
      "parts": [
       {
        "a": "Opposite charges",
+       "am": "서로 반대 부호의 전하",
        "w": [
         "Identical charges",
         "Opposite currents",
@@ -6275,6 +6633,7 @@
       ", one positive the other negative, ",
       {
        "a": "attract",
+       "am": "서로 끌어당긴다",
        "w": [
         "repel",
         "contract",
@@ -6295,6 +6654,7 @@
      "parts": [
       {
        "a": "Like charges",
+       "am": "같은 부호의 전하",
        "w": [
         "Opposite charges",
         "Opposite poles",
@@ -6309,6 +6669,7 @@
       ", both positive or both negative, ",
       {
        "a": "repel",
+       "am": "서로 밀어낸다",
        "w": [
         "repent",
         "rebel",
@@ -6330,6 +6691,7 @@
       "This means that a ",
       {
        "a": "composite object",
+       "am": "복합 물체",
        "w": [
         "comparative method",
         "competitive market",
@@ -6344,6 +6706,7 @@
       " that has an equal amount of positive and negative charge will push and pull in equal amounts and consequently experience and ",
       {
        "a": "exert",
+       "am": "힘을 가하다",
        "w": [
         "exhale",
         "export",
@@ -6358,6 +6721,7 @@
       " no ",
       {
        "a": "electromagnetic force",
+       "am": "전자기력",
        "w": [
         "electromotive force",
         "gravitational potential",
@@ -6379,6 +6743,7 @@
       "This balance, the result of ",
       {
        "a": "charge neutrality",
+       "am": "전하 중성",
        "w": [
         "charge mobility",
         "charge density",
@@ -6393,6 +6758,7 @@
       ", can never happen with ",
       {
        "a": "gravity",
+       "am": "중력",
        "w": [
         "polarity",
         "viscosity",
@@ -6414,6 +6780,7 @@
       "There being no ",
       {
        "a": "negative mass",
+       "am": "음의 질량",
        "w": [
         "positive mass",
         "negative charge",
@@ -6435,6 +6802,7 @@
       "You can’t ",
       {
        "a": "neutralize",
+       "am": "상쇄하다",
        "w": [
         "naturalize",
         "normalize",
@@ -6456,6 +6824,7 @@
       "At Purdue University Library, a librarian ",
       {
        "a": "goes about her business",
+       "am": "자기 업무를 수행한다",
        "w": [
         "goes out of business",
         "goes against her wishes",
@@ -6470,6 +6839,7 @@
       ", ",
       {
        "a": "checking out",
+       "am": "대출 처리하는",
        "w": [
         "checking up",
         "catching on",
@@ -6491,6 +6861,7 @@
       "She is ",
       {
        "a": "playing a role in",
+       "am": "~에서 역할을 수행하는",
        "w": [
         "taking a stand against",
         "turning a blind eye to",
@@ -6505,6 +6876,7 @@
       " an experiment in unnoticeable ",
       {
        "a": "physical contact",
+       "am": "신체 접촉",
        "w": [
         "physical contrast",
         "chemical reaction",
@@ -6526,6 +6898,7 @@
       "This experiment goes on all day, and soon a pattern emerges: those students who have been ",
       {
        "a": "subtly",
+       "am": "알아차리기 어렵게",
        "w": [
         "substantially",
         "forcefully",
@@ -6540,6 +6913,7 @@
       " touched report much more ",
       {
        "a": "satisfaction",
+       "am": "만족감",
        "w": [
         "certification",
         "classification",
@@ -6566,6 +6940,7 @@
       "The term “",
       {
        "a": "tragedy",
+       "am": "비극",
        "w": [
         "strategy",
         "trilogy",
@@ -6587,6 +6962,7 @@
       "It is an ",
       {
        "a": "imitation",
+       "am": "모방",
        "w": [
         "immigration",
         "irrigation",
@@ -6601,6 +6977,7 @@
       " of complex actions which should ",
       {
        "a": "arouse",
+       "am": "불러일으키다",
        "w": [
         "arrest",
         "assess",
@@ -6615,6 +6992,7 @@
       " an emotional response combining fear and ",
       {
        "a": "pity",
+       "am": "연민",
        "w": [
         "purity",
         "parity",
@@ -6636,6 +7014,7 @@
       "While comedy shows us a progression from ",
       {
        "a": "adversity",
+       "am": "역경",
        "w": [
         "diversity",
         "complexity",
@@ -6650,6 +7029,7 @@
       " to prosperity, tragedy must show the reverse; moreover, this progression must be experienced by a certain kind of character whom we can ",
       {
        "a": "designate as",
+       "am": "~로 지칭하다",
        "w": [
         "mistake for",
         "distinguish from",
@@ -6664,6 +7044,7 @@
       " the ",
       {
        "a": "tragic hero",
+       "am": "비극의 주인공",
        "w": [
         "comic hero",
         "tragic villain",
@@ -6685,6 +7066,7 @@
       "This central figure must be basically good and noble: “good” because we will not be aroused to fear and pity over the misfortunes of a ",
       {
        "a": "villain",
+       "am": "악인",
        "w": [
         "civilian",
         "veteran",
@@ -6699,6 +7081,7 @@
       ", and “noble” both by ",
       {
        "a": "social position",
+       "am": "사회적 지위",
        "w": [
         "spatial position",
         "social opposition",
@@ -6713,6 +7096,7 @@
       " and ",
       {
        "a": "moral standards",
+       "am": "도덕적 기준",
        "w": [
         "mortal remains",
         "formal statements",
@@ -6734,6 +7118,7 @@
       "These virtues do not make the tragic hero perfect, however, for he must also possess a certain ",
       {
        "a": "flaw",
+       "am": "결함",
        "w": [
         "flow",
         "flair",
@@ -6748,6 +7133,7 @@
       " — the weakness which ",
       {
        "a": "leads the hero to",
+       "am": "주인공이 ~하도록 이끈다",
        "w": [
         "forbids the hero to",
         "refuses to let him",
@@ -6762,6 +7148,7 @@
       " make an error in judgment which initiates the ",
       {
        "a": "reversal",
+       "am": "운명의 역전",
        "w": [
         "rehearsal",
         "revival",
@@ -6783,6 +7170,7 @@
       "The most astonishing thing about trees is how ",
       {
        "a": "social",
+       "am": "사회적인",
        "w": [
         "fiscal",
         "facial",
@@ -6804,6 +7192,7 @@
       "The trees in a forest ",
       {
        "a": "care for",
+       "am": "~을 돌보다",
        "w": [
         "compete with",
         "turn against",
@@ -6818,6 +7207,7 @@
       " each other, sometimes even going so far as to ",
       {
        "a": "nourish",
+       "am": "영양을 공급하다",
        "w": [
         "demolish",
         "diminish",
@@ -6832,6 +7222,7 @@
       " the stump of a felled tree for centuries by feeding it sugars and other nutrients, and so ",
       {
        "a": "keeping it alive",
+       "am": "그것을 살아 있게 유지하며",
        "w": [
         "bringing it down",
         "wearing it out",
@@ -6853,6 +7244,7 @@
       "A tree’s most important means of staying ",
       {
        "a": "connected to",
+       "am": "~과 연결된",
        "w": [
         "divided by",
         "protected from",
@@ -6867,6 +7259,7 @@
       " other trees is a “wood wide web” of ",
       {
        "a": "soil fungi",
+       "am": "토양 균류",
        "w": [
         "soil minerals",
         "plant fossils",
@@ -6881,6 +7274,7 @@
       " that connects vegetation in an intimate ",
       {
        "a": "network",
+       "am": "연결망",
        "w": [
         "outbreak",
         "outgrowth",
@@ -6902,6 +7296,7 @@
       "Scientific research ",
       {
        "a": "aimed at",
+       "am": "~을 목표로 하는",
        "w": [
         "diverted from",
         "opposed to",
@@ -6916,6 +7311,7 @@
       " understanding the astonishing abilities of this ",
       {
        "a": "partnership",
+       "am": "협력 관계",
        "w": [
         "ownership",
         "dictatorship",
@@ -6930,6 +7326,7 @@
       " between ",
       {
        "a": "fungi",
+       "am": "균류",
        "w": [
         "fossils",
         "fibers",
@@ -6951,6 +7348,7 @@
       "The reason trees share food and ",
       {
        "a": "communicate",
+       "am": "의사소통하다",
        "w": [
         "commute",
         "compete",
@@ -6972,6 +7370,7 @@
       "It takes a forest to create the unique ",
       {
        "a": "atmospheric",
+       "am": "대기의",
        "w": [
         "astronomical",
         "anatomical",
@@ -6986,6 +7385,7 @@
       " conditions where trees can grow and ",
       {
        "a": "thrive",
+       "am": "잘 자라다",
        "w": [
         "shrivel",
         "wither",
@@ -7007,6 +7407,7 @@
       "So it’s not surprising that ",
       {
        "a": "isolated",
+       "am": "고립된",
        "w": [
         "insulated",
         "irrigated",
@@ -7028,6 +7429,7 @@
       "Perhaps the saddest plants of all are the plants we have ",
       {
        "a": "enslaved",
+       "am": "예속시킨",
        "w": [
         "engraved",
         "enlarged",
@@ -7042,6 +7444,7 @@
       " in our ",
       {
        "a": "agricultural",
+       "am": "농업의",
        "w": [
         "architectural",
         "multicultural",
@@ -7063,6 +7466,7 @@
       "They seem to have lost the ability to ",
       {
        "a": "communicate",
+       "am": "의사소통하다",
        "w": [
         "commute",
         "compete",
@@ -7077,6 +7481,7 @@
       " a long time ago, and are thus rendered ",
       {
        "a": "deaf and dumb",
+       "am": "듣지도 말하지도 못하는",
        "w": [
         "safe and sound",
         "high and dry",
@@ -7098,6 +7503,7 @@
       "“What two numbers ",
       {
        "a": "add up to",
+       "am": "합계가 ~이 되다",
        "w": [
         "make up for",
         "catch up with",
@@ -7119,6 +7525,7 @@
       "The first question has only one right answer, and the second question has an ",
       {
        "a": "infinite",
+       "am": "무한한",
        "w": [
         "inanimate",
         "involuntary",
@@ -7133,6 +7540,7 @@
       " number of ",
       {
        "a": "solutions",
+       "am": "해답",
        "w": [
         "solvents",
         "situations",
@@ -7154,6 +7562,7 @@
       "These two problems, which ",
       {
        "a": "rely on",
+       "am": "~에 의존하다",
        "w": [
         "rule out",
         "run into",
@@ -7168,6 +7577,7 @@
       " simple addition, differ only in the way they are ",
       {
        "a": "framed",
+       "am": "틀이 지어진",
        "w": [
         "flamed",
         "farmed",
@@ -7189,6 +7599,7 @@
       "In fact, all questions are the ",
       {
        "a": "frame",
+       "am": "틀",
        "w": [
         "flame",
         "fraud",
@@ -7210,6 +7621,7 @@
       "And as you can see, by changing the frame, you can dramatically change the range of possible ",
       {
        "a": "solutions",
+       "am": "해답",
        "w": [
         "situations",
         "selections",
@@ -7231,6 +7643,7 @@
       "Albert Einstein ",
       {
        "a": "is quoted as saying",
+       "am": "~라고 말했다고 인용된다",
        "w": [
         "is prevented from saying",
         "is accused of saying",
@@ -7245,6 +7658,7 @@
       ", “If I had an hour to solve a problem and my life ",
       {
        "a": "depended on",
+       "am": "~에 달려 있었다",
        "w": [
         "departed from",
         "dispensed with",
@@ -7266,6 +7680,7 @@
       "Mastering the ability to ",
       {
        "a": "reframe",
+       "am": "새로운 틀로 바라보다",
        "w": [
         "reclaim",
         "retrain",
@@ -7280,6 +7695,7 @@
       " problems is an important tool for increasing your ",
       {
        "a": "imagination",
+       "am": "상상력",
        "w": [
         "imitation",
         "immigration",
@@ -7294,6 +7710,7 @@
       " because it ",
       {
        "a": "unlocks",
+       "am": "가능성을 열어 준다",
        "w": [
         "unloads",
         "unplugs",
@@ -7314,6 +7731,7 @@
      "parts": [
       {
        "a": "Observation",
+       "am": "관찰",
        "w": [
         "Obligation",
         "Obstruction",
@@ -7328,6 +7746,7 @@
       " can offer ",
       {
        "a": "ethnographers",
+       "am": "민족지 연구자들",
        "w": [
         "cartographers",
         "choreographers",
@@ -7342,6 +7761,7 @@
       " solid ",
       {
        "a": "evidence",
+       "am": "증거",
        "w": [
         "incidence",
         "eloquence",
@@ -7363,6 +7783,7 @@
       "Observational skills help, for instance, when we want to use people’s actions to independently ",
       {
        "a": "verify",
+       "am": "검증하다",
        "w": [
         "vilify",
         "versify",
@@ -7377,6 +7798,7 @@
       " their spoken claims; describe and ",
       {
        "a": "make sense of",
+       "am": "~을 이해하다",
        "w": [
         "make fun of",
         "take care of",
@@ -7391,6 +7813,7 @@
       " what is happening when no one can — or will — talk with us; and better capture higher-level ",
       {
        "a": "patterns",
+       "am": "양상",
        "w": [
         "patents",
         "platters",
@@ -7412,6 +7835,7 @@
       "Systematic, observation-based data can help us both ",
       {
        "a": "find out",
+       "am": "알아내다",
        "w": [
         "phase out",
         "rule out",
@@ -7426,6 +7850,7 @@
       " what is actually ",
       {
        "a": "going on",
+       "am": "일어나고 있는",
        "w": [
         "looking after",
         "relying on",
@@ -7440,6 +7865,7 @@
       " and ",
       {
        "a": "justify",
+       "am": "정당화하다",
        "w": [
         "classify",
         "simplify",
@@ -7461,6 +7887,7 @@
       "But observation only gives ",
       {
        "a": "clues",
+       "am": "단서",
        "w": [
         "clauses",
         "clashes",
@@ -7475,6 +7902,7 @@
       " and partial answers ",
       {
        "a": "as to",
+       "am": "~에 관하여",
        "w": [
         "apart from",
         "instead of",
@@ -7489,6 +7917,7 @@
       " why things happen and the meanings actors ",
       {
        "a": "attribute to",
+       "am": "~에 부여하다",
        "w": [
         "subtract from",
         "withhold from",
@@ -7510,6 +7939,7 @@
       "This is why direct ",
       {
        "a": "observation",
+       "am": "관찰",
        "w": [
         "obligation",
         "obstruction",
@@ -7524,6 +7954,7 @@
       " should ",
       {
        "a": "be combined with",
+       "am": "~과 결합되다",
        "w": [
         "be carried out",
         "be brought about",
@@ -7545,6 +7976,7 @@
       "On three other trials, the experimentalist, in a ",
       {
        "a": "sleight of hand",
+       "am": "손속임",
        "w": [
         "slip of the tongue",
         "leap of faith",
@@ -7559,6 +7991,7 @@
       ", ",
       {
        "a": "exchanged",
+       "am": "바꾸었다",
        "w": [
         "examined",
         "expanded",
@@ -7580,6 +8013,7 @@
       "That is, immediately after deciding that woman A was more attractive, a double-card ",
       {
        "a": "ploy",
+       "am": "책략",
        "w": [
         "plea",
         "pledge",
@@ -7594,6 +8028,7 @@
       " was used to ",
       {
        "a": "confront subjects with",
+       "am": "피험자들에게 ~을 마주하게 하다",
        "w": [
         "protect subjects from",
         "shield subjects from",
@@ -7615,6 +8050,7 @@
       "Remarkably, most of the time the subjects were ",
       {
        "a": "fooled",
+       "am": "속은",
        "w": [
         "foiled",
         "fueled",
@@ -7636,6 +8072,7 @@
       "Only in fewer than 25% of trials were participants aware that their original choice was not honored, that they had been ",
       {
        "a": "fooled",
+       "am": "속은",
        "w": [
         "foiled",
         "fueled",
@@ -7657,6 +8094,7 @@
       "Most of the time, they ignored the ",
       {
        "a": "discrepancy",
+       "am": "불일치",
        "w": [
         "dependency",
         "deficiency",
@@ -7671,6 +8109,7 @@
       " between their original ",
       {
        "a": "conscious",
+       "am": "의식적인",
        "w": [
         "continuous",
         "consecutive",
@@ -7692,6 +8131,7 @@
       "And even more remarkably, they ",
       {
        "a": "proceeded to",
+       "am": "이어서 ~했다",
        "w": [
         "referred to",
         "insisted on",
@@ -7706,6 +8146,7 @@
       " ",
       {
        "a": "justify",
+       "am": "정당화하다",
        "w": [
         "quantify",
         "purify",
@@ -7720,6 +8161,7 @@
       " this choice even though it ",
       {
        "a": "contradicted",
+       "am": "~과 모순되었다",
        "w": [
         "contracted",
         "contributed",
@@ -7746,6 +8188,7 @@
       "The intriguing thing about the effects of ",
       {
        "a": "censoring",
+       "am": "검열하는 것",
        "w": [
         "centering",
         "catering",
@@ -7767,6 +8210,7 @@
       "Rather, it is that they ",
       {
        "a": "come to",
+       "am": "~하게 되다",
        "w": [
         "come by",
         "get over",
@@ -7781,6 +8225,7 @@
       " ",
       {
        "a": "believe in",
+       "am": "~을 신뢰하다",
        "w": [
         "belong to",
         "look after",
@@ -7802,6 +8247,7 @@
       "For example, when University of North Carolina students learned that a speech opposing coed dorms on campus would be ",
       {
        "a": "banned",
+       "am": "금지된",
        "w": [
         "banded",
         "bonded",
@@ -7816,6 +8262,7 @@
       ", they became more ",
       {
        "a": "opposed to",
+       "am": "~에 반대하는",
        "w": [
         "composed of",
         "disposed of",
@@ -7837,6 +8284,7 @@
       "Thus, without ever hearing the speech, they became more ",
       {
        "a": "sympathetic to",
+       "am": "~에 공감하는",
        "w": [
         "identical to",
         "dependent on",
@@ -7858,6 +8306,7 @@
       "This raises the worrisome possibility that especially clever individuals holding a weak or unpopular position can get us to ",
       {
        "a": "agree with",
+       "am": "~에 동의하다",
        "w": [
         "part with",
         "depart from",
@@ -7872,6 +8321,7 @@
       " that position by arranging to have their message ",
       {
        "a": "restricted",
+       "am": "제한된",
        "w": [
         "recruited",
         "refunded",
@@ -7893,6 +8343,7 @@
       "The irony is that for such people — members of fringe political groups, for example — the most effective strategy may not be to publicize their unpopular views, but to get those views officially ",
       {
        "a": "censored",
+       "am": "검열된",
        "w": [
         "censured",
         "centered",
@@ -7907,6 +8358,7 @@
       " and then to publicize the ",
       {
        "a": "censorship",
+       "am": "검열",
        "w": [
         "citizenship",
         "sponsorship",
@@ -7928,6 +8380,7 @@
       "Our ",
       {
        "a": "genetic program",
+       "am": "유전 프로그램",
        "w": [
         "generic program",
         "geometric pattern",
@@ -7942,6 +8395,7 @@
       " ",
       {
        "a": "governs",
+       "am": "통제한다",
        "w": [
         "gathers",
         "guesses",
@@ -7963,6 +8417,7 @@
       "We often look like our parents because they were the source of our genes, ",
       {
        "a": "passing along",
+       "am": "물려주며",
        "w": [
         "passing away",
         "passing for",
@@ -7984,6 +8439,7 @@
       "However, your genes do far more than program your ",
       {
        "a": "appearance",
+       "am": "외모",
        "w": [
         "attendance",
         "allowance",
@@ -8005,6 +8461,7 @@
       "They ",
       {
        "a": "orchestrate",
+       "am": "조직적으로 조절하다",
        "w": [
         "overestimate",
         "oscillate",
@@ -8019,6 +8476,7 @@
       " the creation of everything in your body, including fifty thousand ",
       {
        "a": "proteins",
+       "am": "단백질",
        "w": [
         "protons",
         "proverbs",
@@ -8033,6 +8491,7 @@
       " and tens of thousands of other ",
       {
        "a": "biochemicals",
+       "am": "생화학 물질",
        "w": [
         "bioreactors",
         "biographies",
@@ -8054,6 +8513,7 @@
       "Although many of your physical features are ",
       {
        "a": "fixed",
+       "am": "고정된",
        "w": [
         "fitted",
         "funded",
@@ -8068,6 +8528,7 @@
       ", the genes ",
       {
        "a": "in charge of",
+       "am": "~을 담당하는",
        "w": [
         "in search of",
         "in front of",
@@ -8082,6 +8543,7 @@
       " your day-to-day ",
       {
        "a": "biochemical",
+       "am": "생화학적인",
        "w": [
         "biographical",
         "bioethical",
@@ -8102,6 +8564,7 @@
      "parts": [
       {
        "a": "Contrary to",
+       "am": "~과는 반대로",
        "w": [
         "Enrolled in",
         "Docked at",
@@ -8116,6 +8579,7 @@
       " what many people have believed, ",
       {
        "a": "genes",
+       "am": "유전자",
        "w": [
         "genres",
         "glands",
@@ -8130,6 +8594,7 @@
       " are not ",
       {
        "a": "destiny",
+       "am": "운명",
        "w": [
         "density",
         "dynasty",
@@ -8151,6 +8616,7 @@
       "It means that your genes provide tremendous flexibility in your long-term health, and you can use that flexibility ",
       {
        "a": "to your advantage",
+       "am": "자신에게 유리하게",
        "w": [
         "at your expense",
         "in your absence",
@@ -8172,6 +8638,7 @@
       "Your ",
       {
        "a": "genes",
+       "am": "유전자",
        "w": [
         "genitives",
         "gerunds",
@@ -8186,6 +8653,7 @@
       " are always ",
       {
        "a": "responding",
+       "am": "반응하는",
        "w": [
         "resounding",
         "rebounding",
@@ -8207,6 +8675,7 @@
       "Most people use ",
       {
        "a": "reputation",
+       "am": "평판",
        "w": [
         "repetition",
         "reparation",
@@ -8221,6 +8690,7 @@
       " as a ",
       {
        "a": "proxy",
+       "am": "대리 지표",
        "w": [
         "prodigy",
         "prologue",
@@ -8235,6 +8705,7 @@
       " for ",
       {
        "a": "integrity",
+       "am": "도덕적 진실성",
        "w": [
         "intensity",
         "intricacy",
@@ -8255,6 +8726,7 @@
      "parts": [
       {
        "a": "Contrary to",
+       "am": "~과는 반대로",
        "w": [
         "Enrolled in",
         "Docked at",
@@ -8269,6 +8741,7 @@
       " common belief, integrity isn’t a ",
       {
        "a": "stable",
+       "am": "변하지 않는",
        "w": [
         "staple",
         "sterile",
@@ -8283,6 +8756,7 @@
       " ",
       {
        "a": "trait",
+       "am": "특성",
        "w": [
         "treat",
         "trial",
@@ -8304,6 +8778,7 @@
       "To understand why, we need to ",
       {
        "a": "abandon",
+       "am": "버리다",
        "w": [
         "abstain",
         "abound",
@@ -8318,6 +8793,7 @@
       " the notion that people ",
       {
        "a": "wrestle with",
+       "am": "~과 씨름하다",
        "w": [
         "settle for",
         "look after",
@@ -8332,6 +8808,7 @@
       " “good” and “evil” ",
       {
        "a": "impulses",
+       "am": "충동",
        "w": [
         "implants",
         "imprints",
@@ -8353,6 +8830,7 @@
       "Except in cases of serious psychopathology, their brains don’t work that way, and, rather, they ",
       {
        "a": "focus on",
+       "am": "~에 집중하다",
        "w": [
         "call on",
         "put on",
@@ -8367,6 +8845,7 @@
       " two types of gains: ",
       {
        "a": "short-term",
+       "am": "단기적인",
        "w": [
         "short-sighted",
         "short-handed",
@@ -8381,6 +8860,7 @@
       " and ",
       {
        "a": "long-term",
+       "am": "장기적인",
        "w": [
         "long-winded",
         "long-distance",
@@ -8402,6 +8882,7 @@
       "And it’s the ",
       {
        "a": "trade-off",
+       "am": "상충 관계",
        "w": [
         "trade-in",
         "take-off",
@@ -8416,6 +8897,7 @@
       " between them that typically ",
       {
        "a": "dictates",
+       "am": "좌우한다",
        "w": [
         "detects",
         "decorates",
@@ -8430,6 +8912,7 @@
       " ",
       {
        "a": "integrity",
+       "am": "도덕적 진실성",
        "w": [
         "intensity",
         "intricacy",
@@ -8451,6 +8934,7 @@
       "Individuals who ",
       {
        "a": "break a trust",
+       "am": "신뢰를 저버리다",
        "w": [
         "make a fuss",
         "keep a promise",
@@ -8465,6 +8949,7 @@
       " — by promising work they won’t or can’t deliver, for instance — may reap an immediate ",
       {
        "a": "reward",
+       "am": "보상",
        "w": [
         "regard",
         "regret",
@@ -8486,6 +8971,7 @@
       "But they reduce the likelihood of ",
       {
        "a": "accumulating",
+       "am": "축적하는",
        "w": [
         "accommodating",
         "accelerating",
@@ -8500,6 +8986,7 @@
       " greater ",
       {
        "a": "benefits",
+       "am": "이익",
        "w": [
         "deficits",
         "defects",
@@ -8514,6 +9001,7 @@
       " from exchange and ",
       {
        "a": "cooperation",
+       "am": "협력",
        "w": [
         "corporation",
         "compilation",
@@ -8535,6 +9023,7 @@
       "Which outcome is better for them ",
       {
        "a": "depends on",
+       "am": "~에 달려 있다",
        "w": [
         "departs from",
         "dispenses with",
@@ -8556,6 +9045,7 @@
       "It means that the world is constantly changing and thus always ",
       {
        "a": "presenting us with",
+       "am": "우리에게 제시하는",
        "w": [
         "presenting us to",
         "depriving us of",
@@ -8577,6 +9067,7 @@
       "To ",
       {
        "a": "make the most of",
+       "am": "최대한 활용하다",
        "w": [
         "make a point of",
         "get the better of",
@@ -8591,6 +9082,7 @@
       " it, we must continually ",
       {
        "a": "break down",
+       "am": "허물다",
        "w": [
         "break into",
         "build up",
@@ -8612,6 +9104,7 @@
       "The most original and interesting solutions often come when we ",
       {
        "a": "embrace",
+       "am": "받아들이다",
        "w": [
         "embarrass",
         "embroider",
@@ -8626,6 +9119,7 @@
       " “the ",
       {
        "a": "beginner’s mind",
+       "am": "초심자의 마음",
        "w": [
         "beginner’s luck",
         "winner’s pride",
@@ -8640,6 +9134,7 @@
       "”, approaching novel experiences ",
       {
        "a": "with fresh eyes",
+       "am": "새로운 시각으로",
        "w": [
         "with folded arms",
         "with clenched fists",
@@ -8661,6 +9156,7 @@
       "This is a cornerstone of ",
       {
        "a": "emotional flexibility",
+       "am": "정서적 유연성",
        "w": [
         "emotional fragility",
         "emotional hostility",
@@ -8682,6 +9178,7 @@
       "Some of us tend to ",
       {
        "a": "limit ourselves to",
+       "am": "우리 자신을 ~에 한정하다",
        "w": [
         "compare ourselves with",
         "distance ourselves from",
@@ -8696,6 +9193,7 @@
       " narrow, ",
       {
        "a": "predefined",
+       "am": "미리 규정된",
        "w": [
         "predicted",
         "preoccupied",
@@ -8710,6 +9208,7 @@
       " ",
       {
        "a": "categories",
+       "am": "범주",
        "w": [
         "calories",
         "catalogues",
@@ -8731,6 +9230,7 @@
       "If we ",
       {
        "a": "self-categorize",
+       "am": "자신을 범주화하다",
        "w": [
         "self-medicate",
         "self-destruct",
@@ -8745,6 +9245,7 @@
       " ",
       {
        "a": "based on",
+       "am": "~에 근거하여",
        "w": [
         "bound for",
         "deprived of",
@@ -8759,6 +9260,7 @@
       " a particular identity, such as being a “CEO”, “Olympic athlete”, or “the smartest kid in the class”, we can become trapped in that identity and ",
       {
        "a": "lose sight of",
+       "am": "~을 보지 못하게 되다",
        "w": [
         "catch sight of",
         "keep track of",
@@ -8780,6 +9282,7 @@
       "This can also occur when we ",
       {
        "a": "confine ourselves to",
+       "am": "우리 자신을 ~에 가두다",
        "w": [
         "compare ourselves with",
         "distance ourselves from",
@@ -8801,6 +9304,7 @@
       "We need ",
       {
        "a": "adaptability",
+       "am": "적응력",
        "w": [
         "adoptability",
         "affordability",
@@ -8822,6 +9326,7 @@
       "In fact, ",
       {
        "a": "emotional flexibility",
+       "am": "정서적 유연성",
        "w": [
         "emotional fragility",
         "emotional hostility",
@@ -8836,6 +9341,7 @@
       " means the ability to ",
       {
        "a": "regulate",
+       "am": "조절하다",
        "w": [
         "replicate",
         "relegate",
@@ -8850,6 +9356,7 @@
       " your emotions and respond adaptively to changing situations, ",
       {
        "a": "rather than",
+       "am": "~하기보다는",
        "w": [
         "along with",
         "due to",
@@ -8871,6 +9378,7 @@
       "By practicing it, you can respond more effectively to present circumstances and act ",
       {
        "a": "in accordance with",
+       "am": "~에 따라",
        "w": [
         "in conflict with",
         "in exchange for",
@@ -8885,6 +9393,7 @@
       " your values and goals, helping you lead a more ",
       {
        "a": "fulfilling",
+       "am": "충만감을 주는",
        "w": [
         "frustrating",
         "frightening",
@@ -8899,6 +9408,7 @@
       " and ",
       {
        "a": "authentic",
+       "am": "진정한 자신다운",
        "w": [
         "automatic",
         "autocratic",
@@ -8925,6 +9435,7 @@
       "It’s tempting to see a strong dividing line between ",
       {
        "a": "philosophy",
+       "am": "철학",
        "w": [
         "phosphorylation",
         "photosynthesis",
@@ -8939,6 +9450,7 @@
       " and ",
       {
        "a": "science",
+       "am": "과학",
        "w": [
         "scenery",
         "sequence",
@@ -8960,6 +9472,7 @@
       "After all, science is precise and defined by proven, concrete facts, whereas philosophy ",
       {
        "a": "goes beyond",
+       "am": "~을 넘어서다",
        "w": [
         "goes against",
         "goes without",
@@ -8974,6 +9487,7 @@
       " the facts and into areas of ",
       {
        "a": "speculation",
+       "am": "사변",
        "w": [
         "specialization",
         "specification",
@@ -8995,6 +9509,7 @@
       "Still, there is considerable ",
       {
        "a": "overlap",
+       "am": "공통 영역",
        "w": [
         "overload",
         "overhang",
@@ -9016,6 +9531,7 @@
       "Science may ",
       {
        "a": "rely on",
+       "am": "~에 의존하다",
        "w": [
         "dispose of",
         "depart from",
@@ -9030,6 +9546,7 @@
       " ",
       {
        "a": "cold, hard facts",
+       "am": "냉정하고 엄연한 사실",
        "w": [
         "a cold shoulder",
         "a close shave",
@@ -9044,6 +9561,7 @@
       ", but its directions have been determined by ",
       {
        "a": "philosophy",
+       "am": "철학",
        "w": [
         "physiology",
         "philology",
@@ -9065,6 +9583,7 @@
       "The ",
       {
        "a": "scientific method",
+       "am": "과학적 방법",
        "w": [
         "scientific notation",
         "statistical median",
@@ -9079,6 +9598,7 @@
       " itself ",
       {
        "a": "grew out of",
+       "am": "~에서 비롯되었다",
        "w": [
         "ran out of",
         "got away with",
@@ -9093,6 +9613,7 @@
       " philosophical ",
       {
        "a": "inquiry",
+       "am": "탐구",
        "w": [
         "inversion",
         "inhibition",
@@ -9114,6 +9635,7 @@
       "At the same time, the philosophy of ",
       {
        "a": "ethics",
+       "am": "윤리학",
        "w": [
         "ethnology",
         "genetics",
@@ -9128,6 +9650,7 @@
       " determines the types of experiments we allow our scientists to ",
       {
        "a": "carry out",
+       "am": "수행하다",
        "w": [
         "carry over",
         "call off",
@@ -9149,6 +9672,7 @@
       "In the end, one may ",
       {
        "a": "be concerned with",
+       "am": "~을 다루다",
        "w": [
         "be deprived of",
         "be blamed for",
@@ -9163,6 +9687,7 @@
       " observable data and the other with meanings and values, but neither science nor philosophy exists ",
       {
        "a": "in a vacuum",
+       "am": "다른 것과 단절된 채",
        "w": [
         "in a nutshell",
         "in full swing",
@@ -9184,6 +9709,7 @@
       "Each dolphin has its own vocalization that ",
       {
        "a": "is referred to as",
+       "am": "~이라고 불린다",
        "w": [
         "is looked down on",
         "is taken in by",
@@ -9198,6 +9724,7 @@
       " a ",
       {
        "a": "signature whistle",
+       "am": "개체 고유의 휘파람 소리",
        "w": [
         "singular whisper",
         "synthetic whistle",
@@ -9219,6 +9746,7 @@
       "The whistles are used in a variety of behavioral contexts, but during studies of captive animals Vincent Janik and Peter Slater have shown that they are particularly commonly heard in situations where an animal has become ",
       {
        "a": "isolated from",
+       "am": "~로부터 고립된",
        "w": [
         "absorbed in",
         "burdened with",
@@ -9233,6 +9761,7 @@
       " the other members of its ",
       {
        "a": "pod",
+       "am": "돌고래 무리",
        "w": [
         "pond",
         "pact",
@@ -9254,6 +9783,7 @@
       "It is supposed that these animals effectively ",
       {
        "a": "call out",
+       "am": "큰 소리로 부르다",
        "w": [
         "call off",
         "call up",
@@ -9268,6 +9798,7 @@
       " their “name” when they emit their signature whistle and thereby broadcast their ",
       {
        "a": "identity",
+       "am": "개체의 정체",
        "w": [
         "intensity",
         "immunity",
@@ -9282,6 +9813,7 @@
       " and ",
       {
        "a": "give away",
+       "am": "드러내다",
        "w": [
         "take over",
         "rule out",
@@ -9303,6 +9835,7 @@
       "Once the separated animals are ",
       {
        "a": "reunited",
+       "am": "다시 합류한",
        "w": [
         "reclassified",
         "reimbursed",
@@ -9317,6 +9850,7 @@
       ", ",
       {
        "a": "signature whistle",
+       "am": "개체 고유의 휘파람 소리",
        "w": [
         "singular whisper",
         "synthetic whistle",
@@ -9338,6 +9872,7 @@
       "So at least one function of the whistles is the ",
       {
        "a": "maintenance",
+       "am": "유지",
        "w": [
         "malfunction",
         "manipulation",
@@ -9352,6 +9887,7 @@
       " of ",
       {
        "a": "group cohesion",
+       "am": "집단 응집력",
        "w": [
         "group coercion",
         "group collision",
@@ -9372,6 +9908,7 @@
      "parts": [
       {
        "a": "Elderspeak",
+       "am": "노인에게 쓰는 단순화된 말투",
        "w": [
         "Eldercare",
         "Elderberry",
@@ -9386,6 +9923,7 @@
       " ",
       {
        "a": "is characterized by",
+       "am": "~을 특징으로 한다",
        "w": [
         "is deprived of",
         "is mistaken for",
@@ -9407,6 +9945,7 @@
       "The older adults reported that the instructions were easier to follow when the speaker reduced the ",
       {
        "a": "grammatical complexity",
+       "am": "문법적 복잡성",
        "w": [
         "grammatical conformity",
         "geometrical complexity",
@@ -9421,6 +9960,7 @@
       " and used ",
       {
        "a": "semantic elaboration",
+       "am": "의미의 상세한 설명",
        "w": [
         "semantic elimination",
         "syntactic abbreviation",
@@ -9442,6 +9982,7 @@
       "Simpler grammar and ",
       {
        "a": "semantic elaboration",
+       "am": "의미의 상세한 설명",
        "w": [
         "semantic elimination",
         "syntactic abbreviation",
@@ -9456,6 +9997,7 @@
       " also helped older adults improve their ",
       {
        "a": "accuracy",
+       "am": "정확성",
        "w": [
         "adequacy",
         "ambiguity",
@@ -9470,6 +10012,7 @@
       " when they had to ",
       {
        "a": "reproduce",
+       "am": "재현하다",
        "w": [
         "reproach",
         "repossess",
@@ -9490,6 +10033,7 @@
      "parts": [
       {
        "a": "In contrast",
+       "am": "그와 대조적으로",
        "w": [
         "In stock",
         "In arrears",
@@ -9504,6 +10048,7 @@
       ", shortening the length of the speaker’s ",
       {
        "a": "utterances",
+       "am": "발화",
        "w": [
         "alterations",
         "allowances",
@@ -9518,6 +10063,7 @@
       " into two- and five-word sentences did not improve the older adults’ ",
       {
        "a": "comprehension",
+       "am": "이해",
        "w": [
         "compression",
         "compensation",
@@ -9539,6 +10085,7 @@
       "Also, the older listeners did not find that an extremely slow rate of speaking with many pauses or ",
       {
        "a": "exaggerated",
+       "am": "과장된",
        "w": [
         "exasperated",
         "accelerated",
@@ -9553,6 +10100,7 @@
       " ",
       {
        "a": "prosody",
+       "am": "말의 운율",
        "w": [
         "proximity",
         "prosperity",
@@ -9574,6 +10122,7 @@
       "The freedom to choose one’s identity is critical, since the sources of identity are shifting from “",
       {
        "a": "belonging",
+       "am": "소속",
        "w": [
         "borrowing",
         "bargaining",
@@ -9588,6 +10137,7 @@
       "” to “",
       {
        "a": "achievement",
+       "am": "성취",
        "w": [
         "attachment",
         "adjustment",
@@ -9608,6 +10158,7 @@
      "parts": [
       {
        "a": "Speaking for",
+       "am": "~을 대변하여",
        "w": [
         "Giving in",
         "Falling apart",
@@ -9622,6 +10173,7 @@
       " many, Kymlicka says that “identification is more secure, less ",
       {
        "a": "liable to",
+       "am": "~하기 쉬운",
        "w": [
         "eager to",
         "reluctant to",
@@ -9636,6 +10188,7 @@
       " be threatened, if it does not ",
       {
        "a": "depend on",
+       "am": "~에 의존하다",
        "w": [
         "dispose of",
         "depart from",
@@ -9656,6 +10209,7 @@
      "parts": [
       {
        "a": "Achievement",
+       "am": "성취",
        "w": [
         "Attachment",
         "Adjustment",
@@ -9676,6 +10230,7 @@
      "parts": [
       {
        "a": "To be sure",
+       "am": "물론",
        "w": [
         "In due course",
         "At first sight",
@@ -9690,6 +10245,7 @@
       ", some people want ",
       {
        "a": "unconditional",
+       "am": "무조건적인",
        "w": [
         "unintentional",
         "unconventional",
@@ -9704,6 +10260,7 @@
       " ",
       {
        "a": "acceptance",
+       "am": "수용",
        "w": [
         "attendance",
         "avoidance",
@@ -9725,6 +10282,7 @@
       "But more and more, people in rich countries achieve many of their ",
       {
        "a": "identities",
+       "am": "정체성",
        "w": [
         "intensities",
         "immunities",
@@ -9746,6 +10304,7 @@
       "They choose their careers, friendships, allies, ",
       {
        "a": "mixing and matching",
+       "am": "다양하게 조합하는",
        "w": [
         "throwing away",
         "doing away with",
@@ -9767,6 +10326,7 @@
       "Even their ethnic, racial, and national ",
       {
        "a": "affiliations",
+       "am": "소속 관계",
        "w": [
         "affirmations",
         "afflictions",
@@ -9781,6 +10341,7 @@
       " are forged in various ways, ",
       {
        "a": "despite the fact that",
+       "am": "~라는 사실에도 불구하고",
        "w": [
         "on the condition that",
         "to the extent that",
@@ -9795,6 +10356,7 @@
       " a person’s ",
       {
        "a": "self-image",
+       "am": "자아상",
        "w": [
         "self-interest",
         "self-pity",
@@ -9816,6 +10378,7 @@
       "Indeed, the ability to make one’s own self is the ",
       {
        "a": "essence",
+       "am": "본질",
        "w": [
         "absence",
         "incidence",
@@ -9830,6 +10393,7 @@
       " of ",
       {
        "a": "freedom",
+       "am": "자유",
        "w": [
         "boredom",
         "serfdom",
@@ -9851,6 +10415,7 @@
       "A good society recognizes and does not ",
       {
        "a": "pit roots and wings against",
+       "am": "뿌리와 날개를 ~과 대립시키다",
        "w": [
         "hold roots and wings against",
         "take roots and wings for",
@@ -9872,6 +10437,7 @@
       "If roots are the ",
       {
        "a": "necessary condition",
+       "am": "필요조건",
        "w": [
         "sufficient condition",
         "initial condition",
@@ -9886,6 +10452,7 @@
       " for happiness, then wings are the ",
       {
        "a": "sufficient condition",
+       "am": "충분조건",
        "w": [
         "necessary condition",
         "initial condition",
@@ -9907,6 +10474,7 @@
       "To explore the effects of ",
       {
        "a": "mood",
+       "am": "기분",
        "w": [
         "modality",
         "mortality",
@@ -9921,6 +10489,7 @@
       " on ",
       {
        "a": "communication",
+       "am": "의사소통",
        "w": [
         "commemoration",
         "computation",
@@ -9942,6 +10511,7 @@
       "The targets were instructed to either steal or ",
       {
        "a": "leave in place",
+       "am": "제자리에 그대로 두다",
        "w": [
         "take by force",
         "put on display",
@@ -9956,6 +10526,7 @@
       " a movie pass in an empty room, unobserved by anyone, and then ",
       {
        "a": "deny",
+       "am": "부인하다",
        "w": [
         "delay",
         "defer",
@@ -9977,6 +10548,7 @@
       "Those in a ",
       {
        "a": "positive mood",
+       "am": "긍정적 기분",
        "w": [
         "possessive mood",
         "positional mode",
@@ -9991,6 +10563,7 @@
       " were more likely to accept ",
       {
        "a": "denials",
+       "am": "부인하는 진술",
        "w": [
         "denotations",
         "denominations",
@@ -10005,6 +10578,7 @@
       " as ",
       {
        "a": "truthful",
+       "am": "진실한",
        "w": [
         "trustful",
         "tactful",
@@ -10026,6 +10600,7 @@
       "Sad participants made significantly more guilty ",
       {
        "a": "judgements",
+       "am": "판단",
        "w": [
         "adjustments",
         "attachments",
@@ -10040,6 +10615,7 @@
       ", and were significantly better at correctly ",
       {
        "a": "detecting",
+       "am": "식별하는",
        "w": [
         "defecting",
         "detaching",
@@ -10054,6 +10630,7 @@
       " ",
       {
        "a": "deceptive",
+       "am": "거짓말을 하는",
        "w": [
         "receptive",
         "perceptive",
@@ -10074,6 +10651,7 @@
      "parts": [
       {
        "a": "Negative affect",
+       "am": "부정적 정서",
        "w": [
         "Negative effect",
         "Native accent",
@@ -10088,6 +10666,7 @@
       " thus improved the accurate ",
       {
        "a": "distinction",
+       "am": "구별",
        "w": [
         "distraction",
         "distortion",
@@ -10109,6 +10688,7 @@
       "A signal detection analysis also confirmed that sad judges were more accurate in detecting ",
       {
        "a": "deception",
+       "am": "속임수",
        "w": [
         "defection",
         "depletion",
@@ -10123,6 +10703,7 @@
       " (identifying guilty targets as guilty) than were neutral or happy judges, ",
       {
        "a": "consistent with",
+       "am": "~과 일치하는",
        "w": [
         "resistant to",
         "dependent on",
@@ -10137,6 +10718,7 @@
       " the predicted mood-induced ",
       {
        "a": "processing",
+       "am": "정보 처리",
        "w": [
         "programming",
         "positioning",
@@ -10163,6 +10745,7 @@
       "In a classic survey, the College Board asked high school test takers to ",
       {
        "a": "rate",
+       "am": "평가하다",
        "w": [
         "rotate",
         "relate",
@@ -10177,6 +10760,7 @@
       " themselves on ",
       {
        "a": "a host of",
+       "am": "다수의",
        "w": [
         "a lack of",
         "a matter of",
@@ -10198,6 +10782,7 @@
       "Eighty-five percent considered themselves above the median in ",
       {
        "a": "getting along with",
+       "am": "~과 잘 지내는",
        "w": [
         "getting away from",
         "looking down on",
@@ -10219,6 +10804,7 @@
       "In another study, researchers asked subjects to ",
       {
        "a": "rate",
+       "am": "평가하다",
        "w": [
         "rotate",
         "relate",
@@ -10233,6 +10819,7 @@
       " their ",
       {
        "a": "perceived",
+       "am": "스스로 인식한",
        "w": [
         "prescribed",
         "preserved",
@@ -10254,6 +10841,7 @@
       "The result shows that the poorest performers dramatically ",
       {
        "a": "overstated",
+       "am": "과장했다",
        "w": [
         "overstayed",
         "overheated",
@@ -10275,6 +10863,7 @@
       "However, they ",
       {
        "a": "turned in",
+       "am": "기록했다",
        "w": [
         "turned down",
         "held back",
@@ -10296,6 +10885,7 @@
       "Even when ",
       {
        "a": "confronted with",
+       "am": "~에 직면한",
        "w": [
         "compared with",
         "protected from",
@@ -10310,6 +10900,7 @@
       " their actual results, many of these individuals still struggled to accurately ",
       {
        "a": "assess",
+       "am": "평가하다",
        "w": [
         "access",
         "assert",
@@ -10324,6 +10915,7 @@
       " their own abilities, often maintaining an ",
       {
        "a": "inflated",
+       "am": "부풀려진",
        "w": [
         "inflected",
         "inflicted",
@@ -10345,6 +10937,7 @@
       "New ",
       {
        "a": "technologies",
+       "am": "기술",
        "w": [
         "terminologies",
         "theologies",
@@ -10359,6 +10952,7 @@
       " generally benefit or advantage certain groups or members of society over others — namely, those who ",
       {
        "a": "have mastery over",
+       "am": "~에 숙달되어 있다",
        "w": [
         "have doubts about",
         "have trouble with",
@@ -10373,6 +10967,7 @@
       " or ",
       {
        "a": "access",
+       "am": "접근 기회",
        "w": [
         "excess",
         "success",
@@ -10394,6 +10989,7 @@
       "In many cases, we think that because such advantages are ",
       {
        "a": "earned",
+       "am": "노력으로 얻어진",
        "w": [
         "erased",
         "evaded",
@@ -10408,6 +11004,7 @@
       " through hard work or special knowledge they are therefore ",
       {
        "a": "deserved",
+       "am": "받을 만한 자격이 있는",
        "w": [
         "preserved",
         "reserved",
@@ -10429,6 +11026,7 @@
       "However, in other cases, we may feel that such ",
       {
        "a": "restricted",
+       "am": "제한된",
        "w": [
         "restored",
         "redirected",
@@ -10443,6 +11041,7 @@
       " access to some technologies gives certain individuals or groups ",
       {
        "a": "unfair",
+       "am": "불공정한",
        "w": [
         "unclear",
         "unfit",
@@ -10457,6 +11056,7 @@
       " ",
       {
        "a": "advantages",
+       "am": "이점",
        "w": [
         "adventures",
         "advertisements",
@@ -10478,6 +11078,7 @@
       "Public libraries, for instance, were built to ensure that everyone could ",
       {
        "a": "obtain access to",
+       "am": "~에 접근할 기회를 얻다",
        "w": [
         "lose touch with",
         "take pride in",
@@ -10499,6 +11100,7 @@
       "Questions of ",
       {
        "a": "social justice",
+       "am": "사회 정의",
        "w": [
         "social isolation",
         "spatial judgment",
@@ -10513,6 +11115,7 @@
       " and ",
       {
        "a": "equality",
+       "am": "평등",
        "w": [
         "humidity",
         "salinity",
@@ -10527,6 +11130,7 @@
       " of opportunity thus can be occasioned by ",
       {
        "a": "technological innovation",
+       "am": "기술 혁신",
        "w": [
         "technological imitation",
         "theological interpretation",
@@ -10547,6 +11151,7 @@
      "parts": [
       {
        "a": "Broadly speaking",
+       "am": "대체로 말해서",
        "w": [
         "Out of breath",
         "Under the weather",
@@ -10561,6 +11166,7 @@
       ", art exists ",
       {
        "a": "as a consequence of",
+       "am": "~의 결과로",
        "w": [
         "in the absence of",
         "at the expense of",
@@ -10582,6 +11188,7 @@
       "Man is forever endeavoring to ",
       {
        "a": "break down",
+       "am": "허물다",
        "w": [
         "put up",
         "look after",
@@ -10603,6 +11210,7 @@
       "Whether we call it ",
       {
        "a": "egotism",
+       "am": "자기중심주의",
        "w": [
         "elitism",
         "escapism",
@@ -10617,6 +11225,7 @@
       " or simply ",
       {
        "a": "humanity",
+       "am": "인간성",
        "w": [
         "humidity",
         "humility",
@@ -10631,6 +11240,7 @@
       ", we all know the wish to make others ",
       {
        "a": "appreciate",
+       "am": "이해하다",
        "w": [
         "appropriate",
         "depreciate",
@@ -10652,6 +11262,7 @@
       "We batter our fellowmen with our opinions sufficiently often, but this is nothing ",
       {
        "a": "in comparison to",
+       "am": "~와 비교하면",
        "w": [
         "in addition to",
         "in response to",
@@ -10666,6 +11277,7 @@
       " the ",
       {
        "a": "insistence",
+       "am": "끈질김",
        "w": [
         "existence",
         "resistance",
@@ -10680,6 +11292,7 @@
       " with which we ",
       {
        "a": "pour out",
+       "am": "쏟아내다",
        "w": [
         "hold back",
         "brush aside",
@@ -10701,6 +11314,7 @@
       "A friend is the most valued of earthly possessions largely because he ",
       {
        "a": "is willing to",
+       "am": "기꺼이 ~하다",
        "w": [
         "is reluctant to",
         "is unable to",
@@ -10715,6 +11329,7 @@
       " receive without appearance of impatience the unending story of our mental ",
       {
        "a": "sensations",
+       "am": "느낌",
        "w": [
         "situations",
         "simulations",
@@ -10736,6 +11351,7 @@
       "We are all more or less ",
       {
        "a": "conscious of",
+       "am": "~을 의식하는",
        "w": [
         "indifferent to",
         "dependent on",
@@ -10750,6 +11366,7 @@
       " the constant impulse which ",
       {
        "a": "urges us on",
+       "am": "우리를 부추기는",
        "w": [
         "holds us back",
         "lets us down",
@@ -10764,6 +11381,7 @@
       " to ",
       {
        "a": "expression",
+       "am": "표현",
        "w": [
         "depression",
         "expansion",
@@ -10785,6 +11403,7 @@
       "It seems to me that if we ",
       {
        "a": "trace this instinctive desire back",
+       "am": "이 본능적 욕구를 거슬러 추적하다",
        "w": [
         "hold this instinctive desire back",
         "pass this instinctive desire on",
@@ -10806,6 +11425,7 @@
       "While in animals, as in humans, the expression of emotions via ",
       {
        "a": "facial expressions",
+       "am": "얼굴 표정",
        "w": [
         "facial infections",
         "fiscal projections",
@@ -10820,6 +11440,7 @@
       " is more or less ",
       {
        "a": "invariable",
+       "am": "변함없는",
        "w": [
         "invaluable",
         "invisible",
@@ -10834,6 +11455,7 @@
       ", the context in which those emotions are triggered and expressed is very context specific, and relates to ",
       {
        "a": "socialization",
+       "am": "사회화",
        "w": [
         "specialization",
         "serialization",
@@ -10855,6 +11477,7 @@
       "For example, we are more able to read the facial expressions of those with whom we are ",
       {
        "a": "intimate",
+       "am": "친밀한",
        "w": [
         "impatient",
         "incompatible",
@@ -10876,6 +11499,7 @@
       "Moreover, we humans can ",
       {
        "a": "mask",
+       "am": "감추다",
        "w": [
         "mark",
         "match",
@@ -10890,6 +11514,7 @@
       " our ",
       {
        "a": "emotions",
+       "am": "감정",
        "w": [
         "emulsions",
         "erosions",
@@ -10911,6 +11536,7 @@
       "Finally, like humans, nonhuman animals — especially primates — can ",
       {
        "a": "mimic",
+       "am": "흉내 내다",
        "w": [
         "minimize",
         "modify",
@@ -10925,6 +11551,7 @@
       " the ",
       {
        "a": "facial expressions",
+       "am": "얼굴 표정",
        "w": [
         "facial infections",
         "fiscal projections",
@@ -10946,6 +11573,7 @@
       "One researcher, Bob Boice, ",
       {
        "a": "looked into",
+       "am": "조사했다",
        "w": [
         "looked after",
         "looked past",
@@ -10960,6 +11588,7 @@
       " the writing ",
       {
        "a": "habits",
+       "am": "습관",
        "w": [
         "habitats",
         "hazards",
@@ -10974,6 +11603,7 @@
       " of young professors just ",
       {
        "a": "starting out",
+       "am": "처음 시작하는",
        "w": [
         "dropping out",
         "burning out",
@@ -10995,6 +11625,7 @@
       "Not surprisingly, in a job where there is no real boss and no one sets schedules or tells you what to do, these young professors took a variety of ",
       {
        "a": "approaches",
+       "am": "접근 방식",
        "w": [
         "reproaches",
         "appliances",
@@ -11016,6 +11647,7 @@
       "Some would collect information until they were ready and then write a ",
       {
        "a": "manuscript",
+       "am": "원고",
        "w": [
         "inscription",
         "subscription",
@@ -11030,6 +11662,7 @@
       " ",
       {
        "a": "in a burst of",
+       "am": "~을 한꺼번에 쏟아내며",
        "w": [
         "at the expense of",
         "in the absence of",
@@ -11051,6 +11684,7 @@
       "Others worked at a ",
       {
        "a": "steadier",
+       "am": "더 꾸준한",
        "w": [
         "speedier",
         "steeper",
@@ -11072,6 +11706,7 @@
       "When Boice ",
       {
        "a": "followed up on",
+       "am": "후속 조사했다",
        "w": [
         "looked down on",
         "walked out on",
@@ -11086,6 +11721,7 @@
       " the group some years later, he found that their paths had ",
       {
        "a": "diverged",
+       "am": "갈라졌다",
        "w": [
         "converged",
         "submerged",
@@ -11107,6 +11743,7 @@
       "The page-a-day folks had done well and generally gotten ",
       {
        "a": "tenure",
+       "am": "종신 재직권",
        "w": [
         "tenancy",
         "texture",
@@ -11128,6 +11765,7 @@
       "The so-called “",
       {
        "a": "binge writers",
+       "am": "몰아서 글을 쓰는 사람들",
        "w": [
         "fringe writers",
         "binge readers",
@@ -11142,6 +11780,7 @@
       "” did far less well, and many had had their careers ",
       {
        "a": "cut short",
+       "am": "중도에 끝난",
        "w": [
         "drawn out",
         "put off",
@@ -11168,6 +11807,7 @@
       "Over half the human population of the planet now lives in cities, and the proportion is likely to continue to increase ",
       {
        "a": "in the foreseeable future",
+       "am": "예측 가능한 미래에",
        "w": [
         "in the distant past",
         "at the eleventh hour",
@@ -11189,6 +11829,7 @@
       "Building in cities is becoming more and more important, and ",
       {
        "a": "urban form",
+       "am": "도시 형태",
        "w": [
         "urban folklore",
         "rural reform",
@@ -11203,6 +11844,7 @@
       " and ",
       {
        "a": "urban architecture",
+       "am": "도시 건축",
        "w": [
         "verbal aquaculture",
         "urinary arithmetic",
@@ -11224,6 +11866,7 @@
       "Some architects have decided to respond to what they perceive to be the potentially ",
       {
        "a": "formless",
+       "am": "뚜렷한 형태가 없는",
        "w": [
         "faultless",
         "fruitless",
@@ -11238,6 +11881,7 @@
       " and ",
       {
        "a": "anonymous",
+       "am": "개성이 드러나지 않는",
        "w": [
         "anomalous",
         "autonomous",
@@ -11252,6 +11896,7 @@
       " nature of the city by creating buildings that are obviously strange and are intended to become urban ",
       {
        "a": "landmarks",
+       "am": "상징적 건축물",
        "w": [
         "landfills",
         "landslides",
@@ -11273,6 +11918,7 @@
       "One of the simplest ways of making a building look unusual is to break the normal rules of ",
       {
        "a": "structure",
+       "am": "구조",
        "w": [
         "sculpture",
         "scripture",
@@ -11287,6 +11933,7 @@
       " — or at least make it seem as if ",
       {
        "a": "gravity",
+       "am": "중력",
        "w": [
         "brevity",
         "depravity",
@@ -11301,6 +11948,7 @@
       " is ",
       {
        "a": "of no consequence",
+       "am": "중요하지 않은",
        "w": [
         "out of breath",
         "under the weather",
@@ -11322,6 +11970,7 @@
       "Such buildings ",
       {
        "a": "make difficult demands on",
+       "am": "~에게 어려운 요구를 하다",
        "w": [
         "cast serious doubt on",
         "take strong exception to",
@@ -11336,6 +11985,7 @@
       " structural engineers, who have to make paradoxical forms work while concealing how the trick is ",
       {
        "a": "pulled off",
+       "am": "성공적으로 해낸",
        "w": [
         "put off",
         "called off",
@@ -11357,6 +12007,7 @@
       "The world has made huge ",
       {
        "a": "investments",
+       "am": "투자",
        "w": [
         "investigations",
         "inventions",
@@ -11371,6 +12022,7 @@
       " in the facilities that ",
       {
        "a": "extract",
+       "am": "채굴하다",
        "w": [
         "attract",
         "contract",
@@ -11385,6 +12037,7 @@
       " ",
       {
        "a": "fossil fuels",
+       "am": "화석 연료",
        "w": [
         "fissile materials",
         "fiscal policies",
@@ -11405,6 +12058,7 @@
      "parts": [
       {
        "a": "Leaving aside",
+       "am": "~을 제쳐 두더라도",
        "w": [
         "Looking after",
         "Giving away",
@@ -11419,6 +12073,7 @@
       " the political lobbying power that such investment can command, there would be a limit to how quickly that much kit could be replaced even if there were perfect substitute technologies ",
       {
        "a": "to hand",
+       "am": "바로 이용할 수 있는",
        "w": [
         "at stake",
         "in doubt",
@@ -11433,6 +12088,7 @@
       " that simply needed ",
       {
        "a": "scaling up",
+       "am": "규모 확대",
        "w": [
         "phasing out",
         "breaking down",
@@ -11454,6 +12110,7 @@
       "If the world had the ",
       {
        "a": "capacity",
+       "am": "역량",
        "w": [
         "captivity",
         "complexity",
@@ -11468,6 +12125,7 @@
       " to deliver one of the largest nuclear power plants ever built once a week, ",
       {
        "a": "week in and week out",
+       "am": "매주 빠짐없이",
        "w": [
         "once in a while",
         "from time to time",
@@ -11489,6 +12147,7 @@
       "To ",
       {
        "a": "replace",
+       "am": "대체하다",
        "w": [
         "retain",
         "repress",
@@ -11503,6 +12162,7 @@
       " those coal plants with ",
       {
        "a": "solar panels",
+       "am": "태양광 패널",
        "w": [
         "polar regions",
         "sonar signals",
@@ -11517,6 +12177,7 @@
       " at the rate such panels were ",
       {
        "a": "installed",
+       "am": "설치된",
        "w": [
         "instilled",
         "insulated",
@@ -11538,6 +12199,7 @@
       "Whereas nineteenth-century ",
       {
        "a": "dietary reformers",
+       "am": "식생활 개혁가들",
        "w": [
         "literary performers",
         "military informers",
@@ -11552,6 +12214,7 @@
       " worried that we’d stopped baking our own bread, today’s ",
       {
        "a": "food evangelists",
+       "am": "식생활 전도사들",
        "w": [
         "food monopolists",
         "field ecologists",
@@ -11573,6 +12236,7 @@
       "But ",
       {
        "a": "oversimplified",
+       "am": "지나치게 단순화된",
        "w": [
         "overhydrated",
         "overfertilized",
@@ -11587,6 +12251,7 @@
       " comparisons of today’s families with those of previous generations fail to ",
       {
        "a": "acknowledge",
+       "am": "인정하다",
        "w": [
         "accomplish",
         "accumulate",
@@ -11601,6 +12266,7 @@
       " the fact that Americans have long ",
       {
        "a": "depended on",
+       "am": "~에 의존해 왔다",
        "w": [
         "dispensed with",
         "objected to",
@@ -11622,6 +12288,7 @@
       "The difference is that these women previously worked inside the home, as ",
       {
        "a": "domestic laborers",
+       "am": "가사 노동자들",
        "w": [
         "domestic landlords",
         "democratic leaders",
@@ -11636,6 +12303,7 @@
       ", ",
       {
        "a": "rather than",
+       "am": "~이 아니라",
        "w": [
         "owing to",
         "according to",
@@ -11657,6 +12325,7 @@
       "At the peak, almost two million ",
       {
        "a": "domestic workers",
+       "am": "가사 노동자들",
        "w": [
         "diplomatic officers",
         "democratic leaders",
@@ -11671,6 +12340,7 @@
       " were ",
       {
        "a": "employed",
+       "am": "고용된",
        "w": [
         "implemented",
         "embroidered",
@@ -11685,6 +12355,7 @@
       " in American ",
       {
        "a": "households",
+       "am": "가정",
        "w": [
         "houseplants",
         "housewares",
@@ -11706,6 +12377,7 @@
       "Anthropologist Amy Trubek notes that ",
       {
        "a": "idealized",
+       "am": "이상화된",
        "w": [
         "itemized",
         "ionized",
@@ -11720,6 +12392,7 @@
       " visions of ",
       {
        "a": "home cooking",
+       "am": "가정 요리",
        "w": [
         "home schooling",
         "home banking",
@@ -11734,6 +12407,7 @@
       " persistently ",
       {
        "a": "neglect",
+       "am": "간과하다",
        "w": [
         "negotiate",
         "nominate",
@@ -11755,6 +12429,7 @@
       "When someone shouts at you, “Look out!” and you jump just in time to avoid being hit by an automobile, you owe your escape from injury to ",
       {
        "a": "communication",
+       "am": "의사소통",
        "w": [
         "computation",
         "commemoration",
@@ -11769,6 +12444,7 @@
       " ",
       {
        "a": "by means of",
+       "am": "~을 수단으로",
        "w": [
         "in charge of",
         "in search of",
@@ -11790,6 +12466,7 @@
       "You did not see the car coming; nevertheless, someone did, and he made certain noises to ",
       {
        "a": "communicate",
+       "am": "전달하다",
        "w": [
         "commemorate",
         "complicate",
@@ -11811,6 +12488,7 @@
       "You had, ",
       {
        "a": "for the time being",
+       "am": "잠시 동안",
        "w": [
         "for the sake of",
         "at the expense of",
@@ -11825,6 +12503,7 @@
       ", the advantage of someone else’s ",
       {
        "a": "nervous system",
+       "am": "신경계",
        "w": [
         "numerical sequence",
         "nutrient solution",
@@ -11846,6 +12525,7 @@
       "Indeed, most of the time when we are listening to the noises people make or looking at the black marks on paper that ",
       {
        "a": "stand for",
+       "am": "~을 나타내다",
        "w": [
         "stand against",
         "stand over",
@@ -11860,6 +12540,7 @@
       " such noises, we are drawing upon the ",
       {
        "a": "experiences",
+       "am": "경험",
        "w": [
         "expenses",
         "exemptions",
@@ -11874,6 +12555,7 @@
       " of others in order to ",
       {
        "a": "make up for",
+       "am": "보완하다",
        "w": [
         "make off with",
         "come down with",
@@ -11895,6 +12577,7 @@
       "Obviously the more an individual can ",
       {
        "a": "make use of",
+       "am": "활용하다",
        "w": [
         "make fun of",
         "make light of",
@@ -11909,6 +12592,7 @@
       " the nervous systems of others to ",
       {
        "a": "supplement",
+       "am": "보완하다",
        "w": [
         "supplicate",
         "segregate",
@@ -11923,6 +12607,7 @@
       " his own, the easier it is for him to ",
       {
        "a": "survive",
+       "am": "생존하다",
        "w": [
         "supervise",
         "surpass",
@@ -11944,6 +12629,7 @@
       "And, of course, the more individuals in a group make helpful noises at each other, the better it is for all — within the limits, naturally, of the group’s talents for ",
       {
        "a": "social organization",
+       "am": "사회 조직화",
        "w": [
         "special authorization",
         "solar radiation",
@@ -11965,6 +12651,7 @@
       "Birds and animals ",
       {
        "a": "congregate",
+       "am": "무리 지어 모이다",
        "w": [
         "congratulate",
         "consecrate",
@@ -11986,6 +12673,7 @@
       "In fact, ",
       {
        "a": "gregariousness",
+       "am": "군집성",
        "w": [
         "grievousness",
         "gratuitousness",
@@ -12000,6 +12688,7 @@
       " as an aid to survival and ",
       {
        "a": "self-defense",
+       "am": "자기방어",
        "w": [
         "self-deception",
         "self-destruction",
@@ -12014,6 +12703,7 @@
       " is ",
       {
        "a": "forced upon",
+       "am": "~에게 강요되는",
        "w": [
         "looked into",
         "taken after",
@@ -12035,6 +12725,7 @@
       "Societies, both animal and human, might almost ",
       {
        "a": "be regarded as",
+       "am": "~으로 여겨지다",
        "w": [
         "be deprived of",
         "be confined to",
@@ -12049,6 +12740,7 @@
       " huge ",
       {
        "a": "cooperative",
+       "am": "협력적인",
        "w": [
         "comparative",
         "combustible",
@@ -12063,6 +12755,7 @@
       " ",
       {
        "a": "nervous systems",
+       "am": "신경계",
        "w": [
         "numerical sequences",
         "nutrient solutions",
@@ -12089,6 +12782,7 @@
       "Then I tell the story ",
       {
        "a": "inserting",
+       "am": "끼워 넣는",
        "w": [
         "insisting",
         "insulating",
@@ -12110,6 +12804,7 @@
       "Not only Ethan, but many of the other children, too, found that occasion ",
       {
        "a": "meaningful",
+       "am": "의미 있는",
        "w": [
         "merciful",
         "measurable",
@@ -12131,6 +12826,7 @@
       "You might pick a child who you feel ",
       {
        "a": "could do with",
+       "am": "~이 있으면 좋겠다",
        "w": [
         "could put off",
         "could give up",
@@ -12152,6 +12848,7 @@
       "Alternatively, if you are struggling to build a positive ",
       {
        "a": "relationship",
+       "am": "관계",
        "w": [
         "readership",
         "citizenship",
@@ -12173,6 +12870,7 @@
       "It will help to ",
       {
        "a": "assure",
+       "am": "확신시켜 주다",
        "w": [
         "assume",
         "assign",
@@ -12194,6 +12892,7 @@
       "As I grew older, I was at the gym or on the sports field ",
       {
        "a": "from dawn to dusk",
+       "am": "새벽부터 해 질 때까지",
        "w": [
         "from door to door",
         "from cover to cover",
@@ -12215,6 +12914,7 @@
       "This investment of time and energy eventually ",
       {
        "a": "led to",
+       "am": "~으로 이어졌다",
        "w": [
         "laid off",
         "looked into",
@@ -12236,6 +12936,7 @@
       "As a basketball player, I learned very early about the ",
       {
        "a": "paradox",
+       "am": "역설",
        "w": [
         "paralysis",
         "paraphrase",
@@ -12250,6 +12951,7 @@
       " of team sports — the tension between ",
       {
        "a": "individual",
+       "am": "개인적인",
        "w": [
         "industrial",
         "intestinal",
@@ -12264,6 +12966,7 @@
       " and ",
       {
        "a": "collective",
+       "am": "집단적인",
        "w": [
         "corrective",
         "collectible",
@@ -12285,6 +12988,7 @@
       "During practice, athletes ",
       {
        "a": "competed with",
+       "am": "~와 경쟁했다",
        "w": [
         "coincided with",
         "consisted of",
@@ -12299,6 +13003,7 @@
       " fellow ",
       {
        "a": "teammates",
+       "am": "팀 동료들",
        "w": [
         "templates",
         "terminals",
@@ -12320,6 +13025,7 @@
       "When game day ",
       {
        "a": "rolled around",
+       "am": "돌아왔다",
        "w": [
         "broke down",
         "wore off",
@@ -12334,6 +13040,7 @@
       ", however, teammates were required to put all of their individual rivalries aside and became like bees working ",
       {
        "a": "for the sake of",
+       "am": "~을 위해",
        "w": [
         "on the verge of",
         "in the wake of",
@@ -12355,6 +13062,7 @@
       "We ",
       {
        "a": "came together",
+       "am": "하나로 뭉쳤다",
        "w": [
         "came apart",
         "came across",
@@ -12369,6 +13077,7 @@
       " as a ",
       {
        "a": "cohesive",
+       "am": "결속력 있는",
        "w": [
         "corrosive",
         "compressive",
@@ -12390,6 +13099,7 @@
       "While this is difficult to accomplish, humans possess the equipment to ",
       {
        "a": "pull this off",
+       "am": "이것을 해내다",
        "w": [
         "put this off",
         "give this away",
@@ -12411,6 +13121,7 @@
       "We can do this because we are ",
       {
        "a": "by nature",
+       "am": "본성상",
        "w": [
         "by hand",
         "by heart",
@@ -12431,6 +13142,7 @@
      "parts": [
       {
        "a": "Creativity",
+       "am": "창의성",
        "w": [
         "Credibility",
         "Conductivity",
@@ -12445,6 +13157,7 @@
       " is about “",
       {
        "a": "connecting the dots",
+       "am": "개별 요소들을 연결하기",
        "w": [
         "beating the clock",
         "passing the buck",
@@ -12466,6 +13179,7 @@
       "It is the ability to recognize the ",
       {
        "a": "possibilities",
+       "am": "가능성",
        "w": [
         "possessions",
         "prescriptions",
@@ -12480,6 +13194,7 @@
       " that exist within any scenario and the ",
       {
        "a": "opportunities",
+       "am": "기회",
        "w": [
         "commodities",
         "immunities",
@@ -12500,6 +13215,7 @@
      "parts": [
       {
        "a": "Changing the game",
+       "am": "판도를 바꾸기",
        "w": [
         "Passing the buck",
         "Missing the boat",
@@ -12521,6 +13237,7 @@
       "German philosopher Arthur Schopenhauer once said, “",
       {
        "a": "Talent",
+       "am": "재능",
        "w": [
         "Tangent",
         "Tenure",
@@ -12541,6 +13258,7 @@
      "parts": [
       {
        "a": "Genius",
+       "am": "천재성",
        "w": [
         "Genus",
         "Genesis",
@@ -12561,6 +13279,7 @@
      "parts": [
       {
        "a": "Creative",
+       "am": "창의적인",
        "w": [
         "Corrosive",
         "Congestive",
@@ -12575,6 +13294,7 @@
       " ",
       {
        "a": "solutions",
+       "am": "해결책",
        "w": [
         "solstices",
         "sediments",
@@ -12589,6 +13309,7 @@
       " and ",
       {
        "a": "breakthroughs",
+       "am": "획기적인 발전",
        "w": [
         "breakdowns",
         "breakages",
@@ -12610,6 +13331,7 @@
       "Patents for ",
       {
        "a": "novel",
+       "am": "참신한",
        "w": [
         "normal",
         "nominal",
@@ -12624,6 +13346,7 @@
       " ideas, processes, and methodologies are simply the ",
       {
        "a": "tangible",
+       "am": "실체가 있는",
        "w": [
         "edible",
         "audible",
@@ -12644,6 +13367,7 @@
      "parts": [
       {
        "a": "Paradigms",
+       "am": "사고의 틀",
        "w": [
         "Paradoxes",
         "Paragraphs",
@@ -12658,6 +13382,7 @@
       " shift when people ",
       {
        "a": "come along",
+       "am": "나타나다",
        "w": [
         "come apart",
         "come between",
@@ -12672,6 +13397,7 @@
       " who see how to ",
       {
        "a": "connect the dots",
+       "am": "개별 요소들을 연결하다",
        "w": [
         "pass the buck",
         "jump the gun",
@@ -12693,6 +13419,7 @@
       "This put the portrait studios ",
       {
        "a": "out of business",
+       "am": "폐업한 상태로",
        "w": [
         "out of breath",
         "out of print",
@@ -12707,6 +13434,7 @@
       "; the newly unemployed photographers needed a way to ",
       {
        "a": "distinguish between",
+       "am": "~을 구별하다",
        "w": [
         "dispose of",
         "disagree with",
@@ -12721,6 +13449,7 @@
       " what they did and this new popular ",
       {
        "a": "photography",
+       "am": "사진 촬영",
        "w": [
         "phonology",
         "geography",
@@ -12742,6 +13471,7 @@
       "The movement of ",
       {
        "a": "pictorialism",
+       "am": "회화주의 사진",
        "w": [
         "particularism",
         "patriotism",
@@ -12756,6 +13486,7 @@
       " was the response, with photographers attempting to ",
       {
        "a": "imitate",
+       "am": "모방하다",
        "w": [
         "irrigate",
         "immigrate",
@@ -12777,6 +13508,7 @@
       "They presented their works in ",
       {
        "a": "art galleries",
+       "am": "미술관",
        "w": [
         "art graduates",
         "art critics",
@@ -12798,6 +13530,7 @@
       "The elements of an ",
       {
        "a": "art world",
+       "am": "예술계",
        "w": [
         "art award",
         "art workbook",
@@ -12819,6 +13552,7 @@
       "However, ",
       {
        "a": "art photography",
+       "am": "예술 사진",
        "w": [
         "art typography",
         "art cartography",
@@ -12833,6 +13567,7 @@
       " remained ",
       {
        "a": "marginalized",
+       "am": "주변부로 밀려난",
        "w": [
         "commercialized",
         "militarized",
@@ -12853,6 +13588,7 @@
      "parts": [
       {
        "a": "Pictorialism",
+       "am": "회화주의 사진",
        "w": [
         "Paternalism",
         "Provincialism",
@@ -12867,6 +13603,7 @@
       " eventually ",
       {
        "a": "died out",
+       "am": "사라졌다",
        "w": [
         "caught on",
         "took over",
@@ -12888,6 +13625,7 @@
       "Say you’re driving down the interstate at sixty-five miles an hour with three friends from ",
       {
        "a": "out of town",
+       "am": "타지에서 온",
        "w": [
         "out of hand",
         "out of order",
@@ -12909,6 +13647,7 @@
       "Probably there’s a lot of sudden head turning, and someone’s elbow ",
       {
        "a": "ends up",
+       "am": "결국 ~에 있게 된다",
        "w": [
         "sets off",
         "backs down",
@@ -12923,6 +13662,7 @@
       " in someone else’s ribs, and maybe one of your friends ",
       {
        "a": "gets a glimpse",
+       "am": "잠깐 보게 된다",
        "w": [
         "gets a grip",
         "takes a stand",
@@ -12944,6 +13684,7 @@
       "What if you had said instead, “Hey, ",
       {
        "a": "coming up",
+       "am": "곧 나타나는",
        "w": [
         "closing down",
         "falling apart",
@@ -12958,6 +13699,7 @@
       " on the right here in about two miles, there’s an amazing huge neon Pink House: ",
       {
        "a": "watch for",
+       "am": "~을 주의해서 살펴보다",
        "w": [
         "look after",
         "listen to",
@@ -12979,6 +13721,7 @@
       "Writers need to ",
       {
        "a": "advise",
+       "am": "미리 알려 주다",
        "w": [
         "advertise",
         "supervise",
@@ -13000,6 +13743,7 @@
       "That advice doesn’t always need to be in a ",
       {
        "a": "thesis statement",
+       "am": "중심 논지를 제시하는 문장",
        "w": [
         "theory assessment",
         "thesis submission",
@@ -13014,6 +13758,7 @@
       " or a ",
       {
        "a": "topic sentence",
+       "am": "주제문",
        "w": [
         "topic selection",
         "typical sequence",
