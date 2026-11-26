@@ -55,9 +55,21 @@ body{font-family:"Noto Sans KR","Outfit",sans-serif;background:var(--bg);color:v
 .choice{background:var(--surface);border:2px solid var(--surface2);border-radius:var(--radius-sm);padding:14px 15px;color:var(--text);font-size:16px;font-weight:600;text-align:left;transition:all .15s}
 .choices.two .choice{text-align:center;padding:14px 8px;font-size:15px;word-break:keep-all}
 .choice:active{transform:scale(0.98)}
-.choice.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong);animation:shake .35s}
 .choice.right{border-color:var(--correct);background:var(--correct-bg);color:var(--correct)}
 .choice:disabled{opacity:.45}
+/* 틀린 선지: 카드가 뒤집히며 그 낱말과 뜻을 보여 줌 */
+.choice{position:relative;perspective:700px;min-height:54px}
+.choice .flip{display:block;position:relative;transition:transform .45s ease;transform-style:preserve-3d}
+.choice .face{display:block;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.choice .back{position:absolute;inset:-14px -15px;transform:rotateY(180deg);display:flex;flex-direction:column;justify-content:center;align-items:inherit;padding:6px 12px;border-radius:10px;background:var(--wrong-bg);line-height:1.25}
+.choices.two .choice .back{inset:-14px -8px;align-items:center;text-align:center}
+.choice .back b{color:var(--wrong);font-size:15px;font-weight:700;text-decoration:line-through;text-decoration-thickness:1px}
+.choice .back small{color:#FFB3B3;font-size:13px;font-weight:500;margin-top:3px;word-break:keep-all;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.choices.two .choice{min-height:64px}
+.choices.two .choice .back small{font-size:12px}
+.choice.wrong{border-color:var(--wrong);background:var(--surface)}
+.choice.wrong .flip{transform:rotateY(180deg)}
+.choice.wrong:disabled{opacity:1}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .next-btn{margin:2px 18px 24px;background:linear-gradient(135deg,var(--accent),#8B5CF6);border:none;border-radius:var(--radius);padding:16px;color:#fff;font-size:15px;font-weight:800;display:none}
 .next-btn.show{display:block}
@@ -206,9 +218,19 @@ function askBlank(){
   missedHere = false;
   $('hint').textContent = (bi + 1) + '번 빈칸에 들어갈 말을 고르세요';
   var b = blanks[bi], opts = shuffle([b.a].concat(b.w)); box.innerHTML = '';
+  var meanOf = {}; (b.w || []).forEach(function(w, k){ meanOf[w] = (b.wm || [])[k] || ''; });
   box.classList.toggle('two', opts.every(function(o){ return o.length <= 16; }));   // 짧은 선지는 2×2 — 작은 휴대폰에서도 한 화면
   opts.forEach(function(opt){
-    var btn = document.createElement('button'); btn.className = 'choice'; btn.textContent = opt;
+    var btn = document.createElement('button'); btn.className = 'choice';
+    var flip = document.createElement('span'); flip.className = 'flip';
+    var front = document.createElement('span'); front.className = 'face front'; front.textContent = opt; flip.appendChild(front);
+    if (opt !== b.a) {
+      var back = document.createElement('span'); back.className = 'face back';
+      var bw = document.createElement('b'); bw.textContent = opt; back.appendChild(bw);
+      if (meanOf[opt]) { var bm = document.createElement('small'); bm.textContent = meanOf[opt]; back.appendChild(bm); }
+      flip.appendChild(back);
+    }
+    btn.appendChild(flip);
     btn.onclick = function(){
       if (opt === b.a) {
         btn.classList.add('right'); box.querySelectorAll('.choice').forEach(function(x){ x.disabled = true; });
