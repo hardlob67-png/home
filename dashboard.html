@@ -534,7 +534,24 @@ async function loadQuizzes(){
     const classIds = (Array.isArray(cms)?cms:[]).map(cm=>cm.class_id).filter(Boolean);
     if(Array.isArray(cms)) cms.forEach(cm=>{ if(cm.classes) classNameMap[cm.class_id]=cm.classes.name });
 
-    if(classIds.length){
+    const isAdmin = user && user.role==='admin';
+    if(isAdmin){
+      // 관리자: 모든 반의 단어장을 다 보여 준다(반 이름은 wordlist_classes 로 모아 표시)
+      const [clsRes, wlRes, jRes] = await Promise.all([
+        fetch(`${SUPA_URL}/rest/v1/classes?select=id,name`,{headers:HDR}),
+        fetch(`${SUPA_URL}/rest/v1/wordlists?select=id,class_id,title,created_at&order=created_at.desc`,{headers:HDR}),
+        fetch(`${SUPA_URL}/rest/v1/wordlist_classes?select=wordlist_id,class_id`,{headers:HDR}),
+      ]);
+      const cls = await clsRes.json(), wls = await wlRes.json(), js = await jRes.json();
+      if(Array.isArray(cls)) cls.forEach(c=>{ classNameMap[c.id]=c.name });
+      wordlists = Array.isArray(wls) ? wls : [];
+      const names = {};
+      if(Array.isArray(js)) js.forEach(r=>{ const n=classNameMap[r.class_id]; if(n){ (names[r.wordlist_id]=names[r.wordlist_id]||[]).includes(n)||names[r.wordlist_id].push(n); } });
+      wordlists.forEach(w=>{ w._className = (names[w.id]||[]).join('·') || classNameMap[w.class_id] || '반 미지정'; });
+      if(wordlists.length){
+        await countWords(wordlists.map(w=>w.id), wordCntMap, unitSetMap);
+      }
+    } else if(classIds.length){
       // junction (wordlist_classes) 기반 조회. 단어장이 여러 분반에 속해도 학생 분반 중 하나만 매칭되면 노출.
       const wlcRes = await fetch(`${SUPA_URL}/rest/v1/wordlist_classes?class_id=in.(${classIds.join(',')})&select=wordlist_id,class_id,wordlists(id,class_id,title,created_at)`,{headers:HDR});
       const wlcRows = await wlcRes.json();
@@ -564,15 +581,7 @@ async function loadQuizzes(){
 
       if(wordlists.length){
         const wlIds = wordlists.map(w=>w.id);
-        const cntRes = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=in.(${wlIds.join(',')})&select=wordlist_id,unit`,{headers:HDR});
-        const allWords = await cntRes.json();
-        if(Array.isArray(allWords)){
-          allWords.forEach(w=>{
-            wordCntMap[w.wordlist_id] = (wordCntMap[w.wordlist_id]||0)+1;
-            if(!unitSetMap[w.wordlist_id]) unitSetMap[w.wordlist_id] = new Set();
-            unitSetMap[w.wordlist_id].add(w.unit);
-          });
-        }
+        await countWords(wlIds, wordCntMap, unitSetMap);
       }
     }
 
@@ -585,7 +594,7 @@ async function loadQuizzes(){
 
     if(!totalCount){
       grid.innerHTML=`<div class="quiz-card" onclick="openQuiz('','listening','듣기 딕테이션')"><span class="quiz-tag tag-new">🎧 듣기</span><div class="quiz-title">듣기 딕테이션</div><div class="quiz-desc">학평 듣기 음원을 문항별로 듣고 무작위 빈칸을 받아써요</div><div class="quiz-meta"><span>회차별 연습</span><span class="quiz-arrow">→</span></div></div>`
-        +sentenceQuizCard(classNameMap)
+        +sentenceQuizCard(classNameMap, isAdmin)
         +`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">아직 등록된 퀴즈가 없어요</div></div>`;
       return;
     }
@@ -601,13 +610,13 @@ async function loadQuizzes(){
     </div>`;
 
     // 본문 암기 퀴즈(정적 페이지, 문제는 sentence-quiz/d1.json·d2.json) — 단대1·단대2 반 학생에게만
-    html += sentenceQuizCard(classNameMap);
+    html += sentenceQuizCard(classNameMap, isAdmin);
 
     // 단어장 카드 (위쪽)
     wordlists.forEach(w=>{
       const cnt = wordCntMap[w.id]||0;
       const unitCnt = unitSetMap[w.id]?unitSetMap[w.id].size:0;
-      const className = classNameMap[w.class_id]||'';
+      const className = w._className || classNameMap[w.class_id]||'';
       const disabled = cnt===0;
       const date = new Date(w.created_at).toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
       const titleEsc = esc(w.title).replace(/'/g,'&#39;');
@@ -643,18 +652,38 @@ async function loadQuizzes(){
   }
 }
 
+// 단어 수·단원 수 세기 — 단어장마다 따로, 1000행씩 끊어 읽는다(Supabase 는 한 번에 최대 1000행이라
+// 단어장 여러 개를 한 번에 세면 뒤 단어장이 0개로 잡혀 «단어 없음»으로 막혔다 — 11-26 능률 38-50 실측)
+async function countWords(ids, wordCntMap, unitSetMap){
+  await Promise.all(ids.map(async id=>{
+    for(let from=0; ; from+=1000){
+      const r = await fetch(`${SUPA_URL}/rest/v1/words?wordlist_id=eq.${id}&select=unit&order=id.asc&offset=${from}&limit=1000`,{headers:HDR});
+      const rows = await r.json();
+      if(!Array.isArray(rows)) break;
+      wordCntMap[id] = (wordCntMap[id]||0) + rows.length;
+      if(!unitSetMap[id]) unitSetMap[id] = new Set();
+      rows.forEach(w=>unitSetMap[id].add(w.unit));
+      if(rows.length < 1000) break;
+    }
+  }));
+}
+
 // 본문 암기 퀴즈 카드: 반 이름이 단1·단2(단대1·단대2) 이면 그 반으로 미리 골라 연다
-function sentenceQuizCard(classNameMap){
-  const names = Object.values(classNameMap||{});
-  const sch = names.some(n=>/단대?\s*2/.test(n)) ? 'd2' : names.some(n=>/단대?\s*1/.test(n)) ? 'd1' : '';
-  if(!sch) return '';
-  const label = sch==='d1' ? '공통영어2 3·4과 · 파워업 7·8회' : '영어2 4·6과 · 수능실감 28~37강';
-  return `<div class="quiz-card" onclick="openQuiz('${sch}','sentence','본문 암기 퀴즈')">
+function sentenceQuizCard(classNameMap, isAdmin){
+  const one = (sch)=>{
+    const label = sch==='d1' ? '공통영어2 3·4과 · 파워업 7·8회' : '영어2 4·6과 · 수능실감 28~37강';
+    const title = isAdmin ? '본문 암기 퀴즈 · ' + (sch==='d1' ? '단대1' : '단대2') : '본문 암기 퀴즈';
+    return `<div class="quiz-card" onclick="openQuiz('${sch}','sentence','${title}')">
       <span class="quiz-tag tag-new">📝 본문 암기</span>
-      <div class="quiz-title">본문 암기 퀴즈</div>
+      <div class="quiz-title">${title}</div>
       <div class="quiz-desc">${label} — 문장 속 숙어·핵심 어휘 빈칸을 순서대로 골라요</div>
       <div class="quiz-meta"><span>단원별 · 해석 선택</span><span class="quiz-arrow">→</span></div>
     </div>`;
+  };
+  if(isAdmin) return one('d1') + one('d2');   // 관리자는 두 반 모두
+  const names = Object.values(classNameMap||{});
+  const sch = names.some(n=>/단대?\s*2/.test(n)) ? 'd2' : names.some(n=>/단대?\s*1/.test(n)) ? 'd1' : '';
+  return sch ? one(sch) : '';
 }
 
 async function openQuiz(id, type, titleHint){
