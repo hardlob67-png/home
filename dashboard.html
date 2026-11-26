@@ -585,6 +585,7 @@ async function loadQuizzes(){
 
     if(!totalCount){
       grid.innerHTML=`<div class="quiz-card" onclick="openQuiz('','listening','듣기 딕테이션')"><span class="quiz-tag tag-new">🎧 듣기</span><div class="quiz-title">듣기 딕테이션</div><div class="quiz-desc">학평 듣기 음원을 문항별로 듣고 무작위 빈칸을 받아써요</div><div class="quiz-meta"><span>회차별 연습</span><span class="quiz-arrow">→</span></div></div>`
+        +sentenceQuizCard(classNameMap)
         +`<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">아직 등록된 퀴즈가 없어요</div></div>`;
       return;
     }
@@ -598,6 +599,9 @@ async function loadQuizzes(){
       <div class="quiz-desc">학평 듣기 음원을 문항별로 듣고 무작위 빈칸을 받아써요</div>
       <div class="quiz-meta"><span>회차별 연습</span><span class="quiz-arrow">→</span></div>
     </div>`;
+
+    // 본문 암기 퀴즈(정적 페이지, 문제는 sentence-quiz/d1.json·d2.json) — 단대1·단대2 반 학생에게만
+    html += sentenceQuizCard(classNameMap);
 
     // 단어장 카드 (위쪽)
     wordlists.forEach(w=>{
@@ -639,6 +643,20 @@ async function loadQuizzes(){
   }
 }
 
+// 본문 암기 퀴즈 카드: 반 이름이 단1·단2(단대1·단대2) 이면 그 반으로 미리 골라 연다
+function sentenceQuizCard(classNameMap){
+  const names = Object.values(classNameMap||{});
+  const sch = names.some(n=>/단대?\s*2/.test(n)) ? 'd2' : names.some(n=>/단대?\s*1/.test(n)) ? 'd1' : '';
+  if(!sch) return '';
+  const label = sch==='d1' ? '공통영어2 3·4과 · 파워업 7·8회' : '영어2 4·6과 · 수능실감 28~37강';
+  return `<div class="quiz-card" onclick="openQuiz('${sch}','sentence','본문 암기 퀴즈')">
+      <span class="quiz-tag tag-new">📝 본문 암기</span>
+      <div class="quiz-title">본문 암기 퀴즈</div>
+      <div class="quiz-desc">${label} — 문장 속 숙어·핵심 어휘 빈칸을 순서대로 골라요</div>
+      <div class="quiz-meta"><span>단원별 · 해석 선택</span><span class="quiz-arrow">→</span></div>
+    </div>`;
+}
+
 async function openQuiz(id, type, titleHint){
   type = type || 'quiz';
   document.getElementById('quiz-panel').classList.add('open');
@@ -650,6 +668,13 @@ async function openQuiz(id, type, titleHint){
   const iframe = document.getElementById('quiz-iframe');
   iframe.onload = onIframeLoad;
 
+  if(type==='sentence'){
+    document.getElementById('quiz-panel-title').textContent = titleHint || '본문 암기 퀴즈';
+    sessionStorage.setItem('qhub_current_quiz_title', titleHint || '본문 암기 퀴즈');
+    iframe.removeAttribute('srcdoc');
+    iframe.src = 'sentence-quiz.html' + (id ? '?school=' + encodeURIComponent(id) : '');
+    return;
+  }
   if(type==='listening'){
     document.getElementById('quiz-panel-title').textContent = titleHint || '듣기 딕테이션';
     sessionStorage.setItem('qhub_current_quiz_title', titleHint || '듣기 딕테이션');

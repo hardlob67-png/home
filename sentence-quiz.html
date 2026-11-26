@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>본문 암기 퀴즈</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0b10;--surface:#14161f;--surface2:#1e2030;--accent:#6C5CE7;--accent-light:#A29BFE;--correct:#00E5A0;--correct-bg:rgba(0,229,160,0.12);--wrong:#FF5E5E;--wrong-bg:rgba(255,94,94,0.12);--text:#F0F0F5;--text-dim:#8B8DA3;--text-muted:#5A5C72;--gold:#FFD700;--radius:16px;--radius-sm:12px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation;-webkit-appearance:none;appearance:none;cursor:pointer;font-family:inherit}
+body{font-family:"Noto Sans KR","Outfit",sans-serif;background:var(--bg);color:var(--text);min-height:100dvh}
+.app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;flex:1}
+.screen.active{display:flex}
+.home-header{padding:36px 24px 20px;text-align:center}
+.home-header .emoji{font-size:40px;margin-bottom:8px}
+.home-header h1{font-family:"Outfit","Noto Sans KR",sans-serif;font-size:25px;font-weight:900;letter-spacing:-1px;margin-bottom:6px}
+.home-header p{color:var(--text-dim);font-size:13px;line-height:1.6;word-break:keep-all}
+.section-title{padding:0 20px;font-size:12px;font-weight:700;color:var(--text-muted);letter-spacing:1.5px;margin-bottom:10px}
+.selector{display:flex;gap:10px;padding:0 20px;margin-bottom:22px}
+.sel-btn{flex:1;background:var(--surface);border:2px solid transparent;border-radius:var(--radius);padding:14px 10px;color:var(--text-dim);font-size:14px;font-weight:700;text-align:center;transition:all .2s;line-height:1.4}
+.sel-btn small{display:block;font-size:11px;font-weight:500;color:var(--text-muted);margin-top:3px}
+.sel-btn.selected{border-color:var(--accent);color:var(--text);background:rgba(108,92,231,0.1)}
+.unit-grid{padding:0 20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.unit-card{background:var(--surface);border:2px solid transparent;border-radius:var(--radius-sm);padding:14px 10px;text-align:center;color:var(--text);transition:all .2s}
+.unit-card .u-name{font-size:14px;font-weight:700;display:block;word-break:keep-all}
+.unit-card .u-meta{font-size:11px;color:var(--text-muted);margin-top:4px;display:block}
+.unit-card .u-meta b{color:var(--correct);font-weight:700}
+.unit-card.selected{border-color:var(--accent);background:rgba(108,92,231,0.1)}
+.start-btn{margin:4px 20px 10px;background:linear-gradient(135deg,var(--accent),#8B5CF6);border:none;border-radius:var(--radius);padding:17px;color:#fff;font-size:16px;font-weight:800}
+.start-btn:disabled{opacity:.4}
+.restart-link{margin:0 20px 28px;background:none;border:none;color:var(--text-muted);font-size:13px;text-decoration:underline;display:none}
+.loading{padding:60px 20px;text-align:center;color:var(--text-dim);font-size:14px}
+
+.quiz-top{padding:14px 18px;display:flex;align-items:center;gap:14px}
+.back-btn{background:none;border:none;color:var(--text-dim);font-size:24px;padding:4px}
+.progress-wrap{flex:1}
+.progress-info{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px}
+.progress-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-light));border-radius:3px;transition:width .4s ease;width:0}
+.card{margin:6px 18px 0;background:var(--surface);border-radius:var(--radius);padding:20px 18px}
+.src{font-size:11px;font-weight:700;color:var(--accent-light);letter-spacing:.5px;margin-bottom:10px}
+.sentence{font-size:17px;line-height:2.05;word-break:keep-all;overflow-wrap:break-word}
+.blank{display:inline-block;min-width:64px;padding:0 6px;margin:0 1px;border-bottom:2px solid var(--text-muted);text-align:center;color:transparent;line-height:1.5;border-radius:4px 4px 0 0;transition:all .25s}
+.blank .bn{color:var(--text-muted);font-size:11px;font-weight:700}
+.blank.current{border-bottom-color:var(--accent-light);background:rgba(108,92,231,0.18)}
+.blank.current .bn{color:var(--accent-light)}
+.blank.done{color:var(--correct);border-bottom-color:var(--correct);background:var(--correct-bg);font-weight:700}
+.blank.done.missed{color:var(--gold);border-bottom-color:var(--gold);background:rgba(255,215,0,0.1)}
+.ko{margin-top:12px;padding-top:12px;border-top:1px solid var(--surface2);font-size:13px;color:var(--text-dim);line-height:1.7;word-break:keep-all}
+.hint{margin:14px 18px 8px;font-size:12px;color:var(--text-muted);text-align:center;min-height:18px}
+.choices{display:grid;grid-template-columns:1fr;gap:10px;padding:2px 18px 16px}
+.choices.two{grid-template-columns:1fr 1fr}
+.choice{background:var(--surface);border:2px solid var(--surface2);border-radius:var(--radius-sm);padding:14px 15px;color:var(--text);font-size:16px;font-weight:600;text-align:left;transition:all .15s}
+.choices.two .choice{text-align:center;padding:14px 8px;font-size:15px;word-break:keep-all}
+.choice:active{transform:scale(0.98)}
+.choice.wrong{border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong);animation:shake .35s}
+.choice.right{border-color:var(--correct);background:var(--correct-bg);color:var(--correct)}
+.choice:disabled{opacity:.45}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.next-btn{margin:2px 18px 24px;background:linear-gradient(135deg,var(--accent),#8B5CF6);border:none;border-radius:var(--radius);padding:16px;color:#fff;font-size:15px;font-weight:800;display:none}
+.next-btn.show{display:block}
+.result{padding:52px 24px;text-align:center}
+.result .big{font-family:"Outfit",sans-serif;font-size:52px;font-weight:900;background:linear-gradient(180deg,var(--gold),#FF6B35);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result p{color:var(--text-dim);font-size:14px;margin-top:10px;line-height:1.7}
+.result .start-btn{display:block;width:100%;margin:26px 0 0}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="screen active" id="home">
+  <div class="home-header">
+    <div class="emoji">📝</div>
+    <h1>본문 암기 퀴즈</h1>
+    <p>문장을 읽으며 빈칸에 들어갈 말을 순서대로 고르세요.<br>숙어와 주제 핵심 어휘만 골라 빈칸으로 만들었어요.</p>
+  </div>
+  <div class="section-title">반</div>
+  <div class="selector" id="schoolSel">
+    <button class="sel-btn" data-v="d1">단대1<small>공통영어2 · 파워업</small></button>
+    <button class="sel-btn" data-v="d2">단대2<small>영어2 · 수능실감</small></button>
+  </div>
+  <div class="section-title">단원</div>
+  <div class="unit-grid" id="unitGrid"><div class="loading" style="grid-column:1/-1">불러오는 중…</div></div>
+  <div class="section-title">해석</div>
+  <div class="selector" id="koSel">
+    <button class="sel-btn selected" data-v="1">📖 해석 있음<small>문장 아래 우리말 해석</small></button>
+    <button class="sel-btn" data-v="0">🔥 해석 없음<small>영어 문장만</small></button>
+  </div>
+  <button class="start-btn" id="startBtn" disabled>단원을 고르세요</button>
+  <button class="restart-link" id="restartBtn">처음부터 다시 하기</button>
+</div>
+
+<div class="screen" id="quiz">
+  <div class="quiz-top">
+    <button class="back-btn" id="backBtn" aria-label="그만하기">‹</button>
+    <div class="progress-wrap">
+      <div class="progress-info"><span id="pLabel"></span><span id="pBlank"></span></div>
+      <div class="progress-bar"><div class="progress-fill" id="pFill"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="src" id="src"></div>
+    <div class="sentence" id="sentence"></div>
+    <div class="ko" id="ko"></div>
+  </div>
+  <div class="hint" id="hint"></div>
+  <div class="choices" id="choices"></div>
+  <button class="next-btn" id="nextBtn">다음 문장 →</button>
+</div>
+
+<div class="screen" id="result">
+  <div class="result">
+    <div class="big" id="rScore"></div>
+    <p id="rText"></p>
+    <button class="start-btn" id="againBtn">단원 고르기</button>
+  </div>
+</div>
+
+</div>
+<script>
+// 로그인 확인(다른 퀴즈 페이지와 같음) — 로컬 파일 미리보기만 예외
+var user = null; try { user = JSON.parse(sessionStorage.getItem('qhub_user') || 'null'); } catch (e) {}
+if (!user && location.protocol !== 'file:') location.href = 'index.html';
+
+var DATA = {}, school = null, unit = null, showKo = true;
+var list = [], si = 0, bi = 0, blanks = [], wrongTotal = 0, missedTotal = 0, blankTotal = 0, missedHere = false, startIdx = 0;
+function $(id){ return document.getElementById(id); }
+function show(id){ document.querySelectorAll('.screen').forEach(function(s){ s.classList.toggle('active', s.id === id); }); window.scrollTo(0, 0); }
+function shuffle(a){ a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function key(){ return 'sq_' + school + '_' + unit; }
+function saved(){ return parseInt(localStorage.getItem(key()) || '0', 10) || 0; }
+function units(){ return (DATA[school] && DATA[school].units) || []; }
+function curUnit(){ return units().filter(function(u){ return u.name === unit; })[0]; }
+
+function loadSchool(s){
+  school = s; unit = null;
+  document.querySelectorAll('#schoolSel .sel-btn').forEach(function(b){ b.classList.toggle('selected', b.dataset.v === s); });
+  if (DATA[s]) { renderUnits(); return; }
+  $('unitGrid').innerHTML = '<div class="loading" style="grid-column:1/-1">불러오는 중…</div>';
+  fetch('sentence-quiz/' + s + '.json?v=' + Date.now()).then(function(r){ return r.json(); }).then(function(d){ DATA[s] = d; if (school === s) renderUnits(); })
+    .catch(function(){ $('unitGrid').innerHTML = '<div class="loading" style="grid-column:1/-1">문제를 불러오지 못했어요</div>'; });
+}
+function renderUnits(){
+  var g = $('unitGrid'); g.innerHTML = '';
+  units().forEach(function(u){
+    var b = document.createElement('button'); b.className = 'unit-card' + (u.name === unit ? ' selected' : '');
+    var done = parseInt(localStorage.getItem('sq_' + school + '_' + u.name) || '0', 10) || 0;
+    b.innerHTML = '<span class="u-name"></span><span class="u-meta"></span>';
+    b.querySelector('.u-name').textContent = u.name;
+    b.querySelector('.u-meta').innerHTML = '문장 ' + u.items.length + (done > 0 && done < u.items.length ? ' · <b>' + done + '개 완료</b>' : done >= u.items.length ? ' · <b>완료</b>' : '');
+    b.onclick = function(){ unit = u.name; renderUnits(); };
+    g.appendChild(b);
+  });
+  updateStart();
+}
+function updateStart(){
+  var u = curUnit(), s = u ? saved() : 0;
+  $('startBtn').disabled = !u;
+  $('startBtn').textContent = !u ? '단원을 고르세요' : (s > 0 && s < u.items.length ? '이어 하기 (' + (s + 1) + '번째 문장부터)' : '시작하기');
+  $('restartBtn').style.display = u && s > 0 && s < u.items.length ? 'block' : 'none';
+}
+document.querySelectorAll('#schoolSel .sel-btn').forEach(function(b){ b.onclick = function(){ loadSchool(b.dataset.v); }; });
+document.querySelectorAll('#koSel .sel-btn').forEach(function(b){ b.onclick = function(){ document.querySelectorAll('#koSel .sel-btn').forEach(function(x){ x.classList.remove('selected'); }); b.classList.add('selected'); showKo = b.dataset.v === '1'; }; });
+
+function begin(from){
+  var u = curUnit(); if (!u) return;
+  list = u.items; startIdx = from; si = from; wrongTotal = 0; missedTotal = 0; blankTotal = 0;
+  show('quiz'); loadSentence();
+}
+$('startBtn').onclick = function(){ var s = saved(); begin(s > 0 && s < curUnit().items.length ? s : 0); };
+$('restartBtn').onclick = function(){ localStorage.removeItem(key()); begin(0); };
+$('backBtn').onclick = function(){ show('home'); renderUnits(); };
+$('againBtn').onclick = function(){ show('home'); renderUnits(); };
+$('nextBtn').onclick = function(){
+  si++; localStorage.setItem(key(), String(si));
+  if (si < list.length) loadSentence(); else finish();
+};
+
+function loadSentence(){
+  var s = list[si]; bi = 0; blanks = [];
+  $('src').textContent = s.src;
+  var box = $('sentence'); box.innerHTML = ''; var n = 0;
+  s.parts.forEach(function(p){
+    if (typeof p === 'string') { box.appendChild(document.createTextNode(p)); return; }
+    var el = document.createElement('span'); el.className = 'blank'; el.id = 'b' + n;
+    el.innerHTML = '<span class="bn">' + (n + 1) + '</span>'; box.appendChild(el); blanks.push(p); n++;
+  });
+  $('ko').textContent = s.ko || ''; $('ko').style.display = showKo && s.ko ? 'block' : 'none';
+  $('nextBtn').classList.remove('show');
+  $('nextBtn').textContent = si + 1 < list.length ? '다음 문장 →' : '결과 보기 →';
+  askBlank();
+}
+function askBlank(){
+  var total = blanks.length;
+  $('pLabel').textContent = curUnit().name + ' · ' + (si + 1) + ' / ' + list.length;
+  $('pBlank').textContent = '빈칸 ' + Math.min(bi + 1, total) + ' / ' + total;
+  $('pFill').style.width = ((si + (total ? bi / total : 1)) / list.length * 100) + '%';
+  document.querySelectorAll('.blank').forEach(function(el, i){ el.classList.toggle('current', i === bi); });
+  var box = $('choices');
+  if (bi >= total) {
+    box.innerHTML = ''; $('hint').textContent = '문장 완성! 소리 내어 한 번 읽어 보세요.';
+    $('nextBtn').classList.add('show'); return;
+  }
+  missedHere = false;
+  $('hint').textContent = (bi + 1) + '번 빈칸에 들어갈 말을 고르세요';
+  var b = blanks[bi], opts = shuffle([b.a].concat(b.w)); box.innerHTML = '';
+  box.classList.toggle('two', opts.every(function(o){ return o.length <= 16; }));   // 짧은 선지는 2×2 — 작은 휴대폰에서도 한 화면
+  opts.forEach(function(opt){
+    var btn = document.createElement('button'); btn.className = 'choice'; btn.textContent = opt;
+    btn.onclick = function(){
+      if (opt === b.a) {
+        btn.classList.add('right'); box.querySelectorAll('.choice').forEach(function(x){ x.disabled = true; });
+        var el = $('b' + bi); el.textContent = b.a; el.classList.add('done'); blankTotal++;
+        if (missedHere) { el.classList.add('missed'); missedTotal++; }
+        setTimeout(function(){ bi++; askBlank(); }, 450);
+      } else {
+        btn.classList.add('wrong'); btn.disabled = true; missedHere = true; wrongTotal++;
+        $('hint').textContent = '다시 골라 보세요';
+      }
+    };
+    box.appendChild(btn);
+  });
+}
+function finish(){
+  localStorage.setItem(key(), String(list.length));
+  var ok = blankTotal - missedTotal;
+  $('rScore').textContent = missedTotal === 0 ? 'PERFECT' : ok + ' / ' + blankTotal;
+  $('rText').innerHTML = curUnit().name + ' · 문장 ' + (list.length - startIdx) + '개<br>빈칸 ' + blankTotal + '개 중 한 번에 맞힌 것 ' + ok + '개 · 틀린 시도 ' + wrongTotal + '번<br>노란 빈칸이 나온 문장은 다시 외워 두세요';
+  show('result');
+}
+
+// 반 미리 고르기: ?school=d1 (대시보드가 학생 반으로 넘김), 없으면 단대1
+var qs = new URLSearchParams(location.search).get('school');
+loadSchool(qs === 'd2' ? 'd2' : 'd1');
+</script>
+</body>
+</html>
